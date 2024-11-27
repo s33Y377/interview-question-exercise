@@ -618,4 +618,465 @@ ORDER BY order_id;
 
 These advanced SQL queries cover complex scenarios that involve recursion, optimization, pivoting, conditional aggregation, and more. Let me know if you would like further details or help with specific queries!
 
-Let me know if you'd like further clarification on any of these queries!
+
+
+Here are some advanced SQL interview questions that test deeper knowledge of SQL concepts, optimization techniques, and real-world problem-solving. These questions cover a range of topics including complex queries, joins, subqueries, window functions, performance tuning, and database design.
+
+### 1. **Explain the difference between `JOIN` and `UNION` in SQL.**
+   - **JOIN**: Combines columns from two or more tables based on a related column. You can perform inner, outer, left, right, and cross joins.
+   - **UNION**: Combines the result sets of two or more SELECT queries into a single result set. `UNION` removes duplicates, while `UNION ALL` does not.
+
+### 2. **How would you write a query to find the Nth highest salary from a "employees" table?**
+There are several ways to approach this problem, but one of the most efficient methods is using `ROW_NUMBER()` or `RANK()` window functions.
+
+```sql
+WITH RankedSalaries AS (
+    SELECT salary, ROW_NUMBER() OVER (ORDER BY salary DESC) AS rank
+    FROM employees
+)
+SELECT salary
+FROM RankedSalaries
+WHERE rank = N;  -- Replace N with the desired rank (Nth highest salary)
+```
+
+Alternatively, using a subquery approach:
+
+```sql
+SELECT MAX(salary) AS NthHighestSalary
+FROM employees
+WHERE salary < (SELECT DISTINCT salary FROM employees ORDER BY salary DESC LIMIT N-1, 1);
+```
+
+### 3. **What is the difference between `WHERE` and `HAVING` in SQL?**
+   - **WHERE**: Filters rows before aggregation (i.e., before `GROUP BY`).
+   - **HAVING**: Filters rows after aggregation (i.e., after `GROUP BY`).
+
+```sql
+SELECT department, COUNT(*) 
+FROM employees
+GROUP BY department
+HAVING COUNT(*) > 10;  -- This filters groups after counting
+```
+
+### 4. **What is a window function in SQL? Give an example.**
+A **window function** performs a calculation across a set of table rows related to the current row. It is often used for running totals, rankings, moving averages, etc.
+
+Example: Calculating a running total of salaries.
+
+```sql
+SELECT employee_id, salary, 
+       SUM(salary) OVER (ORDER BY employee_id) AS running_total
+FROM employees;
+```
+
+### 5. **What is the difference between `RANK()`, `DENSE_RANK()`, and `ROW_NUMBER()`?**
+   - **`ROW_NUMBER()`**: Assigns a unique number to each row, even if the values are duplicates.
+   - **`RANK()`**: Assigns ranks, with gaps in case of ties (i.e., if two rows have the same value, they will have the same rank, but the next rank will skip numbers).
+   - **`DENSE_RANK()`**: Assigns ranks without gaps. If two rows tie, the next row will have the next rank number, not skipping any.
+
+Example:
+
+```sql
+SELECT employee_id, salary, 
+       RANK() OVER (ORDER BY salary DESC) AS rank,
+       DENSE_RANK() OVER (ORDER BY salary DESC) AS dense_rank,
+       ROW_NUMBER() OVER (ORDER BY salary DESC) AS row_number
+FROM employees;
+```
+
+### 6. **How would you optimize a query with a `JOIN` and `GROUP BY` that runs slowly?**
+   - **Indexes**: Ensure there are proper indexes on the columns used in `JOIN`, `WHERE`, and `ORDER BY`.
+   - **Avoid `SELECT *`**: Specify only the columns needed to reduce I/O.
+   - **Subqueries**: In some cases, using subqueries or Common Table Expressions (CTEs) can optimize performance by limiting the number of rows before applying joins.
+   - **Join order**: For complex queries, the order in which you perform joins can impact performance. Start with the smaller tables or the ones with better indexes.
+   - **Use `EXPLAIN`**: Analyze the query plan using `EXPLAIN` to identify bottlenecks (e.g., full table scans).
+
+### 7. **Explain the use of `WITH` clause (Common Table Expressions, CTEs).**
+   A **CTE** is a temporary result set that you can reference within a `SELECT`, `INSERT`, `UPDATE`, or `DELETE` query. It can simplify complex joins and subqueries.
+
+```sql
+WITH EmployeeSalaries AS (
+    SELECT employee_id, salary
+    FROM employees
+    WHERE salary > 50000
+)
+SELECT employee_id, salary
+FROM EmployeeSalaries;
+```
+
+### 8. **How would you detect and resolve a deadlock situation in SQL?**
+   - **Deadlock** occurs when two or more transactions are waiting on each other to release locks. It usually involves a circular dependency.
+   - **Detecting Deadlocks**: Most database systems automatically detect deadlocks and will terminate one of the transactions to resolve the situation. You can use monitoring tools or logs to identify deadlock events.
+   - **Resolving Deadlocks**: Common strategies include:
+     - **Transaction Design**: Ensure transactions acquire locks in a consistent order.
+     - **Lock Granularity**: Use row-level locks instead of table-level locks.
+     - **Timeouts**: Implement timeouts on transactions to prevent them from waiting indefinitely.
+
+### 9. **What are `IN` and `EXISTS` in SQL? How are they different?**
+   - **`IN`**: Checks if a value exists in a set of values (e.g., a list of numbers or the result of a subquery).
+   - **`EXISTS`**: Checks if a subquery returns any rows. It is often used for correlated subqueries.
+
+```sql
+-- Using IN
+SELECT employee_id 
+FROM employees
+WHERE department_id IN (1, 2, 3);
+
+-- Using EXISTS (for correlated subquery)
+SELECT employee_id 
+FROM employees e
+WHERE EXISTS (
+    SELECT 1 
+    FROM departments d
+    WHERE e.department_id = d.department_id AND d.department_name = 'Sales'
+);
+```
+
+**Difference**:
+   - `IN` is typically used when you want to match a column to a list of values.
+   - `EXISTS` is used when you want to check if the result of a subquery contains any rows.
+
+### 10. **Explain the concept of "Normalization" and "Denormalization".**
+   - **Normalization**: The process of organizing data to minimize redundancy and dependency by splitting large tables into smaller tables. Common forms are 1NF, 2NF, 3NF, and BCNF.
+   - **Denormalization**: The process of combining tables to reduce the complexity of queries, often for performance reasons, at the cost of additional data redundancy.
+
+### 11. **What are index types available in SQL, and when would you use each?**
+   - **B-tree index**: Default index type for many databases. It is efficient for equality and range queries.
+   - **Hash index**: Used for equality searches but does not support range queries.
+   - **Bitmap index**: Efficient for columns with a limited number of distinct values (e.g., boolean flags).
+   - **Full-text index**: Used for searching text-based data.
+   - **Clustered index**: The table rows are stored in the order of the index (usually the primary key).
+   - **Non-clustered index**: A separate structure that stores pointers to the data rows.
+
+### 12. **What are ACID properties, and why are they important?**
+   - **Atomicity**: All operations in a transaction are either fully completed or none at all.
+   - **Consistency**: The database must remain in a consistent state before and after a transaction.
+   - **Isolation**: Transactions are isolated from each other, meaning the intermediate state of a transaction is not visible to others.
+   - **Durability**: Once a transaction is committed, its effects are permanent, even in the case of a system failure.
+
+### 13. **What is an "Explain Plan" and how do you use it to optimize a query?**
+   An **Explain Plan** provides the query execution plan used by the SQL engine. It shows how tables are accessed (full table scan, index scan, etc.), join methods, and the order of operations. You can use `EXPLAIN` (or a similar command depending on the database) to identify bottlenecks in a query's execution and optimize it by:
+   - Adding indexes.
+   - Changing the join order.
+   - Reducing subqueries or using more efficient joins.
+
+```sql
+EXPLAIN SELECT * FROM employees WHERE department_id = 1;
+```
+
+### 14. **What is a "Composite Index" and when should you use it?**
+   A **composite index** is an index that involves multiple columns. It can be useful when queries involve multiple columns in `WHERE` clauses or `ORDER BY` clauses. It can improve performance but should be used cautiously, as it can slow down insert and update operations.
+
+```sql
+CREATE INDEX idx_department_salary ON employees(department_id, salary);
+```
+
+### 15. **Explain the difference between `TRUNCATE` and `DELETE`.**
+   - **`DELETE`**: Removes rows one by one and logs each row deletion. It can be rolled back and used with a `WHERE` clause to delete specific rows.
+   - **`TRUNCATE`**: Removes all rows from a table without logging individual row deletions, making it faster. It cannot be rolled back (unless used within a transaction in some DBMS), and it resets identity columns.
+
+
+Here is an overview of key SQL concepts with example queries for each:
+
+### 1. **SQL Basics**
+SQL (Structured Query Language) is used to communicate with databases. 
+
+- **Creating a Database**
+  ```sql
+  CREATE DATABASE School;
+  ```
+
+- **Using a Database**
+  ```sql
+  USE School;
+  ```
+
+- **Creating a Table**
+  ```sql
+  CREATE TABLE Students (
+      StudentID INT PRIMARY KEY,
+      FirstName VARCHAR(50),
+      LastName VARCHAR(50),
+      Age INT,
+      Grade VARCHAR(10)
+  );
+  ```
+
+- **Inserting Data into a Table**
+  ```sql
+  INSERT INTO Students (StudentID, FirstName, LastName, Age, Grade)
+  VALUES (1, 'John', 'Doe', 20, 'A');
+  ```
+
+- **Selecting Data from a Table**
+  ```sql
+  SELECT * FROM Students;
+  ```
+
+- **Filtering Data (WHERE)**
+  ```sql
+  SELECT * FROM Students WHERE Age > 18;
+  ```
+
+---
+
+### 2. **Data Retrieval and Aggregation**
+
+- **Sorting Data (ORDER BY)**
+  ```sql
+  SELECT * FROM Students ORDER BY LastName;
+  ```
+
+- **Limiting Results (LIMIT)**
+  ```sql
+  SELECT * FROM Students LIMIT 5;
+  ```
+
+- **Counting Rows (COUNT)**
+  ```sql
+  SELECT COUNT(*) FROM Students;
+  ```
+
+- **Finding the Average (AVG)**
+  ```sql
+  SELECT AVG(Age) FROM Students;
+  ```
+
+- **Summing Values (SUM)**
+  ```sql
+  SELECT SUM(Age) FROM Students;
+  ```
+
+- **Grouping Data (GROUP BY)**
+  ```sql
+  SELECT Grade, COUNT(*) AS NumberOfStudents
+  FROM Students
+  GROUP BY Grade;
+  ```
+
+- **Filtering Groups (HAVING)**
+  ```sql
+  SELECT Grade, COUNT(*) AS NumberOfStudents
+  FROM Students
+  GROUP BY Grade
+  HAVING COUNT(*) > 2;
+  ```
+
+---
+
+### 3. **Joins**
+
+- **INNER JOIN** (Returns rows that match in both tables)
+  ```sql
+  SELECT Students.FirstName, Students.LastName, Grades.Subject
+  FROM Students
+  INNER JOIN Grades ON Students.StudentID = Grades.StudentID;
+  ```
+
+- **LEFT JOIN** (Returns all rows from the left table, and matched rows from the right table)
+  ```sql
+  SELECT Students.FirstName, Students.LastName, Grades.Subject
+  FROM Students
+  LEFT JOIN Grades ON Students.StudentID = Grades.StudentID;
+  ```
+
+- **RIGHT JOIN** (Returns all rows from the right table, and matched rows from the left table)
+  ```sql
+  SELECT Students.FirstName, Students.LastName, Grades.Subject
+  FROM Students
+  RIGHT JOIN Grades ON Students.StudentID = Grades.StudentID;
+  ```
+
+- **FULL OUTER JOIN** (Returns rows when there is a match in one of the tables)
+  ```sql
+  SELECT Students.FirstName, Students.LastName, Grades.Subject
+  FROM Students
+  FULL OUTER JOIN Grades ON Students.StudentID = Grades.StudentID;
+  ```
+
+---
+
+### 4. **Subqueries**
+
+- **Subquery in SELECT**
+  ```sql
+  SELECT FirstName, LastName, (SELECT AVG(Age) FROM Students) AS AverageAge
+  FROM Students;
+  ```
+
+- **Subquery in WHERE**
+  ```sql
+  SELECT FirstName, LastName FROM Students
+  WHERE StudentID IN (SELECT StudentID FROM Grades WHERE Subject = 'Math');
+  ```
+
+---
+
+### 5. **Data Modification**
+
+- **Updating Data**
+  ```sql
+  UPDATE Students
+  SET Age = 21
+  WHERE StudentID = 1;
+  ```
+
+- **Deleting Data**
+  ```sql
+  DELETE FROM Students WHERE StudentID = 1;
+  ```
+
+- **Deleting All Data (Truncate)**
+  ```sql
+  TRUNCATE TABLE Students;
+  ```
+
+---
+
+### 6. **Constraints and Keys**
+
+- **Primary Key** (Ensures each row is unique)
+  ```sql
+  CREATE TABLE Employees (
+      EmployeeID INT PRIMARY KEY,
+      Name VARCHAR(50),
+      Age INT
+  );
+  ```
+
+- **Foreign Key** (Enforces a relationship between two tables)
+  ```sql
+  CREATE TABLE Orders (
+      OrderID INT PRIMARY KEY,
+      OrderDate DATE,
+      CustomerID INT,
+      FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID)
+  );
+  ```
+
+- **Unique Constraint** (Ensures unique values in a column)
+  ```sql
+  CREATE TABLE Employees (
+      EmployeeID INT PRIMARY KEY,
+      Email VARCHAR(100) UNIQUE
+  );
+  ```
+
+- **Not Null** (Ensures a column cannot have NULL values)
+  ```sql
+  CREATE TABLE Employees (
+      EmployeeID INT PRIMARY KEY,
+      Name VARCHAR(50) NOT NULL
+  );
+  ```
+
+- **Check Constraint** (Ensures data meets a specified condition)
+  ```sql
+  CREATE TABLE Employees (
+      EmployeeID INT PRIMARY KEY,
+      Age INT CHECK (Age >= 18)
+  );
+  ```
+
+---
+
+### 7. **Indexes**
+
+- **Creating an Index**
+  ```sql
+  CREATE INDEX idx_lastname
+  ON Students (LastName);
+  ```
+
+- **Dropping an Index**
+  ```sql
+  DROP INDEX idx_lastname;
+  ```
+
+---
+
+### 8. **Transactions**
+
+- **Begin Transaction**
+  ```sql
+  BEGIN TRANSACTION;
+  ```
+
+- **Commit Transaction**
+  ```sql
+  COMMIT;
+  ```
+
+- **Rollback Transaction**
+  ```sql
+  ROLLBACK;
+  ```
+
+---
+
+### 9. **Views**
+
+- **Creating a View**
+  ```sql
+  CREATE VIEW StudentGrades AS
+  SELECT Students.FirstName, Students.LastName, Grades.Subject
+  FROM Students
+  INNER JOIN Grades ON Students.StudentID = Grades.StudentID;
+  ```
+
+- **Querying a View**
+  ```sql
+  SELECT * FROM StudentGrades;
+  ```
+
+- **Dropping a View**
+  ```sql
+  DROP VIEW StudentGrades;
+  ```
+
+---
+
+### 10. **Stored Procedures**
+
+- **Creating a Stored Procedure**
+  ```sql
+  CREATE PROCEDURE GetStudentDetails (IN studentID INT)
+  BEGIN
+      SELECT * FROM Students WHERE StudentID = studentID;
+  END;
+  ```
+
+- **Executing a Stored Procedure**
+  ```sql
+  CALL GetStudentDetails(1);
+  ```
+
+---
+
+### 11. **Triggers**
+
+- **Creating a Trigger**
+  ```sql
+  CREATE TRIGGER before_insert_student
+  BEFORE INSERT ON Students
+  FOR EACH ROW
+  BEGIN
+      IF NEW.Age < 18 THEN
+          SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Age must be 18 or older';
+      END IF;
+  END;
+  ```
+
+---
+
+### 12. **Normalization**
+
+- **1st Normal Form (1NF)**: Eliminate duplicate rows; each column contains atomic values.
+- **2nd Normal Form (2NF)**: Move data to different tables to eliminate partial dependency.
+- **3rd Normal Form (3NF)**: Eliminate transitive dependency.
+
+Normalization typically involves decomposing large tables into smaller ones, ensuring data redundancy is minimized.
+
+---
+
+These are some of the essential SQL concepts and operations with example queries. SQL can be very powerful when working with relational databases, helping with tasks like data retrieval, modification, and management.
