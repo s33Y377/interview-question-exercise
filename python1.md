@@ -1789,3 +1789,927 @@ class ContextSensitiveLogger:
 
 
 These exercises will help you explore some advanced Python techniques that are not as commonly used. Mastering them can significantly improve your ability to write efficient, elegant, and highly Pythonic code.
+
+
+
+Here are some advanced Python string exercises often encountered in interviews, along with their examples and solutions. These exercises test your understanding of Python string manipulation techniques, such as regular expressions, slicing, formatting, and working with more complex scenarios.
+
+### 1. **Reverse Words in a String**
+**Problem**: Given a string, reverse the order of words while maintaining the order of characters within each word.
+
+#### Example:
+```python
+Input: "The quick brown fox"
+Output: "fox brown quick The"
+```
+
+#### Solution:
+```python
+def reverse_words(s: str) -> str:
+    # Split the string by spaces and reverse the list of words
+    words = s.split()
+    return ' '.join(reversed(words))
+
+# Test the function
+input_str = "The quick brown fox"
+print(reverse_words(input_str))  # Output: "fox brown quick The"
+```
+
+### 2. **Check if a String is a Palindrome**
+**Problem**: Check whether a given string is a palindrome (ignoring spaces, punctuation, and case sensitivity).
+
+#### Example:
+```python
+Input: "A man, a plan, a canal, Panama"
+Output: True
+```
+
+#### Solution:
+```python
+import re
+
+def is_palindrome(s: str) -> bool:
+    # Remove non-alphanumeric characters and convert to lowercase
+    cleaned_str = re.sub(r'[^a-zA-Z0-9]', '', s).lower()
+    return cleaned_str == cleaned_str[::-1]
+
+# Test the function
+input_str = "A man, a plan, a canal, Panama"
+print(is_palindrome(input_str))  # Output: True
+```
+
+### 3. **Count Occurrences of a Substring in a String**
+**Problem**: Given a string and a substring, count how many times the substring appears in the string without overlapping.
+
+#### Example:
+```python
+Input: "ababcabcab"
+Substring: "ab"
+Output: 3
+```
+
+#### Solution:
+```python
+def count_substring(s: str, sub: str) -> int:
+    return s.count(sub)
+
+# Test the function
+input_str = "ababcabcab"
+substring = "ab"
+print(count_substring(input_str, substring))  # Output: 3
+```
+
+### 4. **Longest Palindromic Substring**
+**Problem**: Given a string, find the longest substring which is a palindrome.
+
+#### Example:
+```python
+Input: "babad"
+Output: "bab" or "aba" (both are correct)
+```
+
+#### Solution:
+```python
+def longest_palindromic_substring(s: str) -> str:
+    def expand_around_center(left, right):
+        while left >= 0 and right < len(s) and s[left] == s[right]:
+            left -= 1
+            right += 1
+        return s[left+1:right]
+
+    longest = ""
+    for i in range(len(s)):
+        # Odd length palindrome
+        odd_palindrome = expand_around_center(i, i)
+        if len(odd_palindrome) > len(longest):
+            longest = odd_palindrome
+        # Even length palindrome
+        even_palindrome = expand_around_center(i, i+1)
+        if len(even_palindrome) > len(longest):
+            longest = even_palindrome
+    return longest
+
+# Test the function
+input_str = "babad"
+print(longest_palindromic_substring(input_str))  # Output: "bab" or "aba"
+```
+
+### 5. **Remove Duplicate Characters**
+**Problem**: Given a string, remove all duplicate characters while keeping the first occurrence of each character.
+
+#### Example:
+```python
+Input: "aabbccabc"
+Output: "abc"
+```
+
+#### Solution:
+```python
+def remove_duplicates(s: str) -> str:
+    return ''.join(sorted(set(s), key=s.index))
+
+# Test the function
+input_str = "aabbccabc"
+print(remove_duplicates(input_str))  # Output: "abc"
+```
+
+### 6. **Find the First Non-Repeating Character**
+**Problem**: Given a string, find the first character that does not repeat in the string.
+
+#### Example:
+```python
+Input: "geeksforgeeks"
+Output: "f"
+```
+
+#### Solution:
+```python
+from collections import Counter
+
+def first_non_repeating(s: str) -> str:
+    # Count frequency of each character
+    freq = Counter(s)
+    for char in s:
+        if freq[char] == 1:
+            return char
+    return None
+
+# Test the function
+input_str = "geeksforgeeks"
+print(first_non_repeating(input_str))  # Output: "f"
+```
+
+### 7. **String Compression**
+**Problem**: Given a string, compress it using the counts of repeated characters. For example, "aabcccccaaa" becomes "a2b1c5a3". If the compressed string is not smaller than the original string, return the original string.
+
+#### Example:
+```python
+Input: "aabcccccaaa"
+Output: "a2b1c5a3"
+```
+
+#### Solution:
+```python
+def compress_string(s: str) -> str:
+    compressed = []
+    count = 1
+    for i in range(1, len(s)):
+        if s[i] == s[i - 1]:
+            count += 1
+        else:
+            compressed.append(s[i - 1] + str(count))
+            count = 1
+    compressed.append(s[-1] + str(count))  # for the last character
+
+    compressed_str = ''.join(compressed)
+    return compressed_str if len(compressed_str) < len(s) else s
+
+# Test the function
+input_str = "aabcccccaaa"
+print(compress_string(input_str))  # Output: "a2b1c5a3"
+```
+
+### 8. **Find All Anagrams of a String in Another String**
+**Problem**: Given two strings `s` and `p`, return all the start indices of `p`'s anagrams in `s`. Strings consists of lowercase English letters.
+
+#### Example:
+```python
+Input: s = "cbaebabacd", p = "abc"
+Output: [0, 6]
+```
+
+#### Solution:
+```python
+from collections import Counter
+
+def find_anagrams(s: str, p: str):
+    result = []
+    p_count = Counter(p)
+    s_count = Counter()
+
+    for i in range(len(s)):
+        s_count[s[i]] += 1
+        if i >= len(p):
+            if s_count[s[i - len(p)]] == 1:
+                del s_count[s[i - len(p)]]
+            else:
+                s_count[s[i - len(p)]] -= 1
+
+        if s_count == p_count:
+            result.append(i - len(p) + 1)
+
+    return result
+
+# Test the function
+s = "cbaebabacd"
+p = "abc"
+print(find_anagrams(s, p))  # Output: [0, 6]
+```
+
+These exercises are commonly used in coding interviews to assess problem-solving skills, familiarity with string operations, and the ability to write efficient code. They also help to test knowledge of Python libraries like `re` for regular expressions and `collections.Counter` for counting occurrences in strings.
+
+
+
+In Python, the term "oops" refers to **Object-Oriented Programming (OOP)**, a programming paradigm that uses objects and classes to organize code. The advanced concepts in OOP typically include the following:
+
+1. **Inheritance**
+2. **Polymorphism**
+3. **Encapsulation**
+4. **Abstraction**
+5. **Method Overriding**
+6. **Multiple Inheritance**
+7. **Super() and super method**
+8. **Static Methods and Class Methods**
+9. **Magic Methods (Dunder Methods)**
+
+Let's go over these concepts with code examples:
+
+### 1. Inheritance
+Inheritance allows one class to inherit the attributes and methods of another class.
+
+```python
+class Animal:
+    def speak(self):
+        return "Animal sound"
+
+class Dog(Animal):  # Dog inherits from Animal
+    def speak(self):
+        return "Bark"
+
+dog = Dog()
+print(dog.speak())  # Output: Bark
+```
+
+### 2. Polymorphism
+Polymorphism allows methods to have different implementations based on the object type.
+
+```python
+class Cat(Animal):
+    def speak(self):
+        return "Meow"
+
+animals = [Dog(), Cat()]
+for animal in animals:
+    print(animal.speak())  # Output: Bark, Meow
+```
+
+### 3. Encapsulation
+Encapsulation is the bundling of data and methods that operate on the data within a class, and restricting direct access to some of the object's components.
+
+```python
+class Person:
+    def __init__(self, name, age):
+        self.name = name
+        self.__age = age  # Private variable
+
+    def get_age(self):  # Public method to access private variable
+        return self.__age
+
+    def set_age(self, age):  # Public method to set private variable
+        if age >= 0:
+            self.__age = age
+        else:
+            print("Age cannot be negative")
+
+p = Person("John", 30)
+print(p.get_age())  # Output: 30
+p.set_age(35)
+print(p.get_age())  # Output: 35
+```
+
+### 4. Abstraction
+Abstraction allows hiding complex implementation details and exposing only necessary parts.
+
+```python
+from abc import ABC, abstractmethod
+
+class Shape(ABC):
+    @abstractmethod
+    def area(self):
+        pass
+
+class Circle(Shape):
+    def __init__(self, radius):
+        self.radius = radius
+
+    def area(self):
+        return 3.14 * (self.radius ** 2)
+
+circle = Circle(5)
+print(circle.area())  # Output: 78.5
+```
+
+### 5. Method Overriding
+Method overriding occurs when a subclass provides its own implementation of a method that is already defined in the parent class.
+
+```python
+class Animal:
+    def speak(self):
+        return "Some generic sound"
+
+class Dog(Animal):
+    def speak(self):
+        return "Bark"
+
+dog = Dog()
+print(dog.speak())  # Output: Bark (Overridden method)
+```
+
+### 6. Multiple Inheritance
+Multiple inheritance allows a class to inherit from more than one parent class.
+
+```python
+class Animal:
+    def speak(self):
+        return "Animal sound"
+
+class Canine:
+    def walk(self):
+        return "Walking on 4 legs"
+
+class Dog(Animal, Canine):
+    pass
+
+dog = Dog()
+print(dog.speak())  # Output: Animal sound
+print(dog.walk())   # Output: Walking on 4 legs
+```
+
+### 7. Using `super()`
+`super()` allows calling methods from a parent class in the child class.
+
+```python
+class Animal:
+    def speak(self):
+        return "Animal sound"
+
+class Dog(Animal):
+    def speak(self):
+        return super().speak() + " and Bark"
+
+dog = Dog()
+print(dog.speak())  # Output: Animal sound and Bark
+```
+
+### 8. Static Methods and Class Methods
+- **Static methods**: Do not operate on an instance of the class.
+- **Class methods**: Operate on the class itself.
+
+```python
+class MyClass:
+    @staticmethod
+    def static_method():
+        return "This is a static method"
+
+    @classmethod
+    def class_method(cls):
+        return f"This is a class method of {cls.__name__}"
+
+print(MyClass.static_method())  # Output: This is a static method
+print(MyClass.class_method())   # Output: This is a class method of MyClass
+```
+
+### 9. Magic Methods (Dunder Methods)
+Magic methods are special methods that have double underscores before and after their name. They are used to define how instances of the class behave in certain operations.
+
+```python
+class Point:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+    def __repr__(self):
+        return f"Point({self.x}, {self.y})"
+
+    def __add__(self, other):
+        return Point(self.x + other.x, self.y + other.y)
+
+point1 = Point(2, 3)
+point2 = Point(4, 5)
+
+print(point1 + point2)  # Output: Point(6, 8)
+```
+
+### Conclusion
+These advanced OOP concepts in Python help structure and manage complex programs. Understanding inheritance, polymorphism, encapsulation, abstraction, and method overriding can greatly enhance your ability to design and maintain object-oriented systems.
+
+
+Here is a comprehensive guide to **Python sorting algorithms**, including explanations, example exercises, and their solutions.
+
+### 1. **Bubble Sort**
+Bubble sort is a simple comparison-based sorting algorithm. It repeatedly steps through the list, compares adjacent elements, and swaps them if they are in the wrong order. This process is repeated until the list is sorted.
+
+#### Example Code:
+```python
+def bubble_sort(arr):
+    n = len(arr)
+    for i in range(n):
+        swapped = False
+        for j in range(0, n-i-1):
+            if arr[j] > arr[j+1]:
+                arr[j], arr[j+1] = arr[j+1], arr[j]
+                swapped = True
+        if not swapped:
+            break
+    return arr
+```
+
+#### Exercise:
+Sort the following list using Bubble Sort: `[64, 34, 25, 12, 22, 11, 90]`
+
+#### Solution:
+```python
+arr = [64, 34, 25, 12, 22, 11, 90]
+sorted_arr = bubble_sort(arr)
+print(sorted_arr)  # Output: [11, 12, 22, 25, 34, 64, 90]
+```
+
+---
+
+### 2. **Selection Sort**
+Selection sort is another comparison-based sorting algorithm. It repeatedly selects the smallest (or largest) element from the unsorted portion of the list and swaps it with the first unsorted element.
+
+#### Example Code:
+```python
+def selection_sort(arr):
+    n = len(arr)
+    for i in range(n):
+        min_idx = i
+        for j in range(i+1, n):
+            if arr[j] < arr[min_idx]:
+                min_idx = j
+        arr[i], arr[min_idx] = arr[min_idx], arr[i]
+    return arr
+```
+
+#### Exercise:
+Sort the following list using Selection Sort: `[29, 10, 14, 37, 13]`
+
+#### Solution:
+```python
+arr = [29, 10, 14, 37, 13]
+sorted_arr = selection_sort(arr)
+print(sorted_arr)  # Output: [10, 13, 14, 29, 37]
+```
+
+---
+
+### 3. **Insertion Sort**
+Insertion sort works by taking one element at a time from the unsorted portion and inserting it into the correct position in the sorted portion.
+
+#### Example Code:
+```python
+def insertion_sort(arr):
+    for i in range(1, len(arr)):
+        key = arr[i]
+        j = i - 1
+        while j >= 0 and arr[j] > key:
+            arr[j + 1] = arr[j]
+            j -= 1
+        arr[j + 1] = key
+    return arr
+```
+
+#### Exercise:
+Sort the following list using Insertion Sort: `[12, 11, 13, 5, 6]`
+
+#### Solution:
+```python
+arr = [12, 11, 13, 5, 6]
+sorted_arr = insertion_sort(arr)
+print(sorted_arr)  # Output: [5, 6, 11, 12, 13]
+```
+
+---
+
+### 4. **Merge Sort**
+Merge sort is a divide-and-conquer algorithm. It divides the list into two halves, recursively sorts them, and then merges the sorted halves.
+
+#### Example Code:
+```python
+def merge_sort(arr):
+    if len(arr) > 1:
+        mid = len(arr) // 2
+        left_half = arr[:mid]
+        right_half = arr[mid:]
+
+        merge_sort(left_half)
+        merge_sort(right_half)
+
+        i = j = k = 0
+
+        while i < len(left_half) and j < len(right_half):
+            if left_half[i] < right_half[j]:
+                arr[k] = left_half[i]
+                i += 1
+            else:
+                arr[k] = right_half[j]
+                j += 1
+            k += 1
+
+        while i < len(left_half):
+            arr[k] = left_half[i]
+            i += 1
+            k += 1
+
+        while j < len(right_half):
+            arr[k] = right_half[j]
+            j += 1
+            k += 1
+
+    return arr
+```
+
+#### Exercise:
+Sort the following list using Merge Sort: `[38, 27, 43, 3, 9, 82, 10]`
+
+#### Solution:
+```python
+arr = [38, 27, 43, 3, 9, 82, 10]
+sorted_arr = merge_sort(arr)
+print(sorted_arr)  # Output: [3, 9, 10, 27, 38, 43, 82]
+```
+
+---
+
+### 5. **Quick Sort**
+Quick sort is a divide-and-conquer algorithm that works by selecting a 'pivot' element and partitioning the array around it.
+
+#### Example Code:
+```python
+def quick_sort(arr):
+    if len(arr) <= 1:
+        return arr
+    pivot = arr[len(arr) // 2]
+    left = [x for x in arr if x < pivot]
+    middle = [x for x in arr if x == pivot]
+    right = [x for x in arr if x > pivot]
+    return quick_sort(left) + middle + quick_sort(right)
+```
+
+#### Exercise:
+Sort the following list using Quick Sort: `[3, 6, 8, 10, 1, 2, 1]`
+
+#### Solution:
+```python
+arr = [3, 6, 8, 10, 1, 2, 1]
+sorted_arr = quick_sort(arr)
+print(sorted_arr)  # Output: [1, 1, 2, 3, 6, 8, 10]
+```
+
+---
+
+### 6. **Heap Sort**
+Heap sort is a comparison-based sorting algorithm that uses a binary heap data structure. It first builds a max heap and then repeatedly extracts the maximum element.
+
+#### Example Code:
+```python
+import heapq
+
+def heap_sort(arr):
+    heapq.heapify(arr)  # Turn the list into a heap in-place
+    return [heapq.heappop(arr) for _ in range(len(arr))]
+```
+
+#### Exercise:
+Sort the following list using Heap Sort: `[4, 10, 3, 5, 1]`
+
+#### Solution:
+```python
+arr = [4, 10, 3, 5, 1]
+sorted_arr = heap_sort(arr)
+print(sorted_arr)  # Output: [1, 3, 4, 5, 10]
+```
+
+---
+
+### 7. **Tim Sort**
+Tim Sort is a hybrid sorting algorithm derived from merge sort and insertion sort. It is used in Python’s built-in sorting functions (`sorted()` and `.sort()`).
+
+#### Example Code (Using Python's Built-In Sorting):
+```python
+arr = [7, 1, 3, 9, 5]
+arr.sort()
+print(arr)  # Output: [1, 3, 5, 7, 9]
+```
+
+#### Exercise:
+Sort the following list using Tim Sort: `[3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5]`
+
+#### Solution:
+```python
+arr = [3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5]
+arr.sort()
+print(arr)  # Output: [1, 1, 2, 3, 3, 4, 5, 5, 5, 6, 9]
+```
+
+---
+
+### 8. **Radix Sort**
+Radix sort is a non-comparative integer sorting algorithm. It processes each digit of the number starting from the least significant digit to the most significant digit.
+
+#### Example Code:
+```python
+def counting_sort(arr, exp):
+    n = len(arr)
+    output = [0] * n
+    count = [0] * 10
+
+    for i in range(n):
+        index = arr[i] // exp
+        count[index % 10] += 1
+
+    for i in range(1, 10):
+        count[i] += count[i - 1]
+
+    i = n - 1
+    while i >= 0:
+        index = arr[i] // exp
+        output[count[index % 10] - 1] = arr[i]
+        count[index % 10] -= 1
+        i -= 1
+
+    for i in range(n):
+        arr[i] = output[i]
+
+def radix_sort(arr):
+    max_val = max(arr)
+    exp = 1
+    while max_val // exp > 0:
+        counting_sort(arr, exp)
+        exp *= 10
+    return arr
+```
+
+#### Exercise:
+Sort the following list using Radix Sort: `[170, 45, 75, 90, 802, 24, 2, 66]`
+
+#### Solution:
+```python
+arr = [170, 45, 75, 90, 802, 24, 2, 66]
+sorted_arr = radix_sort(arr)
+print(sorted_arr)  # Output: [2, 24, 45, 66, 75, 90, 170, 802]
+```
+
+---
+
+### Conclusion
+These are common Python sorting algorithms, each with its own strengths and weaknesses. You can practice sorting different arrays using the given algorithms to understand their behavior and performance.
+
+
+Here is a list of common Python searching algorithms with explanations, exercises, and solutions:
+
+### 1. **Linear Search**
+
+#### Explanation:
+Linear search is the simplest search algorithm. It checks each element in the list one by one until the desired element is found or the end of the list is reached.
+
+#### Exercise:
+- Implement a function `linear_search(arr, target)` that returns the index of the target element if it exists in the list, otherwise returns `-1`.
+
+#### Solution:
+
+```python
+def linear_search(arr, target):
+    for index, element in enumerate(arr):
+        if element == target:
+            return index
+    return -1
+
+# Example usage:
+arr = [10, 20, 30, 40, 50]
+target = 30
+print(linear_search(arr, target))  # Output: 2
+```
+
+---
+
+### 2. **Binary Search**
+
+#### Explanation:
+Binary search works only on sorted arrays. It divides the array into halves and eliminates half of the search space after each comparison.
+
+#### Exercise:
+- Implement a function `binary_search(arr, target)` that returns the index of the target element if it exists, otherwise returns `-1`.
+
+#### Solution:
+
+```python
+def binary_search(arr, target):
+    low, high = 0, len(arr) - 1
+    while low <= high:
+        mid = (low + high) // 2
+        if arr[mid] == target:
+            return mid
+        elif arr[mid] < target:
+            low = mid + 1
+        else:
+            high = mid - 1
+    return -1
+
+# Example usage:
+arr = [10, 20, 30, 40, 50]
+target = 30
+print(binary_search(arr, target))  # Output: 2
+```
+
+---
+
+### 3. **Jump Search**
+
+#### Explanation:
+Jump search is an algorithm for searching a sorted array. It works by jumping ahead by a fixed number of steps (called `block size`), then performing a linear search within that block.
+
+#### Exercise:
+- Implement a function `jump_search(arr, target)` that searches for the target element in a sorted array.
+
+#### Solution:
+
+```python
+import math
+
+def jump_search(arr, target):
+    n = len(arr)
+    step = int(math.sqrt(n))  # Block size (step size)
+    prev = 0
+    
+    while arr[min(step, n) - 1] < target:
+        prev = step
+        step += int(math.sqrt(n))
+        if prev >= n:
+            return -1
+    
+    for i in range(prev, min(step, n)):
+        if arr[i] == target:
+            return i
+    return -1
+
+# Example usage:
+arr = [10, 20, 30, 40, 50]
+target = 30
+print(jump_search(arr, target))  # Output: 2
+```
+
+---
+
+### 4. **Exponential Search**
+
+#### Explanation:
+Exponential search is an algorithm for searching a sorted array. It starts by checking the first element, then exponentially increases the search range.
+
+#### Exercise:
+- Implement a function `exponential_search(arr, target)` that searches for a target in a sorted array using exponential search.
+
+#### Solution:
+
+```python
+def exponential_search(arr, target):
+    if arr[0] == target:
+        return 0
+    i = 1
+    while i < len(arr) and arr[i] <= target:
+        i *= 2
+    
+    # Perform binary search in the found range
+    return binary_search(arr[i//2: min(i, len(arr))], target)
+
+def binary_search(arr, target):
+    low, high = 0, len(arr) - 1
+    while low <= high:
+        mid = (low + high) // 2
+        if arr[mid] == target:
+            return mid
+        elif arr[mid] < target:
+            low = mid + 1
+        else:
+            high = mid - 1
+    return -1
+
+# Example usage:
+arr = [10, 20, 30, 40, 50]
+target = 30
+print(exponential_search(arr, target))  # Output: 2
+```
+
+---
+
+### 5. **Interpolation Search**
+
+#### Explanation:
+Interpolation search is similar to binary search but instead of dividing the array into two halves, it tries to estimate where the value might be based on the distribution of the numbers.
+
+#### Exercise:
+- Implement a function `interpolation_search(arr, target)` for searching the target in a sorted array using interpolation search.
+
+#### Solution:
+
+```python
+def interpolation_search(arr, target):
+    low, high = 0, len(arr) - 1
+    while low <= high and arr[low] <= target <= arr[high]:
+        pos = low + ((target - arr[low]) * (high - low)) // (arr[high] - arr[low])
+        if arr[pos] == target:
+            return pos
+        elif arr[pos] < target:
+            low = pos + 1
+        else:
+            high = pos - 1
+    return -1
+
+# Example usage:
+arr = [10, 20, 30, 40, 50]
+target = 30
+print(interpolation_search(arr, target))  # Output: 2
+```
+
+---
+
+### 6. **Ternary Search**
+
+#### Explanation:
+Ternary search is similar to binary search but divides the array into three parts instead of two.
+
+#### Exercise:
+- Implement a function `ternary_search(arr, target)` for searching the target element in a sorted array using ternary search.
+
+#### Solution:
+
+```python
+def ternary_search(arr, target):
+    low, high = 0, len(arr) - 1
+    while high >= low:
+        mid1 = low + (high - low) // 3
+        mid2 = high - (high - low) // 3
+        if arr[mid1] == target:
+            return mid1
+        elif arr[mid2] == target:
+            return mid2
+        elif target < arr[mid1]:
+            high = mid1 - 1
+        elif target > arr[mid2]:
+            low = mid2 + 1
+        else:
+            low = mid1 + 1
+            high = mid2 - 1
+    return -1
+
+# Example usage:
+arr = [10, 20, 30, 40, 50]
+target = 30
+print(ternary_search(arr, target))  # Output: 2
+```
+
+---
+
+### 7. **Fibonacci Search**
+
+#### Explanation:
+Fibonacci search is a divide-and-conquer algorithm that uses Fibonacci numbers to calculate the mid-point of the array. It is similar to binary search but instead of halving the search range, it reduces the range based on Fibonacci numbers.
+
+#### Exercise:
+- Implement a function `fibonacci_search(arr, target)` to find the target element using Fibonacci search.
+
+#### Solution:
+
+```python
+def fibonacci_search(arr, target):
+    n = len(arr)
+    fib_m_minus_2 = 0
+    fib_m_minus_1 = 1
+    fib_m = fib_m_minus_1 + fib_m_minus_2
+
+    while fib_m < n:
+        fib_m_minus_2 = fib_m_minus_1
+        fib_m_minus_1 = fib_m
+        fib_m = fib_m_minus_1 + fib_m_minus_2
+
+    offset = -1
+    while fib_m > 1:
+        i = min(offset + fib_m_minus_2, n - 1)
+        if arr[i] == target:
+            return i
+        elif arr[i] < target:
+            fib_m = fib_m_minus_1
+            fib_m_minus_1 = fib_m_minus_2
+            fib_m_minus_2 = fib_m - fib_m_minus_1
+            offset = i
+        else:
+            fib_m = fib_m_minus_2
+            fib_m_minus_1 -= fib_m_minus_2
+            fib_m_minus_2 = fib_m - fib_m_minus_1
+
+    if fib_m_minus_1 and arr[offset + 1] == target:
+        return offset + 1
+    return -1
+
+# Example usage:
+arr = [10, 20, 30, 40, 50]
+target = 30
+print(fibonacci_search(arr, target))  # Output: 2
+```
+
+---
+
+These are some of the most commonly used searching algorithms in Python. Each algorithm has its own use case based on the input data and its properties (e.g., sorted or unsorted arrays).
+
+
