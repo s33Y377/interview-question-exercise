@@ -841,3 +841,278 @@ ll.print_list()  # Output: 30 -> 10 -> None
 ---
 
 These exercises touch on several advanced Python topics and will challenge you to apply your knowledge of Python's features like decorators, generators, context managers, metaclasses, and more. Try to implement them step-by-step, and experiment with different variations to fully grasp these concepts!
+
+
+Sure! Here are a few advanced exercises related to dunder methods (special methods) in Python. These exercises will help you get more comfortable working with the Python data model.
+
+### Exercise 1: Custom Complex Number Class
+Create a custom class `MyComplex` that represents a complex number, and implement the following dunder methods:
+- `__init__(self, real, imag)` – for initializing a complex number.
+- `__repr__(self)` – for string representation of the complex number.
+- `__add__(self, other)` – to add two complex numbers.
+- `__sub__(self, other)` – to subtract two complex numbers.
+- `__mul__(self, other)` – to multiply two complex numbers.
+- `__truediv__(self, other)` – to divide two complex numbers.
+- `__eq__(self, other)` – to check equality of two complex numbers.
+
+```python
+class MyComplex:
+    def __init__(self, real, imag):
+        self.real = real
+        self.imag = imag
+
+    def __repr__(self):
+        return f'{self.real} + {self.imag}i'
+
+    def __add__(self, other):
+        if isinstance(other, MyComplex):
+            return MyComplex(self.real + other.real, self.imag + other.imag)
+        return NotImplemented
+
+    def __sub__(self, other):
+        if isinstance(other, MyComplex):
+            return MyComplex(self.real - other.real, self.imag - other.imag)
+        return NotImplemented
+
+    def __mul__(self, other):
+        if isinstance(other, MyComplex):
+            real_part = self.real * other.real - self.imag * other.imag
+            imag_part = self.real * other.imag + self.imag * other.real
+            return MyComplex(real_part, imag_part)
+        return NotImplemented
+
+    def __truediv__(self, other):
+        if isinstance(other, MyComplex):
+            denominator = other.real**2 + other.imag**2
+            real_part = (self.real * other.real + self.imag * other.imag) / denominator
+            imag_part = (self.imag * other.real - self.real * other.imag) / denominator
+            return MyComplex(real_part, imag_part)
+        return NotImplemented
+
+    def __eq__(self, other):
+        if isinstance(other, MyComplex):
+            return self.real == other.real and self.imag == other.imag
+        return False
+
+# Test your class
+c1 = MyComplex(3, 2)
+c2 = MyComplex(1, 7)
+print(c1 + c2)  # Should print the sum of c1 and c2
+print(c1 - c2)  # Should print the difference
+print(c1 * c2)  # Should print the product
+print(c1 / c2)  # Should print the division result
+print(c1 == c2) # Should print False
+```
+
+---
+
+### Exercise 2: Custom String Formatter
+Create a class `MyString` that behaves like a string but adds additional functionality. Implement the following dunder methods:
+- `__init__(self, value)` – for initializing the string value.
+- `__str__(self)` – for string representation.
+- `__add__(self, other)` – to concatenate two strings.
+- `__len__(self)` – to return the length of the string.
+- `__contains__(self, item)` – to check if a substring is present in the string.
+- `__getitem__(self, index)` – to get a character at a specific index.
+- `__call__(self)` – to return the string in uppercase.
+
+```python
+class MyString:
+    def __init__(self, value):
+        self.value = value
+
+    def __str__(self):
+        return f"MyString('{self.value}')"
+
+    def __add__(self, other):
+        if isinstance(other, MyString):
+            return MyString(self.value + other.value)
+        return NotImplemented
+
+    def __len__(self):
+        return len(self.value)
+
+    def __contains__(self, item):
+        return item in self.value
+
+    def __getitem__(self, index):
+        return self.value[index]
+
+    def __call__(self):
+        return self.value.upper()
+
+# Test your class
+s1 = MyString("Hello")
+s2 = MyString(" World")
+print(s1 + s2)    # Should concatenate the strings
+print(len(s1))    # Should print the length of s1
+print("lo" in s1)  # Should check if "lo" is a substring
+print(s1[1])       # Should print the second character of s1
+print(s1())        # Should return the string in uppercase
+```
+
+---
+
+### Exercise 3: Implementing Iterable Class
+Create a custom iterable class `MyRange` that behaves like `range()` but with custom behavior. Implement the following dunder methods:
+- `__init__(self, start, stop, step)` – for initializing the range.
+- `__iter__(self)` – to return the iterator object.
+- `__next__(self)` – to return the next value in the range.
+- `__contains__(self, item)` – to check if an item is in the range.
+
+```python
+class MyRange:
+    def __init__(self, start, stop, step=1):
+        self.start = start
+        self.stop = stop
+        self.step = step
+        self.current = start
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        if self.current >= self.stop:
+            raise StopIteration
+        value = self.current
+        self.current += self.step
+        return value
+
+    def __contains__(self, item):
+        return self.start <= item < self.stop and (item - self.start) % self.step == 0
+
+# Test your class
+r = MyRange(0, 10, 2)
+for num in r:
+    print(num)  # Should print: 0, 2, 4, 6, 8
+
+print(4 in r)  # Should print: True
+print(5 in r)  # Should print: False
+```
+
+---
+
+### Exercise 4: Custom Context Manager
+Implement a custom context manager using `__enter__` and `__exit__`. The context manager will log when the code enters and exits a block, and handle exceptions.
+
+```python
+class MyContextManager:
+    def __enter__(self):
+        print("Entering the context")
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        print("Exiting the context")
+        if exc_type:
+            print(f"An exception occurred: {exc_value}")
+        return True  # Suppress exception
+
+# Test your context manager
+with MyContextManager():
+    print("Inside the context")
+    # Uncomment the next line to test exception handling
+    # raise ValueError("Something went wrong")
+```
+
+**Expected output without an exception:**
+```
+Entering the context
+Inside the context
+Exiting the context
+```
+
+**Expected output with an exception:**
+```
+Entering the context
+Inside the context
+Exiting the context
+An exception occurred: Something went wrong
+```
+
+---
+
+### Exercise 5: Custom Descriptor
+Create a class `Age` that acts as a descriptor to enforce age constraints in another class `Person`. Implement the following:
+- `__get__(self, instance, owner)` – returns the value of age.
+- `__set__(self, instance, value)` – sets the value of age, but ensures it's between 0 and 120.
+- `__delete__(self, instance)` – deletes the age attribute.
+
+```python
+class Age:
+    def __get__(self, instance, owner):
+        return instance._age
+
+    def __set__(self, instance, value):
+        if 0 <= value <= 120:
+            instance._age = value
+        else:
+            raise ValueError("Age must be between 0 and 120.")
+
+    def __delete__(self, instance):
+        del instance._age
+
+class Person:
+    age = Age()
+
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+
+# Test your class
+p = Person("John", 25)
+print(p.age)  # Should print: 25
+p.age = 30     # Should set age to 30
+print(p.age)
+# p.age = 130  # Uncommenting this should raise a ValueError
+del p.age     # Should delete the age attribute
+```
+
+---
+
+### Exercise 6: Implementing `__call__`
+Create a class `Counter` that increments a counter value each time it is called. Implement:
+- `__init__(self)` – for initializing the counter value.
+- `__call__(self)` – for incrementing and returning the counter.
+
+```python
+class Counter:
+    def __init__(self):
+        self.count = 0
+
+    def __call__(self):
+        self.count += 1
+        return self.count
+
+# Test your class
+counter = Counter()
+print(counter())  # Should print: 1
+print(counter())  # Should print: 2
+print(counter())  # Should print: 3
+```
+
+---
+
+### Bonus Exercise: Metaclass Example
+Create a metaclass `UppercaseMeta` that automatically converts all class variable names to uppercase when a class is created.
+
+```python
+class UppercaseMeta(type):
+    def __new__(cls, name, bases, dct):
+        uppercase_attributes = {
+            key.upper(): value for key, value in dct.items()
+        }
+        return super().__new__(cls, name, bases, uppercase_attributes)
+
+class MyClass(metaclass=UppercaseMeta):
+    lowercase = "I am a
+
+ lowercase attribute"
+
+# Test your class
+print(hasattr(MyClass, "lowercase"))  # Should print False
+print(hasattr(MyClass, "LOWERCASE"))  # Should print True
+```
+
+---
+
+These exercises will provide you with a deeper understanding of Python’s special methods and how they fit into the language’s data model. Have fun implementing and experimenting!
