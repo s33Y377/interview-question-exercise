@@ -323,3 +323,533 @@ In this example, the `SupportHandler` objects pass the request along the chain u
 ---
 
 These advanced design patterns solve complex architectural issues and allow for more flexible
+
+
+Creational Design Patterns are patterns that deal with object creation mechanisms, trying to create objects in a manner suitable to the situation. These patterns abstract the instantiation process, making it more flexible and adaptable. The key creational patterns in object-oriented design are:
+
+1. **Singleton Pattern**
+2. **Factory Method Pattern**
+3. **Abstract Factory Pattern**
+4. **Builder Pattern**
+5. **Prototype Pattern**
+
+Let's go through each of these patterns in detail:
+
+---
+
+### 1. **Singleton Pattern**
+The **Singleton Pattern** ensures that a class has only one instance and provides a global point of access to that instance. This is useful when you need to control access to shared resources (like a database connection or configuration object) or when you want to ensure that a class only has one instance throughout the application's lifetime.
+
+#### Key Concepts:
+- **Single instance**: Guarantees that only one instance of the class will be created.
+- **Global access point**: Provides a global point of access to the instance.
+
+#### Example:
+```python
+class Singleton:
+    _instance = None
+
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super(Singleton, cls).__new__(cls)
+        return cls._instance
+
+# Testing Singleton behavior
+singleton1 = Singleton()
+singleton2 = Singleton()
+
+print(singleton1 is singleton2)  # True, both are the same instance
+```
+
+---
+
+### 2. **Factory Method Pattern**
+The **Factory Method Pattern** defines an interface for creating objects, but allows subclasses to alter the type of objects that will be created. It is a method for creating objects in a superclass but letting subclasses change the type of objects that will be created.
+
+#### Key Concepts:
+- **Encapsulation**: Hides the object creation logic in a method, allowing subclasses to create different kinds of objects.
+- **Loose coupling**: The client code doesn't need to know the exact class of the object being created.
+
+#### Example:
+```python
+from abc import ABC, abstractmethod
+
+class Animal(ABC):
+    @abstractmethod
+    def speak(self):
+        pass
+
+class Dog(Animal):
+    def speak(self):
+        return "Woof"
+
+class Cat(Animal):
+    def speak(self):
+        return "Meow"
+
+class AnimalFactory:
+    def create_animal(self, animal_type):
+        if animal_type == "Dog":
+            return Dog()
+        elif animal_type == "Cat":
+            return Cat()
+        else:
+            raise ValueError("Unknown animal type")
+
+# Client code
+factory = AnimalFactory()
+animal = factory.create_animal("Dog")
+print(animal.speak())  # Woof
+```
+
+---
+
+### 3. **Abstract Factory Pattern**
+The **Abstract Factory Pattern** provides an interface for creating families of related or dependent objects without specifying their concrete classes. This pattern is useful when you need to create products that are related by a common theme but vary by type.
+
+#### Key Concepts:
+- **Family of objects**: Creates a set of related objects that work well together.
+- **Interface abstraction**: Provides an abstract interface for creating families of objects.
+
+#### Example:
+```python
+class Chair:
+    def sit_on(self):
+        pass
+
+class VictorianChair(Chair):
+    def sit_on(self):
+        return "Sitting on a Victorian chair."
+
+class ModernChair(Chair):
+    def sit_on(self):
+        return "Sitting on a modern chair."
+
+class Sofa:
+    def lie_on(self):
+        pass
+
+class VictorianSofa(Sofa):
+    def lie_on(self):
+        return "Lying on a Victorian sofa."
+
+class ModernSofa(Sofa):
+    def lie_on(self):
+        return "Lying on a modern sofa."
+
+class FurnitureFactory(ABC):
+    @abstractmethod
+    def create_chair(self):
+        pass
+
+    @abstractmethod
+    def create_sofa(self):
+        pass
+
+class VictorianFurnitureFactory(FurnitureFactory):
+    def create_chair(self):
+        return VictorianChair()
+
+    def create_sofa(self):
+        return VictorianSofa()
+
+class ModernFurnitureFactory(FurnitureFactory):
+    def create_chair(self):
+        return ModernChair()
+
+    def create_sofa(self):
+        return ModernSofa()
+
+# Client code
+def client_code(factory: FurnitureFactory):
+    chair = factory.create_chair()
+    sofa = factory.create_sofa()
+    print(chair.sit_on())
+    print(sofa.lie_on())
+
+# Usage
+factory = VictorianFurnitureFactory()
+client_code(factory)  # Creates Victorian furniture
+```
+
+---
+
+### 4. **Builder Pattern**
+The **Builder Pattern** separates the construction of a complex object from its representation. It allows you to create different types and representations of an object using the same construction process. This pattern is particularly useful for creating objects with a large number of optional components.
+
+#### Key Concepts:
+- **Separation of construction and representation**: The builder defines the parts of an object and how it is assembled, while the director orchestrates the construction.
+- **Flexibility**: Different representations of an object can be created using the same building process.
+
+#### Example:
+```python
+class Car:
+    def __init__(self, wheels, engine, color):
+        self.wheels = wheels
+        self.engine = engine
+        self.color = color
+
+    def __str__(self):
+        return f"Car with {self.wheels} wheels, {self.engine} engine, and {self.color} color."
+
+class CarBuilder:
+    def __init__(self):
+        self.wheels = 4
+        self.engine = "V6"
+        self.color = "Red"
+
+    def set_wheels(self, wheels):
+        self.wheels = wheels
+        return self
+
+    def set_engine(self, engine):
+        self.engine = engine
+        return self
+
+    def set_color(self, color):
+        self.color = color
+        return self
+
+    def build(self):
+        return Car(self.wheels, self.engine, self.color)
+
+# Client code
+builder = CarBuilder()
+car = builder.set_wheels(4).set_engine("V8").set_color("Blue").build()
+print(car)  # Car with 4 wheels, V8 engine, and Blue color.
+```
+
+---
+
+### 5. **Prototype Pattern**
+The **Prototype Pattern** is used to create new objects by copying an existing object, known as the prototype. This pattern is useful when object creation is expensive or complicated, and you want to create new instances by cloning existing ones.
+
+#### Key Concepts:
+- **Cloning objects**: New objects are created by cloning an existing prototype.
+- **Efficiency**: Useful when object creation is resource-intensive and you want to avoid redundant creation.
+
+#### Example:
+```python
+import copy
+
+class Prototype:
+    def clone(self):
+        return copy.deepcopy(self)
+
+class ConcretePrototype(Prototype):
+    def __init__(self, value):
+        self.value = value
+
+# Client code
+prototype = ConcretePrototype("Prototype A")
+clone = prototype.clone()
+print(clone.value)  # Prototype A
+```
+
+---
+
+### Summary of Creational Patterns:
+
+| **Pattern**             | **Purpose**                                                                            | **When to Use**                                                                                  |
+|-------------------------|----------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------|
+| **Singleton**            | Ensures only one instance of a class exists and provides a global access point.        | When you need to control access to a single resource, e.g., configuration, database connection. |
+| **Factory Method**       | Defines an interface for creating objects but lets subclasses alter the type of objects created. | When you have a family of related objects and want to allow flexibility in which object to create. |
+| **Abstract Factory**     | Creates families of related or dependent objects.                                       | When you need to create families of related objects but want to keep the client code independent. |
+| **Builder**              | Separates the construction of a complex object from its representation.                 | When constructing a complex object with many parts and optional configurations.                   |
+| **Prototype**            | Creates new objects by cloning an existing object.                                      | When object creation is expensive, and you want to avoid redundant object creation.              |
+
+These patterns help simplify the object creation process, provide flexibility, and make your code more maintainable and adaptable to changes.
+
+
+
+### Structural Design Patterns in Python
+
+Structural design patterns are patterns that deal with how objects and classes are composed to form larger structures. These patterns focus on simplifying the structure of a system by identifying simple ways to realize relationships between entities. The most commonly used structural design patterns include:
+
+1. **Adapter Pattern**
+2. **Bridge Pattern**
+3. **Composite Pattern**
+4. **Decorator Pattern**
+5. **Facade Pattern**
+6. **Flyweight Pattern**
+7. **Proxy Pattern**
+
+Let's break down each of these design patterns with examples in Python.
+
+---
+
+### 1. **Adapter Pattern**
+The Adapter pattern allows incompatible interfaces to work together. It provides a way to convert one interface into another expected by the client.
+
+#### Example:
+
+```python
+# Legacy System (Old Printer)
+class OldPrinter:
+    def print_text(self, text):
+        print(f"Printing text: {text}")
+
+# New System (Modern Printer)
+class ModernPrinter:
+    def print_formatted(self, text):
+        print(f"=== Start ===\n{text}\n=== End ===")
+
+# Adapter to make ModernPrinter compatible with OldPrinter interface
+class PrinterAdapter(OldPrinter):
+    def __init__(self, modern_printer):
+        self.modern_printer = modern_printer
+    
+    def print_text(self, text):
+        self.modern_printer.print_formatted(text)
+
+# Using Adapter
+old_printer = OldPrinter()
+modern_printer = ModernPrinter()
+
+# Adapting ModernPrinter to work with OldPrinter interface
+adapter = PrinterAdapter(modern_printer)
+adapter.print_text("This is a message adapted to an old interface.")
+```
+
+### 2. **Bridge Pattern**
+The Bridge pattern decouples abstraction from implementation, allowing the two to vary independently. This pattern is used to separate an abstraction (high-level structure) from its implementation (low-level details).
+
+#### Example:
+
+```python
+# Abstraction class
+class Shape:
+    def __init__(self, draw_impl):
+        self.draw_impl = draw_impl
+
+    def draw(self):
+        pass  # Defined by subclasses
+
+# Implementation class
+class DrawAPI:
+    def draw_circle(self, radius):
+        pass  # Concrete implementation
+
+# Concrete implementation
+class RedCircle(DrawAPI):
+    def draw_circle(self, radius):
+        print(f"Drawing Circle with radius {radius} in Red")
+
+class GreenCircle(DrawAPI):
+    def draw_circle(self, radius):
+        print(f"Drawing Circle with radius {radius} in Green")
+
+# Refined abstraction
+class Circle(Shape):
+    def __init__(self, radius, draw_impl):
+        super().__init__(draw_impl)
+        self.radius = radius
+
+    def draw(self):
+        self.draw_impl.draw_circle(self.radius)
+
+# Using the Bridge Pattern
+red_circle = Circle(5, RedCircle())
+red_circle.draw()
+
+green_circle = Circle(10, GreenCircle())
+green_circle.draw()
+```
+
+### 3. **Composite Pattern**
+The Composite pattern allows you to treat individual objects and composites of objects uniformly. It's typically used for creating tree-like structures.
+
+#### Example:
+
+```python
+# Component Interface
+class Component:
+    def display(self):
+        pass
+
+# Leaf Node
+class Leaf(Component):
+    def __init__(self, name):
+        self.name = name
+
+    def display(self):
+        print(f"Leaf {self.name}")
+
+# Composite Node
+class Composite(Component):
+    def __init__(self, name):
+        self.name = name
+        self.children = []
+
+    def add(self, component):
+        self.children.append(component)
+
+    def display(self):
+        print(f"Composite {self.name}")
+        for child in self.children:
+            child.display()
+
+# Using Composite Pattern
+root = Composite("Root")
+leaf1 = Leaf("Leaf 1")
+leaf2 = Leaf("Leaf 2")
+
+root.add(leaf1)
+root.add(leaf2)
+root.display()
+```
+
+### 4. **Decorator Pattern**
+The Decorator pattern allows behavior to be added to an individual object dynamically, without affecting the behavior of other objects from the same class.
+
+#### Example:
+
+```python
+# Base Component
+class Coffee:
+    def cost(self):
+        return 5
+
+# Decorator Base Class
+class CoffeeDecorator(Coffee):
+    def __init__(self, coffee):
+        self._coffee = coffee
+
+    def cost(self):
+        return self._coffee.cost()
+
+# Concrete Decorators
+class MilkDecorator(CoffeeDecorator):
+    def cost(self):
+        return self._coffee.cost() + 2
+
+class SugarDecorator(CoffeeDecorator):
+    def cost(self):
+        return self._coffee.cost() + 1
+
+# Using Decorator Pattern
+coffee = Coffee()
+print("Cost of plain coffee:", coffee.cost())
+
+milk_coffee = MilkDecorator(coffee)
+print("Cost of coffee with milk:", milk_coffee.cost())
+
+sugar_milk_coffee = SugarDecorator(milk_coffee)
+print("Cost of coffee with milk and sugar:", sugar_milk_coffee.cost())
+```
+
+### 5. **Facade Pattern**
+The Facade pattern provides a simplified interface to a complex subsystem. It helps to hide the complexities of a system by providing a higher-level interface.
+
+#### Example:
+
+```python
+# Subsystems
+class Engine:
+    def start(self):
+        print("Engine started")
+
+class Lights:
+    def turn_on(self):
+        print("Lights on")
+
+class AirConditioner:
+    def turn_on(self):
+        print("Air Conditioner on")
+
+# Facade
+class Car:
+    def __init__(self):
+        self.engine = Engine()
+        self.lights = Lights()
+        self.ac = AirConditioner()
+
+    def start_car(self):
+        self.engine.start()
+        self.lights.turn_on()
+        self.ac.turn_on()
+
+# Using Facade Pattern
+car = Car()
+car.start_car()
+```
+
+### 6. **Flyweight Pattern**
+The Flyweight pattern allows for sharing objects to support a large number of similar objects efficiently. It reduces memory usage by sharing as much data as possible with other objects.
+
+#### Example:
+
+```python
+class Car:
+    def __init__(self, model, color):
+        self.model = model
+        self.color = color
+
+    def display(self):
+        print(f"Car model: {self.model}, Color: {self.color}")
+
+class CarFactory:
+    def __init__(self):
+        self._cars = {}
+
+    def get_car(self, model, color):
+        if (model, color) not in self._cars:
+            self._cars[(model, color)] = Car(model, color)
+        return self._cars[(model, color)]
+
+# Using Flyweight Pattern
+factory = CarFactory()
+
+car1 = factory.get_car("Model X", "Red")
+car2 = factory.get_car("Model X", "Red")
+car3 = factory.get_car("Model Y", "Blue")
+
+car1.display()
+car2.display()
+car3.display()
+
+# car1 and car2 share the same object
+print(car1 is car2)  # Output: True
+```
+
+### 7. **Proxy Pattern**
+The Proxy pattern provides an object representing another object. It controls access to the real object, often by adding a level of indirection. This pattern is useful for lazy initialization, access control, and logging.
+
+#### Example:
+
+```python
+# Subject Interface
+class RealSubject:
+    def request(self):
+        print("Real Subject: Handling request.")
+
+# Proxy class
+class Proxy:
+    def __init__(self, real_subject):
+        self._real_subject = real_subject
+
+    def request(self):
+        print("Proxy: Pre-processing request.")
+        self._real_subject.request()
+        print("Proxy: Post-processing request.")
+
+# Using Proxy Pattern
+real_subject = RealSubject()
+proxy = Proxy(real_subject)
+proxy.request()
+```
+
+---
+
+### Summary of Structural Design Patterns:
+
+1. **Adapter**: Converts an interface into another expected by the client.
+2. **Bridge**: Separates abstraction from implementation.
+3. **Composite**: Treats individual objects and composites uniformly.
+4. **Decorator**: Dynamically adds behavior to an object.
+5. **Facade**: Provides a simplified interface to a complex subsystem.
+6. **Flyweight**: Shares objects to reduce memory usage.
+7. **Proxy**: Controls access to another object with additional functionality.
+
+These structural patterns help in organizing and managing complex systems in Python by providing flexible ways of composing and interacting with objects.
+
