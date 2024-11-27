@@ -1544,3 +1544,248 @@ print(decoder.decode(data))
 ---
 
 These exercises test a candidate's knowledge of advanced Python features such as context managers, generators, decorators, static/class methods, iterators, and custom deserialization logic. Be sure to implement and test each solution independently!
+
+
+
+Here are some advanced Python exercises that many people may not know, but which will challenge your understanding of Python concepts such as metaprogramming, decorators, context managers, and advanced data structures.
+
+### 1. **Metaclasses and Dynamic Class Creation**
+Metaclasses allow you to control the creation of classes in Python. This exercise involves creating a metaclass that automatically adds a `__str__` method to any class that doesn't have it.
+
+**Exercise:**
+Create a metaclass that ensures every class has a `__str__` method. If a class does not define it, the metaclass should automatically generate a default `__str__` method that prints out the name of the class.
+
+```python
+class AutoStrMeta(type):
+    def __new__(cls, name, bases, dct):
+        if '__str__' not in dct:
+            dct['__str__'] = lambda self: f'{self.__class__.__name__} instance'
+        return super().__new__(cls, name, bases, dct)
+
+class MyClass(metaclass=AutoStrMeta):
+    pass
+
+# Test
+obj = MyClass()
+print(obj)  # Should print: "MyClass instance"
+```
+
+### 2. **Custom Context Manager with `__enter__` and `__exit__`**
+Context managers are useful for managing resources like file handles, network connections, or database sessions. You can create a custom context manager to handle operations automatically.
+
+**Exercise:**
+Create a custom context manager that measures the time taken to execute a block of code using `time` module.
+
+```python
+import time
+
+class TimerContextManager:
+    def __enter__(self):
+        self.start_time = time.time()
+        return self
+    
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.end_time = time.time()
+        print(f'Elapsed time: {self.end_time - self.start_time:.4f} seconds')
+
+# Test
+with TimerContextManager() as timer:
+    sum(range(1_000_000))  # Some operation
+```
+
+### 3. **Function Caching with a Custom Decorator**
+Python's built-in `functools.lru_cache` decorator caches results of functions. But you can write your own caching decorator to implement caching based on custom logic.
+
+**Exercise:**
+Create a decorator that caches function results using a dictionary and only invalidates the cache when explicitly told to do so.
+
+```python
+def cache_decorator(func):
+    cache = {}
+    
+    def wrapper(*args):
+        if args not in cache:
+            print(f"Cache miss for {args}")
+            cache[args] = func(*args)
+        else:
+            print(f"Cache hit for {args}")
+        return cache[args]
+    
+    wrapper.clear_cache = lambda: cache.clear()
+    return wrapper
+
+@cache_decorator
+def expensive_function(x):
+    return x * x
+
+# Test
+print(expensive_function(4))  # Cache miss
+print(expensive_function(4))  # Cache hit
+print(expensive_function(5))  # Cache miss
+expensive_function.clear_cache()  # Manually clear cache
+print(expensive_function(4))  # Cache miss again
+```
+
+### 4. **Creating a Singleton Class**
+A singleton is a design pattern where a class ensures only one instance is created. You can implement a singleton pattern using a metaclass.
+
+**Exercise:**
+Implement the Singleton design pattern using a metaclass.
+
+```python
+class SingletonMeta(type):
+    _instances = {}
+    
+    def __call__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            cls._instances[cls] = super(SingletonMeta, cls).__call__(*args, **kwargs)
+        return cls._instances[cls]
+
+class SingletonClass(metaclass=SingletonMeta):
+    def __init__(self, value):
+        self.value = value
+
+# Test
+obj1 = SingletonClass(1)
+obj2 = SingletonClass(2)
+print(obj1 is obj2)  # Should be True
+```
+
+### 5. **Descriptors and Property Management**
+Descriptors are a low-level mechanism that allows customization of attribute access, which can be used for validation, lazy loading, etc.
+
+**Exercise:**
+Create a descriptor that validates whether the assigned value is a positive integer.
+
+```python
+class PositiveInteger:
+    def __get__(self, instance, owner):
+        return instance._value
+
+    def __set__(self, instance, value):
+        if value <= 0:
+            raise ValueError("Value must be positive.")
+        instance._value = value
+
+class MyClass:
+    positive_value = PositiveInteger()
+
+# Test
+obj = MyClass()
+obj.positive_value = 10  # Valid
+print(obj.positive_value)  # 10
+
+obj.positive_value = -5  # Raises ValueError
+```
+
+### 6. **Lazy Evaluation with `__iter__`**
+Lazy evaluation is a programming technique where you delay computation until the result is actually needed. This is often used in situations like large datasets or infinite sequences.
+
+**Exercise:**
+Create a generator that lazily computes Fibonacci numbers.
+
+```python
+class Fibonacci:
+    def __init__(self):
+        self.a, self.b = 0, 1
+    
+    def __iter__(self):
+        return self
+    
+    def __next__(self):
+        self.a, self.b = self.b, self.a + self.b
+        return self.a
+
+# Test
+fib = Fibonacci()
+for i, num in zip(range(10), fib):
+    print(num)
+```
+
+### 7. **Advanced Comprehensions and Generator Expressions**
+You can use advanced comprehension techniques to handle complex data transformations and filtering.
+
+**Exercise:**
+Create a nested list comprehension to find all pairs of numbers in a list that add up to a specific target sum.
+
+```python
+numbers = [1, 2, 3, 4, 5, 6]
+target = 7
+
+pairs = [(x, y) for i, x in enumerate(numbers) for y in numbers[i+1:] if x + y == target]
+print(pairs)  # Should print [(1, 6), (2, 5), (3, 4)]
+```
+
+### 8. **Handling Circular Imports**
+Circular imports are a common issue in larger Python projects. You can design your program to handle circular imports gracefully.
+
+**Exercise:**
+Write a small program with two modules that import each other and resolve the circular import using `importlib`.
+
+- `module_a.py`: Contains a reference to `module_b`.
+- `module_b.py`: Contains a reference to `module_a`.
+
+```python
+# module_a.py
+import importlib
+
+def call_b():
+    module_b = importlib.import_module('module_b')
+    module_b.call_a()
+
+def call_a():
+    print("Function call_a from module_a")
+
+# module_b.py
+import importlib
+
+def call_a():
+    module_a = importlib.import_module('module_a')
+    module_a.call_b()
+
+def call_b():
+    print("Function call_b from module_b")
+```
+
+### 9. **Context-Sensitive Logger**
+Build a logger that can dynamically adjust its logging level based on the context.
+
+**Exercise:**
+Create a logger class that changes its logging level within certain scopes, using a context manager.
+
+```python
+import logging
+
+class ContextSensitiveLogger:
+    def __init__(self, name):
+        self.logger = logging.getLogger(name)
+        self.logger.setLevel(logging.DEBUG)
+        ch = logging.StreamHandler()
+        formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+        ch.setFormatter(formatter)
+        self.logger.addHandler(ch)
+
+    def debug(self, msg):
+        self.logger.debug(msg)
+    
+    def info(self, msg):
+        self.logger.info(msg)
+    
+    def set_level(self, level):
+        self.logger.setLevel(level)
+
+    def log_with_context(self, context, msg):
+        with self.contextualize(context):
+            self.logger.info(msg)
+    
+    class contextualize:
+        def __init__(self, context):
+            self.context = context
+        def __enter__(self):
+            logging.getLogger().setLevel(self.context)
+        def __exit__(self, exc_type, exc_value, traceback):
+            logging.getLogger().setLevel(logging.DEBUG)
+```
+
+
+These exercises will help you explore some advanced Python techniques that are not as commonly used. Mastering them can significantly improve your ability to write efficient, elegant, and highly Pythonic code.
