@@ -2713,3 +2713,259 @@ print(fibonacci_search(arr, target))  # Output: 2
 These are some of the most commonly used searching algorithms in Python. Each algorithm has its own use case based on the input data and its properties (e.g., sorted or unsorted arrays).
 
 
+Here's an advanced Python interview exercise focusing on **tuples** and their various features. This exercise tests understanding of how to manipulate tuples, their immutability, and how they can be used in various scenarios.
+
+---
+
+### Problem: Tuple Manipulation Exercise
+
+You are given a list of tuples, where each tuple contains two elements: a string and an integer. Your task is to:
+
+1. **Sort** the list of tuples by the integer value in each tuple.
+2. **Filter** out tuples where the integer is less than or equal to 5.
+3. Convert the resulting tuples into a dictionary where the string in each tuple is the key and the integer is the value.
+4. Extract the first two values from the dictionary and store them as a tuple of tuples. (Make sure the result is still in tuple format).
+5. Return the final result as a tuple of tuples containing the first two elements of the filtered dictionary.
+
+**Example:**
+
+```python
+data = [("apple", 7), ("banana", 3), ("orange", 9), ("pear", 2), ("grape", 8)]
+```
+
+1. **Sort** the list by the integer values.
+2. **Filter** out elements with integers less than or equal to 5.
+3. Convert it to a dictionary.
+4. Extract the first two elements as tuples and return the result.
+
+---
+
+### Solution:
+
+```python
+def advanced_tuple_manipulation(data):
+    # Step 1: Sort the list of tuples by the integer values (second element in each tuple)
+    sorted_data = sorted(data, key=lambda x: x[1])
+    
+    # Step 2: Filter out tuples where the integer is less than or equal to 5
+    filtered_data = [item for item in sorted_data if item[1] > 5]
+    
+    # Step 3: Convert the filtered list of tuples into a dictionary
+    data_dict = dict(filtered_data)
+    
+    # Step 4: Extract the first two elements from the dictionary as a tuple of tuples
+    # Convert the dictionary items to a list of tuples and get the first two elements
+    dict_items = list(data_dict.items())
+    first_two_items = tuple(dict_items[:2])
+    
+    return first_two_items
+
+# Test the function
+data = [("apple", 7), ("banana", 3), ("orange", 9), ("pear", 2), ("grape", 8)]
+result = advanced_tuple_manipulation(data)
+print(result)
+```
+
+### Explanation:
+
+1. **Sorting**: We sort the list of tuples based on the second item (integer) using the `sorted()` function with a custom sorting key (`lambda x: x[1]`).
+   
+2. **Filtering**: We use a list comprehension to filter out tuples where the second element (integer) is less than or equal to 5.
+
+3. **Dictionary Conversion**: After filtering, we convert the list of tuples into a dictionary using the `dict()` function. The first element of each tuple becomes the key, and the second element becomes the value.
+
+4. **Extracting Tuples**: We then convert the dictionary back to a list of items and select the first two elements. These are returned as a tuple of tuples.
+
+---
+
+### Expected Output:
+
+For the input:
+
+```python
+data = [("apple", 7), ("banana", 3), ("orange", 9), ("pear", 2), ("grape", 8)]
+```
+
+The steps result in:
+
+1. Sorted: `[("banana", 3), ("pear", 2), ("apple", 7), ("grape", 8), ("orange", 9)]`
+2. Filtered (integer > 5): `[("apple", 7), ("grape", 8), ("orange", 9)]`
+3. Converted to dictionary: `{"apple": 7, "grape": 8, "orange": 9}`
+4. First two items: `(("apple", 7), ("grape", 8))`
+
+The final output will be:
+
+```python
+(('apple', 7), ('grape', 8))
+```
+
+### Complexity Analysis:
+
+- **Time Complexity**: 
+  - Sorting takes \(O(n \log n)\), where \(n\) is the number of tuples.
+  - Filtering takes \(O(n)\).
+  - Converting the list to a dictionary takes \(O(n)\).
+  - Extracting the first two elements from the dictionary takes constant time, \(O(1)\).
+  
+Thus, the overall time complexity is \(O(n \log n)\), dominated by the sorting step.
+
+- **Space Complexity**: 
+  - The space complexity is \(O(n)\) due to the space required for the filtered list, sorted list, and dictionary.
+
+In Python, **set operations** allow you to perform various mathematical operations on sets, such as union, intersection, difference, and symmetric difference. Here's a breakdown of all the common set operations with examples:
+
+### 1. **Union (`|` or `union()`)**
+The union of two sets returns a new set containing all the unique elements from both sets.
+
+#### Example:
+```python
+set1 = {1, 2, 3}
+set2 = {3, 4, 5}
+
+union_result = set1 | set2  # Using the `|` operator
+# or
+union_result_method = set1.union(set2)  # Using the `union()` method
+
+print(union_result)          # Output: {1, 2, 3, 4, 5}
+print(union_result_method)   # Output: {1, 2, 3, 4, 5}
+```
+
+### 2. **Intersection (`&` or `intersection()`)**
+The intersection of two sets returns a new set with elements that are common to both sets.
+
+#### Example:
+```python
+set1 = {1, 2, 3}
+set2 = {3, 4, 5}
+
+intersection_result = set1 & set2  # Using the `&` operator
+# or
+intersection_result_method = set1.intersection(set2)  # Using the `intersection()` method
+
+print(intersection_result)          # Output: {3}
+print(intersection_result_method)   # Output: {3}
+```
+
+### 3. **Difference (`-` or `difference()`)**
+The difference between two sets returns a new set containing elements that are in the first set but not in the second set.
+
+#### Example:
+```python
+set1 = {1, 2, 3}
+set2 = {3, 4, 5}
+
+difference_result = set1 - set2  # Using the `-` operator
+# or
+difference_result_method = set1.difference(set2)  # Using the `difference()` method
+
+print(difference_result)          # Output: {1, 2}
+print(difference_result_method)   # Output: {1, 2}
+```
+
+### 4. **Symmetric Difference (`^` or `symmetric_difference()`)**
+The symmetric difference of two sets returns a new set containing elements that are in either of the sets but not in both.
+
+#### Example:
+```python
+set1 = {1, 2, 3}
+set2 = {3, 4, 5}
+
+symmetric_difference_result = set1 ^ set2  # Using the `^` operator
+# or
+symmetric_difference_result_method = set1.symmetric_difference(set2)  # Using the `symmetric_difference()` method
+
+print(symmetric_difference_result)          # Output: {1, 2, 4, 5}
+print(symmetric_difference_result_method)   # Output: {1, 2, 4, 5}
+```
+
+### 5. **Subset (`<=` or `issubset()`)**
+A set is a subset of another if all elements of the first set are contained within the second set.
+
+#### Example:
+```python
+set1 = {1, 2}
+set2 = {1, 2, 3, 4}
+
+is_subset = set1 <= set2  # Using the `<=` operator
+# or
+is_subset_method = set1.issubset(set2)  # Using the `issubset()` method
+
+print(is_subset)          # Output: True
+print(is_subset_method)   # Output: True
+```
+
+### 6. **Superset (`>=` or `issuperset()`)**
+A set is a superset of another if it contains all elements of the second set.
+
+#### Example:
+```python
+set1 = {1, 2, 3, 4}
+set2 = {2, 3}
+
+is_superset = set1 >= set2  # Using the `>=` operator
+# or
+is_superset_method = set1.issuperset(set2)  # Using the `issuperset()` method
+
+print(is_superset)          # Output: True
+print(is_superset_method)   # Output: True
+```
+
+### 7. **Disjoint Sets (`isdisjoint()`)**
+Two sets are disjoint if they have no common elements.
+
+#### Example:
+```python
+set1 = {1, 2, 3}
+set2 = {4, 5, 6}
+
+are_disjoint = set1.isdisjoint(set2)  # Using the `isdisjoint()` method
+
+print(are_disjoint)  # Output: True
+```
+
+### 8. **Adding and Removing Elements**
+You can add or remove elements from a set using methods like `add()`, `remove()`, `discard()`, and `pop()`.
+
+#### Example:
+```python
+set1 = {1, 2, 3}
+
+# Adding an element
+set1.add(4)  # Adds 4 to the set
+print(set1)  # Output: {1, 2, 3, 4}
+
+# Removing an element (raises KeyError if not found)
+set1.remove(2)
+print(set1)  # Output: {1, 3, 4}
+
+# Removing an element (doesn't raise error if not found)
+set1.discard(5)  # No error even though 5 is not in the set
+print(set1)  # Output: {1, 3, 4}
+
+# Popping an element (removes and returns an arbitrary element)
+popped_element = set1.pop()
+print(popped_element)  # Output: arbitrary element (e.g., 1)
+print(set1)  # Output: remaining elements
+```
+
+### 9. **Clear All Elements (`clear()`)**
+This method removes all elements from a set.
+
+#### Example:
+```python
+set1 = {1, 2, 3}
+set1.clear()  # Clears the set
+print(set1)  # Output: set()
+```
+
+### Summary
+- **Union**: Combines elements of both sets.
+- **Intersection**: Finds common elements between two sets.
+- **Difference**: Finds elements that are in the first set but not in the second.
+- **Symmetric Difference**: Finds elements that are in either set, but not in both.
+- **Subset**: Checks if one set is a subset of another.
+- **Superset**: Checks if one set is a superset of another.
+- **Disjoint**: Checks if two sets have no common elements.
+- **Modification methods**: Add, remove, or clear elements in a set.
+
+These operations are powerful tools for manipulating sets in Python!
