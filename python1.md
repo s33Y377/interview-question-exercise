@@ -1090,6 +1090,224 @@ print(counter())  # Should print: 2
 print(counter())  # Should print: 3
 ```
 
+
+In Python, Object-Oriented Programming (OOP) allows you to structure your code in a way that mimics real-world objects and their interactions. The advanced concepts in OOP include things like multiple inheritance, method resolution order (MRO), mixins, abstract base classes (ABCs), class methods, static methods, and decorators.
+
+Here's an explanation of these concepts with implementation examples:
+
+### 1. **Multiple Inheritance & Method Resolution Order (MRO)**
+
+Multiple inheritance occurs when a class inherits from more than one base class. Python uses the C3 linearization algorithm to resolve method calls in a way that respects the inheritance hierarchy.
+
+#### Example of Multiple Inheritance:
+```python
+class Animal:
+    def sound(self):
+        return "Some generic animal sound"
+
+class Bird:
+    def sound(self):
+        return "Chirp"
+
+class Dog(Animal, Bird):
+    def sound(self):
+        return "Bark"
+
+# Instantiating Dog class
+dog = Dog()
+print(dog.sound())  # Output: Bark
+
+# Check method resolution order
+print(Dog.__mro__)
+```
+
+In the code above, `Dog` inherits from both `Animal` and `Bird`. The method resolution order (`__mro__`) will help us understand the order in which methods are looked up when invoked.
+
+### 2. **Mixins**
+
+A mixin is a class designed to be inherited by other classes to provide functionality, but it’s not meant to be instantiated on its own. Mixins usually provide reusable functionality for multiple classes.
+
+#### Example of a Mixin:
+```python
+class CanFly:
+    def fly(self):
+        return "Flying!"
+
+class CanSwim:
+    def swim(self):
+        return "Swimming!"
+
+class Duck(CanFly, CanSwim):
+    def quack(self):
+        return "Quack!"
+
+# Instantiating Duck
+duck = Duck()
+print(duck.fly())  # Output: Flying!
+print(duck.swim())  # Output: Swimming!
+print(duck.quack())  # Output: Quack!
+```
+
+In this example, `Duck` inherits from two mixins, `CanFly` and `CanSwim`, which provide it with flying and swimming capabilities.
+
+### 3. **Abstract Base Classes (ABCs)**
+
+Abstract base classes define methods that must be implemented in subclasses. This ensures that subclasses follow a certain interface.
+
+#### Example of ABC:
+```python
+from abc import ABC, abstractmethod
+
+class Animal(ABC):
+    @abstractmethod
+    def make_sound(self):
+        pass
+
+class Dog(Animal):
+    def make_sound(self):
+        return "Bark"
+
+class Cat(Animal):
+    def make_sound(self):
+        return "Meow"
+
+# Instantiating the classes
+dog = Dog()
+print(dog.make_sound())  # Output: Bark
+
+cat = Cat()
+print(cat.make_sound())  # Output: Meow
+
+# Uncommenting the following line will raise an error
+# animal = Animal()  # TypeError: Can't instantiate abstract class Animal with abstract methods make_sound
+```
+
+Here, `Animal` is an abstract base class with an abstract method `make_sound`. Both `Dog` and `Cat` implement this method, but you cannot instantiate `Animal` directly.
+
+### 4. **Class Methods & Static Methods**
+
+Class methods and static methods allow for defining methods that are not bound to instances but are still associated with the class.
+
+- **Class Methods**: Operate on the class itself, not an instance, and have access to the class state.
+- **Static Methods**: Do not operate on the class or instance at all and are independent methods.
+
+#### Example of Class and Static Methods:
+```python
+class Calculator:
+    base_value = 10
+
+    def __init__(self, value):
+        self.value = value
+
+    @classmethod
+    def set_base_value(cls, new_base_value):
+        cls.base_value = new_base_value
+
+    @staticmethod
+    def add(x, y):
+        return x + y
+
+    def calculate(self):
+        return self.value + self.base_value
+
+# Using Class Method to change class-level value
+Calculator.set_base_value(20)
+
+# Using Static Method
+print(Calculator.add(5, 3))  # Output: 8
+
+# Instantiating Calculator
+calc = Calculator(5)
+print(calc.calculate())  # Output: 25 (5 + 20)
+```
+
+In this example, `set_base_value` is a class method that modifies the class-level `base_value`, while `add` is a static method that performs a simple addition.
+
+### 5. **Property Decorators**
+
+The `property` decorator allows you to define getter, setter, and deleter methods for attributes, making them more manageable and controlled.
+
+#### Example of Property Decorators:
+```python
+class Circle:
+    def __init__(self, radius):
+        self._radius = radius
+
+    @property
+    def radius(self):
+        return self._radius
+
+    @radius.setter
+    def radius(self, value):
+        if value < 0:
+            raise ValueError("Radius cannot be negative.")
+        self._radius = value
+
+    @property
+    def area(self):
+        return 3.1415 * self._radius ** 2
+
+# Instantiating Circle
+circle = Circle(5)
+print(circle.radius)  # Output: 5
+print(circle.area)    # Output: 78.5375
+
+circle.radius = 10
+print(circle.area)    # Output: 314.15
+
+# Uncommenting the following will raise an error
+# circle.radius = -5  # ValueError: Radius cannot be negative
+```
+
+Here, `radius` is a property, and `area` is another property that calculates the area based on the radius.
+
+### 6. **Dynamic Class Creation with `type`**
+
+You can create classes dynamically at runtime using the built-in `type()` function.
+
+#### Example of Dynamic Class Creation:
+```python
+# Dynamically creating a class
+Person = type('Person', (object,), {'greet': lambda self: "Hello!"})
+
+# Instantiating the dynamically created class
+p = Person()
+print(p.greet())  # Output: Hello!
+```
+
+In this case, `Person` is created dynamically using `type()`. The class has a `greet` method, and you can instantiate and use it just like any other class.
+
+### 7. **Operator Overloading**
+
+Python allows you to overload operators (such as `+`, `-`, `*`, etc.) by defining special methods in the class.
+
+#### Example of Operator Overloading:
+```python
+class Vector:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+    def __add__(self, other):
+        return Vector(self.x + other.x, self.y + other.y)
+
+    def __repr__(self):
+        return f"Vector({self.x}, {self.y})"
+
+# Instantiating Vectors
+v1 = Vector(2, 3)
+v2 = Vector(4, 5)
+
+# Using overloaded '+' operator
+v3 = v1 + v2
+print(v3)  # Output: Vector(6, 8)
+```
+
+In this example, the `+` operator is overloaded to add two `Vector` objects.
+
+---
+
+These are some advanced OOP concepts in Python that help create more flexible, reusable, and maintainable code. If you want more detail on any specific topic or additional examples, feel free to ask!
 ---
 
 ### Bonus Exercise: Metaclass Example
