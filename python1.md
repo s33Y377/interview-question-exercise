@@ -586,3 +586,258 @@ python
 
 These practical questions test your ability to write efficient and effective Python code, focusing on problem-solving, algorithm implementation, and understanding Python's advanced features such as decorators, iterators, and context managers.
 
+Here are some advanced Python exercises that cover a range of topics such as decorators, generators, metaprogramming, context managers, and advanced data structures. These exercises are designed to deepen your understanding of Python’s features and help you write more efficient and elegant code.
+
+---
+
+### 1. **Custom Decorator for Timing Function Execution**
+Write a decorator that measures the execution time of a function and logs it. The decorator should print the function name, arguments, and execution time. Use the `time` module.
+
+**Requirements:**
+- Decorator should handle both positional and keyword arguments.
+- It should print out the function name, arguments, and execution time.
+
+```python
+import time
+
+def timer_decorator(func):
+    def wrapper(*args, **kwargs):
+        start_time = time.time()
+        result = func(*args, **kwargs)
+        end_time = time.time()
+        execution_time = end_time - start_time
+        print(f"Function {func.__name__} executed in {execution_time:.4f} seconds with arguments {args} and keyword arguments {kwargs}")
+        return result
+    return wrapper
+
+# Example usage:
+@timer_decorator
+def slow_function(x, y):
+    time.sleep(2)
+    return x + y
+
+slow_function(3, 4)
+```
+
+---
+
+### 2. **Generator for Fibonacci Sequence**
+Create a generator function that yields Fibonacci numbers up to a given number `n`. The generator should use the `yield` keyword.
+
+**Requirements:**
+- The generator should continue yielding Fibonacci numbers until `n` is reached.
+- It should stop when the next Fibonacci number exceeds `n`.
+
+```python
+def fibonacci_generator(n):
+    a, b = 0, 1
+    while a <= n:
+        yield a
+        a, b = b, a + b
+
+# Example usage:
+for num in fibonacci_generator(100):
+    print(num)
+```
+
+---
+
+### 3. **Context Manager for File Handling**
+Create a context manager that automatically closes a file after writing some content into it. You should use the `with` statement to handle file writing and ensure that the file is properly closed after the operation.
+
+```python
+class FileWriter:
+    def __init__(self, filename):
+        self.filename = filename
+    
+    def __enter__(self):
+        self.file = open(self.filename, 'w')
+        return self.file
+    
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.file.close()
+
+# Example usage:
+with FileWriter('output.txt') as file:
+    file.write('Hello, World!')
+```
+
+---
+
+### 4. **Metaclass to Enforce Singleton Pattern**
+Write a metaclass that ensures only one instance of a class can exist at any given time. The class should raise an exception if a new instance is created after the first one.
+
+**Requirements:**
+- The metaclass should manage the instance and ensure that only one instance of the class is allowed.
+- Use the `__call__` method of the metaclass to manage instance creation.
+
+```python
+class SingletonMeta(type):
+    _instances = {}
+    
+    def __call__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            cls._instances[cls] = super().__call__(*args, **kwargs)
+        return cls._instances[cls]
+
+class SingletonClass(metaclass=SingletonMeta):
+    def __init__(self):
+        print("SingletonClass instance created")
+
+# Example usage:
+obj1 = SingletonClass()
+obj2 = SingletonClass()
+
+# Check if both objects are the same instance
+print(obj1 is obj2)  # True
+```
+
+---
+
+### 5. **Advanced Sorting with Custom Key Functions**
+Create a function that sorts a list of dictionaries by multiple keys, where each key has a different sort order (ascending or descending). You should use the `sorted()` function with a custom key.
+
+**Requirements:**
+- The function should accept a list of dictionaries.
+- The sort order should be specified by a list of tuples, where each tuple contains the key and the desired order (`True` for ascending, `False` for descending).
+
+```python
+def multi_key_sort(data, keys):
+    def sort_key(item):
+        return tuple((item[k] if order else -item[k]) for k, order in keys)
+
+    return sorted(data, key=sort_key)
+
+# Example usage:
+data = [
+    {"name": "Alice", "age": 30, "salary": 50000},
+    {"name": "Bob", "age": 25, "salary": 70000},
+    {"name": "Charlie", "age": 35, "salary": 60000},
+]
+
+keys = [("age", True), ("salary", False)]  # Sort by age ascending, salary descending
+sorted_data = multi_key_sort(data, keys)
+print(sorted_data)
+```
+
+---
+
+### 6. **Custom Iterator for Prime Numbers**
+Write a custom iterator that generates prime numbers. The iterator should yield the next prime number each time it’s called.
+
+**Requirements:**
+- The iterator should use the `__next__` method to yield the next prime number.
+- The iterator should be able to be reset to start from the first prime number again.
+
+```python
+class PrimeIterator:
+    def __init__(self):
+        self.num = 2
+
+    def __iter__(self):
+        return self
+    
+    def __next__(self):
+        while True:
+            if self._is_prime(self.num):
+                prime = self.num
+                self.num += 1
+                return prime
+            self.num += 1
+
+    def _is_prime(self, n):
+        if n < 2:
+            return False
+        for i in range(2, int(n**0.5) + 1):
+            if n % i == 0:
+                return False
+        return True
+
+# Example usage:
+primes = PrimeIterator()
+for _ in range(10):
+    print(next(primes))
+```
+
+---
+
+### 7. **Dynamic Class Creation Using `type()`**
+Use the `type()` function to dynamically create a class at runtime. The class should inherit from a base class and have a method that prints a message.
+
+**Requirements:**
+- The dynamic class should inherit from a given base class.
+- The class should have a method that prints a custom message.
+
+```python
+def create_class(name, base_class):
+    def custom_method(self):
+        print(f"{self.__class__.__name__} instance created!")
+    
+    return type(name, (base_class,), {"custom_method": custom_method})
+
+class Base:
+    pass
+
+# Example usage:
+DynamicClass = create_class("DynamicClass", Base)
+obj = DynamicClass()
+obj.custom_method()  # Output: DynamicClass instance created!
+```
+
+---
+
+### 8. **Implementing a Linked List**
+Implement a simple singly linked list with methods to insert nodes, delete nodes, and print the list. Define a `Node` class and a `LinkedList` class.
+
+**Requirements:**
+- The `Node` class should represent a node in the list.
+- The `LinkedList` class should have methods like `insert`, `delete`, and `print_list`.
+
+```python
+class Node:
+    def __init__(self, data):
+        self.data = data
+        self.next = None
+
+class LinkedList:
+    def __init__(self):
+        self.head = None
+
+    def insert(self, data):
+        new_node = Node(data)
+        new_node.next = self.head
+        self.head = new_node
+
+    def delete(self, data):
+        current = self.head
+        if current and current.data == data:
+            self.head = current.next
+            return
+        prev = None
+        while current:
+            if current.data == data:
+                prev.next = current.next
+                return
+            prev = current
+            current = current.next
+
+    def print_list(self):
+        current = self.head
+        while current:
+            print(current.data, end=" -> ")
+            current = current.next
+        print("None")
+
+# Example usage:
+ll = LinkedList()
+ll.insert(10)
+ll.insert(20)
+ll.insert(30)
+ll.print_list()  # Output: 30 -> 20 -> 10 -> None
+ll.delete(20)
+ll.print_list()  # Output: 30 -> 10 -> None
+```
+
+---
+
+These exercises touch on several advanced Python topics and will challenge you to apply your knowledge of Python's features like decorators, generators, context managers, metaclasses, and more. Try to implement them step-by-step, and experiment with different variations to fully grasp these concepts!
