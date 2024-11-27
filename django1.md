@@ -1461,3 +1461,155 @@ This will expose a new endpoint like `POST /my_model/{id}/custom_action/`.
 
 These are just a few of the advanced questions and answers you might encounter when preparing for a Django REST Framework interview. Each answer addresses core concepts of DRF that would help in building scalable and secure APIs.
 
+
+In Django, **signals** are used to allow certain senders to notify a set of receivers when certain actions have taken place. The signal system is useful for decoupling different parts of the application. For example, when a new user is created, a signal can notify other parts of the application to perform additional actions, such as sending a welcome email.
+
+### Concept of Signals
+
+- **Sender**: The model or function that sends a signal.
+- **Receiver**: The function that receives the signal and processes it.
+- **Signal**: The event that is triggered when an action takes place.
+
+### How Signals Work
+
+1. A signal is created and sent when an event happens (like saving a model).
+2. The receiver function listens for that signal and performs a task when the signal is received.
+3. You connect the signal to the receiver using the `@receiver` decorator or `signals.connect()` method.
+
+### Common Django Signals
+- `pre_save`: Sent before a model is saved.
+- `post_save`: Sent after a model is saved.
+- `pre_delete`: Sent before a model is deleted.
+- `post_delete`: Sent after a model is deleted.
+- `m2m_changed`: Sent when a many-to-many relationship is changed.
+
+### Example of Using Django Signals
+
+Let's work through an example where we use signals to send a welcome email when a new user is created.
+
+1. **Create a Django app** if you haven't already:
+   ```bash
+   python manage.py startapp users
+   ```
+
+2. **Define the model** (we will use the built-in User model in this case, but the example applies to any model).
+
+3. **Create a signal handler** for the `post_save` signal to send an email when a new user is created.
+
+4. **Configure the signal** in the app's `apps.py`.
+
+---
+
+### Step-by-Step Example:
+
+#### Step 1: Install Django and Set Up the Project
+If you haven't already, set up a Django project:
+
+```bash
+django-admin startproject myproject
+cd myproject
+python manage.py startapp users
+```
+
+#### Step 2: Create the Signal Handler
+
+In the `users` app, create a file called `signals.py`. This file will contain the signal handling logic.
+
+```python
+# users/signals.py
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.core.mail import send_mail
+from django.contrib.auth.models import User
+
+# Define the signal receiver for post_save signal
+@receiver(post_save, sender=User)
+def send_welcome_email(sender, instance, created, **kwargs):
+    if created:
+        send_mail(
+            'Welcome to our site!',
+            f'Hello {instance.username}, welcome to our website.',
+            'admin@mywebsite.com',  # from email
+            [instance.email],  # to email
+            fail_silently=False,
+        )
+```
+
+This function will send a welcome email to the new user after they are created.
+
+#### Step 3: Connect the Signal
+
+Now, you need to tell Django to use this signal. In the `users` app, open `apps.py` and modify it as follows:
+
+```python
+# users/apps.py
+from django.apps import AppConfig
+
+class UsersConfig(AppConfig):
+    name = 'users'
+
+    def ready(self):
+        import users.signals  # This imports the signals.py file and connects the signal
+```
+
+#### Step 4: Register the App in the Project's `settings.py`
+
+Make sure that the `users` app is listed in the `INSTALLED_APPS` section of your project’s `settings.py`:
+
+```python
+# myproject/settings.py
+INSTALLED_APPS = [
+    # other apps
+    'users',
+]
+```
+
+#### Step 5: Test the Signal
+
+Now, you can test the signal by creating a new user in the Django shell or through the Django admin.
+
+1. Open the Django shell:
+   ```bash
+   python manage.py shell
+   ```
+
+2. Create a new user:
+   ```python
+   from django.contrib.auth.models import User
+   user = User.objects.create_user(username='newuser', email='newuser@example.com', password='password')
+   ```
+
+3. Check your email for the welcome message.
+
+When the user is created, the `send_welcome_email` function will be called automatically because of the `post_save` signal, and the email will be sent.
+
+---
+
+### Full File Structure:
+```
+myproject/
+    ├── manage.py
+    ├── myproject/
+    │   ├── settings.py
+    │   ├── urls.py
+    │   └── wsgi.py
+    └── users/
+        ├── __init__.py
+        ├── apps.py
+        ├── models.py
+        ├── signals.py
+        ├── views.py
+        └── migrations/
+```
+
+### Additional Notes:
+
+1. **Django Signals vs. Explicit Calls**: Signals are a way of making your code more modular and decoupled. Instead of explicitly calling the `send_welcome_email` function after creating a user, we use signals to handle it automatically when a user is created.
+   
+2. **Fail Silently**: The `fail_silently=False` argument in the `send_mail` function ensures that any errors in sending the email will be raised. If you set it to `True`, Django will silently ignore any errors.
+
+3. **Signals with Other Models**: You can use signals with any Django model, not just `User`. For example, you can listen for the `post_save` signal on a `BlogPost` model to notify subscribers when a new post is published.
+
+### Conclusion:
+
+Django signals help decouple your application logic, allowing different parts of your application to communicate without direct dependencies. In this example, we used signals to automatically send a welcome email when a new user is created, demonstrating how to integrate signals into a Django project.
