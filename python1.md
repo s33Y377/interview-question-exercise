@@ -144,7 +144,7 @@ Here are more advanced Python interview questions, focusing on deeper concepts, 
 ### 1. **What is the difference between __del__ and __exit__ in Python?**
  Answerer*del __del__ and __exit__ are used for cleanup purposes, but they are used in different contedel   - __del__ is a destructor method called when an object is about to be destroyed. It is part of Python’s garbage collection mechanism and is not guaranteed to be called immediately after an object is no longer referenexit  - __exit__ is used in the context of a context manager and is part of the with statement. It ensures that the resources are cleaned up when exiting the context, even if an exception occurs.
 
-###What is method resolution order (MRO) and how does it work in multiple inheritance?e?**
+### 2. What is method resolution order (MRO) and how does it work in multiple inheritance?e?**
  Answerer**: Method Resolution Order (MRO) is the order in which Python searches for methods and attributes in the class hierarchy when using multiple inheritance. Python uses the C3 Linearization algorithm to determine the order, which is the order in which classes are considered for method lookup.
    
    You can view a class's MRO using the mro() method or __mro__ attribute:
