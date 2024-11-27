@@ -1332,3 +1332,215 @@ print(hasattr(MyClass, "LOWERCASE"))  # Should print True
 ---
 
 These exercises will provide you with a deeper understanding of Python’s special methods and how they fit into the language’s data model. Have fun implementing and experimenting!
+
+
+Here's an advanced Python interview exercise that tests deep knowledge of Python's features, including object-oriented programming (OOP), generators, decorators, context managers, and functional programming concepts.
+
+---
+
+### Problem 1: Implementing a Custom Context Manager
+
+Write a context manager that ensures the following conditions:
+
+1. Upon entering the context, it will lock a file to prevent other processes from modifying it. You can simulate this by printing a message about acquiring a lock (you can assume no actual file locking is necessary for the test).
+2. Upon exiting the context, the lock should be released (simulated by a message).
+3. If any exception occurs within the context, it should log the error message and re-raise the exception after releasing the lock.
+
+**Requirements**:
+- Implement this using Python's `with` statement and context manager protocol (`__enter__` and `__exit__`).
+- Simulate file locking with print statements.
+
+```python
+class FileLock:
+    def __init__(self, filename: str):
+        self.filename = filename
+
+    def __enter__(self):
+        # Acquire lock
+        print(f"Lock acquired for {self.filename}")
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        # Release lock, and handle any exception raised within the context
+        print(f"Lock released for {self.filename}")
+        if exc_type:
+            print(f"An error occurred: {exc_value}")
+        # Returning False will allow the exception to propagate, True would suppress it
+        return False
+```
+
+---
+
+### Problem 2: Generator-based Lazy Evaluation
+
+Create a generator `lazy_square` that lazily evaluates and yields the square of integers starting from 0 up to a given number `n` (exclusive). The generator should use the `yield` keyword, and the caller should be able to consume the squares one at a time, without computing all of them at once.
+
+```python
+def lazy_square(n: int):
+    for i in range(n):
+        yield i ** 2
+```
+
+**Test Case**:
+```python
+squares = lazy_square(5)
+for square in squares:
+    print(square)
+```
+
+**Expected Output**:
+```
+0
+1
+4
+9
+16
+```
+
+---
+
+### Problem 3: Decorators and Memoization
+
+Create a decorator `memoize` that caches the results of expensive function calls so that subsequent calls with the same arguments can be returned instantly.
+
+```python
+def memoize(func):
+    cache = {}
+    
+    def wrapper(*args):
+        if args not in cache:
+            cache[args] = func(*args)
+        return cache[args]
+    
+    return wrapper
+```
+
+Test the decorator with a function that computes Fibonacci numbers.
+
+```python
+@memoize
+def fibonacci(n):
+    if n <= 1:
+        return n
+    return fibonacci(n - 1) + fibonacci(n - 2)
+
+# Test the memoization
+print(fibonacci(10))  # Should compute Fibonacci number 55 without recalculating intermediate values
+```
+
+---
+
+### Problem 4: Class Method and Static Method
+
+Given the following class, implement the `from_string` class method to create an instance of `Rectangle` from a string in the format `"width,height"`, and the `area` static method to calculate the area of the rectangle.
+
+```python
+class Rectangle:
+    def __init__(self, width: float, height: float):
+        self.width = width
+        self.height = height
+
+    @classmethod
+    def from_string(cls, s: str):
+        width, height = map(float, s.split(','))
+        return cls(width, height)
+    
+    @staticmethod
+    def area(width: float, height: float):
+        return width * height
+```
+
+Test case:
+```python
+rect = Rectangle.from_string("4.5,3.2")
+print(rect.width, rect.height)  # Output: 4.5 3.2
+print(Rectangle.area(rect.width, rect.height))  # Output: 14.4
+```
+
+---
+
+### Problem 5: Advanced Iterable Handling with `__iter__` and `__next__`
+
+Create a class `PrimeGenerator` that generates prime numbers up to a given limit. The class should implement the iterator protocol (`__iter__` and `__next__`).
+
+```python
+class PrimeGenerator:
+    def __init__(self, limit: int):
+        self.limit = limit
+        self.current = 2
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        while self.current <= self.limit:
+            if self.is_prime(self.current):
+                prime = self.current
+                self.current += 1
+                return prime
+            self.current += 1
+        raise StopIteration
+
+    def is_prime(self, n: int):
+        if n <= 1:
+            return False
+        for i in range(2, int(n ** 0.5) + 1):
+            if n % i == 0:
+                return False
+        return True
+```
+
+Test case:
+```python
+primes = PrimeGenerator(30)
+for prime in primes:
+    print(prime)
+```
+
+**Expected Output**:
+```
+2
+3
+5
+7
+11
+13
+17
+19
+23
+29
+```
+
+---
+
+### Problem 6: Custom Deserialization
+
+Create a custom `JSONDecoder` that deserializes JSON-like strings to Python dictionaries, handling both the basic types (`int`, `float`, `str`, `bool`, `None`) and lists or dictionaries. 
+
+You may assume that the input string is well-formed and use Python's built-in `json` library for comparison.
+
+```python
+import json
+
+class CustomJSONDecoder:
+    def decode(self, s: str):
+        # This method should parse the string and return the corresponding Python object.
+        # Implement it without using json.loads directly.
+        pass
+```
+
+Test case:
+```python
+decoder = CustomJSONDecoder()
+data = '{"name": "Alice", "age": 30, "is_employee": true, "skills": ["Python", "Java"]}'
+print(decoder.decode(data))
+```
+
+**Expected Output**:
+```python
+{'name': 'Alice', 'age': 30, 'is_employee': True, 'skills': ['Python', 'Java']}
+```
+
+---
+
+These exercises test a candidate's knowledge of advanced Python features such as context managers, generators, decorators, static/class methods, iterators, and custom deserialization logic. Be sure to implement and test each solution independently!
