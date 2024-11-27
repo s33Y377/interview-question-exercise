@@ -364,4 +364,258 @@ These solutions cover a variety of advanced SQL techniques such as:
 - **Date functions** for extracting year/month information
 - **Ranking** with `ROW_NUMBER()` for top N queries
 
+
+Sure! Here are a few more advanced SQL query scenarios that cover a range of concepts including recursive queries, performance optimization, advanced joins, CTEs (Common Table Expressions), and handling complex aggregations. These examples can challenge even experienced SQL developers and help prepare for tough interview questions.
+
+### 1. **Recursive Query - Organizational Hierarchy**
+
+You are tasked with querying an organization’s employee hierarchy, where each employee reports to another employee. The table structure is as follows:
+
+#### `Employees`
+| employee_id | employee_name | manager_id |
+|-------------|---------------|------------|
+| 1           | John          | NULL       |
+| 2           | Alice         | 1          |
+| 3           | Bob           | 1          |
+| 4           | Carol         | 2          |
+| 5           | Dave          | 2          |
+| 6           | Eve           | 3          |
+
+In this case, `manager_id` refers to the `employee_id` of the employee's manager. Write a query to return the entire organizational hierarchy starting from the CEO (top-level manager), showing the employee names and their respective managers.
+
+#### **Solution:**
+
+```sql
+WITH RECURSIVE OrgHierarchy AS (
+    -- Base case: Select the top-level manager (CEO)
+    SELECT employee_id, employee_name, manager_id
+    FROM Employees
+    WHERE manager_id IS NULL
+    
+    UNION ALL
+    
+    -- Recursive case: Select employees and their managers
+    SELECT e.employee_id, e.employee_name, e.manager_id
+    FROM Employees e
+    JOIN OrgHierarchy o ON e.manager_id = o.employee_id
+)
+SELECT * FROM OrgHierarchy
+ORDER BY manager_id, employee_id;
+```
+
+- **Explanation**: This query uses a **recursive CTE** to fetch the organizational hierarchy. The base case selects the CEO (the employee without a manager). The recursive part then selects employees who report to the employees already selected in the hierarchy. The recursion continues until all employees are included in the result set.
+
+---
+
+### 2. **Find Duplicates Across Multiple Tables**
+
+Imagine you have multiple tables where you want to identify records that appear in more than one table. Consider two tables:
+
+#### `Products_A`
+| product_id | product_name |
+|------------|--------------|
+| 101        | Laptop       |
+| 102        | Smartphone   |
+| 103        | Tablet       |
+
+#### `Products_B`
+| product_id | product_name |
+|------------|--------------|
+| 102        | Smartphone   |
+| 104        | TV           |
+| 105        | Headphones   |
+
+Write a query to find products that appear in **both** `Products_A` and `Products_B`.
+
+#### **Solution:**
+
+```sql
+SELECT a.product_id, a.product_name
+FROM Products_A a
+JOIN Products_B b ON a.product_id = b.product_id
+ORDER BY a.product_id;
+```
+
+- **Explanation**: A simple **INNER JOIN** finds the products that appear in both `Products_A` and `Products_B`. The result is the list of common products across the two tables.
+
+---
+
+### 3. **Find Nth Highest Salary in a Table**
+
+You are tasked with finding the **Nth highest salary** from an employee table. Here's the `Employees` table:
+
+#### `Employees`
+| employee_id | employee_name | salary |
+|-------------|---------------|--------|
+| 1           | John          | 10000  |
+| 2           | Alice         | 12000  |
+| 3           | Bob           | 15000  |
+| 4           | Carol         | 13000  |
+| 5           | Dave          | 8000   |
+
+Write a query to find the **3rd highest salary** from this table.
+
+#### **Solution:**
+
+```sql
+SELECT MIN(salary) AS third_highest_salary
+FROM (
+    SELECT DISTINCT salary
+    FROM Employees
+    ORDER BY salary DESC
+    LIMIT 3
+) AS Temp;
+```
+
+- **Explanation**: The inner query selects the top 3 distinct salaries ordered by salary in descending order. The outer query then selects the minimum of these salaries, which will be the **3rd highest salary**. This approach handles cases where multiple employees may have the same salary.
+
+---
+
+### 4. **Optimizing Performance with Indexes and Subqueries**
+
+You are asked to find the total amount of sales by each customer. The tables `Orders` and `Order_Items` are quite large, and you are asked to optimize the query. Here’s the schema for the relevant tables:
+
+#### `Orders`
+| order_id | customer_id | order_date | total_amount |
+|----------|-------------|------------|--------------|
+| 1001     | 1           | 2023-01-01 | 2000         |
+| 1002     | 2           | 2023-01-02 | 1500         |
+| 1003     | 1           | 2023-01-05 | 1000         |
+
+#### `Order_Items`
+| order_item_id | order_id | product_id | quantity | price_at_purchase |
+|---------------|----------|------------|----------|-------------------|
+| 1             | 1001     | 101        | 2        | 1000              |
+| 2             | 1002     | 102        | 1        | 500               |
+| 3             | 1003     | 103        | 3        | 200               |
+
+To optimize the performance, write the query using a **subquery** and ensure that indexes are created on `Orders.customer_id` and `Order_Items.order_id`.
+
+#### **Solution:**
+
+```sql
+SELECT
+    o.customer_id,
+    SUM(oi.quantity * oi.price_at_purchase) AS total_sales
+FROM
+    Orders o
+JOIN
+    Order_Items oi ON o.order_id = oi.order_id
+GROUP BY
+    o.customer_id;
+```
+
+- **Explanation**: The query joins the `Orders` and `Order_Items` tables, calculates the total sales for each customer, and groups the results by `customer_id`. To optimize the performance:
+  - Ensure there is an index on `Orders.customer_id` for efficient grouping.
+  - Create an index on `Order_Items.order_id` for fast joins.
+
+Indexes will significantly speed up the lookup and join operations on these columns, improving query performance.
+
+---
+
+### 5. **Top N Products Sold in a Month**
+
+Find the top 5 products by quantity sold in a given month, say **January 2023**.
+
+#### **Solution:**
+
+```sql
+SELECT 
+    p.product_name,
+    SUM(oi.quantity) AS total_quantity_sold
+FROM 
+    Order_Items oi
+JOIN 
+    Products p ON oi.product_id = p.product_id
+JOIN 
+    Orders o ON oi.order_id = o.order_id
+WHERE 
+    o.order_date BETWEEN '2023-01-01' AND '2023-01-31'
+GROUP BY 
+    p.product_name
+ORDER BY 
+    total_quantity_sold DESC
+LIMIT 5;
+```
+
+- **Explanation**: This query selects the top 5 products by quantity sold in January 2023. It uses `WHERE` to filter orders by date, `GROUP BY` to aggregate sales per product, and `ORDER BY` to rank the products by quantity sold. The `LIMIT 5` ensures that only the top 5 products are returned.
+
+---
+
+### 6. **Dynamic Pivot Table with Conditional Aggregation**
+
+Given a sales table, create a **dynamic pivot table** that shows the total sales per product category, with columns for each quarter of the year.
+
+#### `Sales`
+| sale_id | sale_date | product_id | quantity | total_price |
+|---------|-----------|------------|----------|-------------|
+| 1       | 2023-01-05| 101        | 2        | 2000        |
+| 2       | 2023-04-01| 102        | 1        | 500         |
+| 3       | 2023-07-20| 101        | 3        | 3000        |
+| 4       | 2023-10-15| 103        | 1        | 1500        |
+
+We want a table that shows the total sales for each product category (from the `Products` table), with columns for **Q1**, **Q2**, **Q3**, and **Q4** based on the sale date.
+
+#### **Solution:**
+
+```sql
+SELECT
+    p.category,
+    SUM(CASE WHEN QUARTER(s.sale_date) = 1 THEN s.total_price ELSE 0 END) AS Q1_sales,
+    SUM(CASE WHEN QUARTER(s.sale_date) = 2 THEN s.total_price ELSE 0 END) AS Q2_sales,
+    SUM(CASE WHEN QUARTER(s.sale_date) = 3 THEN s.total_price ELSE 0 END) AS Q3_sales,
+    SUM(CASE WHEN QUARTER(s.sale_date) = 4 THEN s.total_price ELSE 0 END) AS Q4_sales
+FROM
+    Sales s
+JOIN
+    Products p ON s.product_id = p.product_id
+GROUP BY
+    p.category
+ORDER BY
+    p.category;
+```
+
+- **Explanation**: This query uses conditional aggregation with the `CASE` statement to calculate the sales for each quarter. It groups the results by product category and computes the total sales for each quarter (Q1, Q2, Q3, Q4) using `SUM()` with conditions based on the `QUARTER()` function applied to the `sale_date`.
+
+---
+
+### 7. **Find the Gaps in Sequence**
+
+Suppose you have a table of order IDs (`Orders`) and you need to find the missing order IDs within a given range
+
+.
+
+#### `Orders`
+| order_id |
+|----------|
+| 1        |
+| 2        |
+| 4        |
+| 5        |
+| 7        |
+
+Write a query to find the missing `order_id` values in the sequence between 1 and 7.
+
+#### **Solution:**
+
+```sql
+WITH RECURSIVE OrderSequence AS (
+    SELECT 1 AS order_id
+    UNION ALL
+    SELECT order_id + 1
+    FROM OrderSequence
+    WHERE order_id < 7
+)
+SELECT order_id
+FROM OrderSequence
+WHERE order_id NOT IN (SELECT order_id FROM Orders)
+ORDER BY order_id;
+```
+
+- **Explanation**: This query uses a **recursive CTE** to generate a sequence of numbers from 1 to 7. It then filters out the existing `order_id`s from the `Orders` table to find the missing `order_id` values. The result will be the gaps in the sequence.
+
+---
+
+These advanced SQL queries cover complex scenarios that involve recursion, optimization, pivoting, conditional aggregation, and more. Let me know if you would like further details or help with specific queries!
+
 Let me know if you'd like further clarification on any of these queries!
