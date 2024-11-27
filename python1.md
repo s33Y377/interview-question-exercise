@@ -1322,9 +1322,7 @@ class UppercaseMeta(type):
         return super().__new__(cls, name, bases, uppercase_attributes)
 
 class MyClass(metaclass=UppercaseMeta):
-    lowercase = "I am a
-
- lowercase attribute"
+    lowercase = "I am a lowercase attribute"
 
 # Test your class
 print(hasattr(MyClass, "lowercase"))  # Should print False
