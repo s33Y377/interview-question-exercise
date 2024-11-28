@@ -49,6 +49,26 @@ Here are some advanced Python interview questions that could be asked to assess 
            self.age = age
 ```
 
+```
+class MyClass:
+    __slots__ = ['name', 'age']
+    def __init__(self, name, age, a):
+        self.name = name
+        self.age = age
+        self.a = a
+
+m = MyClass("Sarvesh", 25, 1)
+
+o/p
+
+Traceback (most recent call last):
+  File "/home/main.py", line 8, in <module>
+    m = MyClass("Sarvesh", 25, 1)
+  File "/home/main.py", line 6, in __init__
+    self.a = a
+AttributeError: 'MyClass' object has no attribute 'a'
+```
+
 ### 9. How does Python handle multiple inheritance and method resolution order (MRO)?
    - Answer: Python uses the C3 linearization algorithm (also known as C3 superclass linearization) to determine the method resolution order (MRO) when dealing with multiple inheritance. The MRO determines the order in which base classes are searched when a method is called. You can view the MRO of a class using the mro() method or __mro__ attribute.
 
