@@ -38,7 +38,8 @@ Here are some advanced Python interview questions that could be asked to assess 
            count += 1
 ```
    
-### 8. **What is theslotsof __slots__ in PytAnswer- slots*: __slots__ is used to limit the attributes of a class to a predefined set, which can save memory by preventing the creation of dictult __dict__ for each instance. This is especially useful when dealing with a large number of instances and known attributes.
+### 8. **What is theslotsof __slots__ in Python
+Answer- slots*: __slots__ is used to limit the attributes of a class to a predefined set, which can save memory by preventing the creation of dictult __dict__ for each instance. This is especially useful when dealing with a large number of instances and known attributes.
 
    Example:
 ```  
@@ -60,12 +61,6 @@ class MyClass:
 m = MyClass("abc", 25, 1)
 
 o/p
-class MyClass:
-    __slots__ = ['name', 'age']
-    def __init__(self, name, age, a):
-        self.name = name
-        self.age = age
-        self.a = a
 
 Traceback (most recent call last):
   File "/home/main.py", line 8, in <module>
@@ -86,20 +81,24 @@ AttributeError: 'MyClass' object has no attribute 'a'
    class D(B, C): pass
    print(D.mro())
 ```
-   
+
+```
+[<class '__main__.D'>, <class '__main__.B'>, <class '__main__.C'>, <class '__main__.A'>, <class 'object'>]
+```
+
 ### 10. What is a context manager in Python?
    - Answer: A context manager is a Python object that allows you to manage resources, such as files or database connections, using the with statement. It defines methods __enter__() and __exit__() to allocate and release resources.
 
    Example:
 ```  
-   class MyContextManager:
-       def __enter__(self):
-           print("Entering the context")
-           return self
-       def __exit__(self, exc_type, exc_value, traceback):
-           print("Exiting the context")
-   with MyContextManager():
-       print("Inside the context")
+class MyContextManager:
+    def __enter__(self):
+        print("Entering the context")
+        return self
+    def __exit__(self, exc_type, exc_value, traceback):
+        print("Exiting the context")
+with MyContextManager():
+    print("Inside the context")
 ```
    
 ### 11. Explain the concept of 'duck typing' in Python.
@@ -118,6 +117,10 @@ AttributeError: 'MyClass' object has no attribute 'a'
    def take_off(flyable):
        flyable.fly()  # Works if the object has a fly method
 ```
+```
+take_off(Bird())
+```
+
    
 ### 12. **What is the difference between is and == in Python?**
  Answerer**: The == operator checks if the values of two objects are the same, while the is operator checks if two references point to the same object in memory. 
@@ -147,7 +150,8 @@ AttributeError: 'MyClass' object has no attribute 'a'
    asyncio.run(main())
 ```
    
-### 14. **What are f-strings in Python, and why are they preferred over other string formatting methAnswer- **Answer**: f-strings (formatted string literals) are a concise and efficient way to embed expressions inside string literals, introduced in Python 3.6. They are preferred over older methods (like % formatting or str.format()) because they are more readable and generally faster.
+### 14. **What are f-strings in Python, and why are they preferred over other string formatting methAnswer- 
+**Answer**: f-strings (formatted string literals) are a concise and efficient way to embed expressions inside string literals, introduced in Python 3.6. They are preferred over older methods (like % formatting or str.format()) because they are more readable and generally faster.
 
    Example:
 ```  
@@ -156,7 +160,7 @@ AttributeError: 'MyClass' object has no attribute 'a'
    print(f"My name is {name} and I am {age} years old.")
 ```
    
-### 15. **How can you optimize the performance of PythAnswer
+### 15. **How can you optimize the performance of Python
    - **Answer**: Some ways to optimize Python code include:
      - Using built-in functions and libraries, as they are often optimized.
      - Avoiding global variables and using local variables where possible.
@@ -167,22 +171,12 @@ AttributeError: 'MyClass' object has no attribute 'a'
 
 Here are more advanced Python interview questions, focusing on deeper concepts, design patterns, and performance considerations:
 
-### 1. **What is the difference between __del__ and __exit__ in Python?**
- Answerer*del __del__ and __exit__ are used for cleanup purposes, but they are used in different contedel   - __del__ is a destructor method called when an object is about to be destroyed. It is part of Python’s garbage collection mechanism and is not guaranteed to be called immediately after an object is no longer referenexit  - __exit__ is used in the context of a context manager and is part of the with statement. It ensures that the resources are cleaned up when exiting the context, even if an exception occurs.
+### 1. **What is the difference between __del__ and __exit__ in Python?
+**Answerer** del __del__ and __exit__ are used for cleanup purposes, but they are used in different contedel   - __del__ is a destructor method called when an object is about to be destroyed. It is part of Python’s garbage collection mechanism and is not guaranteed to be called immediately after an object is no longer referenexit  - __exit__ is used in the context of a context manager and is part of the with statement. It ensures that the resources are cleaned up when exiting the context, even if an exception occurs.
 
-### 2. What is method resolution order (MRO) and how does it work in multiple inheritance?e?**
- Answerer**: Method Resolution Order (MRO) is the order in which Python searches for methods and attributes in the class hierarchy when using multiple inheritance. Python uses the C3 Linearization algorithm to determine the order, which is the order in which classes are considered for method lookup.
    
-   You can view a class's MRO using the mro() method or __mro__ attribute:
-```  
-   class A: pass
-   class B(A): pass
-   class C(A): pass
-   class D(B, C): pass
-   print(D.mro())  # Shows the MRO for class D
-```
-   
-### 3. **What is the purpose of the abc module in Python?AnswerAnswer**: The abc (Abstract Base Classes) module in Python provides a mechanism for defining abstract classes. An abstract class is one that cannot be instantiated directly and is intended to be subclassed. The module allows you to define abstract methods, which must be implemented by any subclass.
+### 3. **What is the purpose of the abc module in Python?
+**Answer**: The abc (Abstract Base Classes) module in Python provides a mechanism for defining abstract classes. An abstract class is one that cannot be instantiated directly and is intended to be subclassed. The module allows you to define abstract methods, which must be implemented by any subclass.
    
    Example:
 ```  
@@ -202,7 +196,8 @@ Here are more advanced Python interview questions, focusing on deeper concepts, 
    dog.make_sound()  # "Woof"
 ```
    
-### 4. **Explain Python's yield from expressAnswer- **Answer**: The yield from expression simplifies delegating part of a generator’s operations to another iterable or generator. It allows a generator to yield all values from another iterable or generator without explicitly looping through it.
+### 4. **Explain** Python's yield from expression- 
+**Answer**: The yield from expression simplifies delegating part of a generator’s operations to another iterable or generator. It allows a generator to yield all values from another iterable or generator without explicitly looping through it.
    
    Example:
 ```  
@@ -222,26 +217,41 @@ Here are more advanced Python interview questions, focusing on deeper concepts, 
        print(value)  # 1, 2, 3, 4
 ```
    
-### 5. **What is the difnew between __new__ and __init__ inAnswer
-   -newer**:
-     - __new__ is the method responsible for creating a new instance of a class. initlled before __init__ and is typically used in metaclasses or when subclassing immutable types like int, str, or tuple.
-     - __init__ is called after the object newted (i.e., after __new__) and is used to initialize the object's attributes.
+### 5. **What is the difnew between __new__ and __init__ in Answer
+   **newer**:
+     - __new__ is the method responsible for creating a new instance of a class. initialised before __init__ and is typically used in metaclasses or when subclassing immutable types like int, str, or tuple.
+     - __init__ is called after the object new  (i.e., after __new__) and is used to initialize the object's attributes.
 
    Example:
 ```  
-   class MyClass:
-       def __new__(cls):
-           print("Creating instance")
-           return super().__new__(cls)
+class MyClass:
+    def __new__(cls):
+        print("Creating instance")
+        return super().__new__(cls)
 
-       def __init__(self):
-           print("Initializing instance")
+    def __init__(self):
+        print("Initializing instance")
 
-   obj = MyClass()  # Output: Creating instance
-                    #         Initializing instance
+obj = MyClass()
+
+# Output:
+# Creating instance
+# Initializing instance
 ```
+
+```
+class LowerCaseTuple(tuple):
+    def __new__(cls, iterable):
+       lower_iterable = (l.lower() for l in iterable)
+       return super().__new__(cls, lower_iterable)
+
+print(LowerCaseTuple(['HELLO', 'MEDIUM']))
+
+```
+[Dunder method](https://docs.python.org/3/reference/datamodel.html#basic-customization)
+
    
-### 6. **What is a "closureAnswern?**
+### 6. **What is a "closure Answern?**
    - **Answer**: A closure is a function that "remembers" the environment in which it was created, even after that environment has finished execution. This means that the function has access to variables that were in scope when the function was defined, even if they are no longer in scope when the function is called.
 
    Example:
