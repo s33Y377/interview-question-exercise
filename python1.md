@@ -251,7 +251,7 @@ print(LowerCaseTuple(['HELLO', 'MEDIUM']))
 [Dunder method](https://docs.python.org/3/reference/datamodel.html#basic-customization)
 
    
-### 6. **What is a "closure Answern?**
+### 6. **What** is a "closure"?
    - **Answer**: A closure is a function that "remembers" the environment in which it was created, even after that environment has finished execution. This means that the function has access to variables that were in scope when the function was defined, even if they are no longer in scope when the function is called.
 
    Example:
@@ -265,8 +265,8 @@ print(LowerCaseTuple(['HELLO', 'MEDIUM']))
    print(closure(5))  # Output: 15
 ```
 
-### 7. **What is the @property decorator, and how is it used?**
- Answerer**: The @property decorator is used to define a method as a read-only attribute. It allows you to define a method that can be accessed like an attribute, without explicitly calling the method.
+### 7. **What is the @property decorator, and how is it used?
+**Answerer**: The @property decorator is used to define a method as a read-only attribute. It allows you to define a method that can be accessed like an attribute, without explicitly calling the method.
    
    Example:
 ```  
@@ -287,17 +287,17 @@ print(LowerCaseTuple(['HELLO', 'MEDIUM']))
    print(c.area)    # 78.53975
 ```
    
-###How can you improve the performance of Python code involving large datasets?s?**
- Answerer**: Some strategies to optimize performance include:
-     - NumPyPy**Pandasas** for large numerical and data-processing tasks.
-     - built-in functionsns** and avoid unnecessary loops.
-     - multiprocessingng**concurrent.futureses** for CPU-bound tasks to take advantage of multiple processors.
-     - generator expressionsns** instead of list comprehensions for memory efficiency.
-     - memoizationon**cachingng** (via functools.lru_cache or custom caching) to avoid redundant computations.
+###How can you improve the performance of Python code involving large datasets?
+**Answerer**: Some strategies to optimize performance include:
+     - NumPy **Pandas** for large numerical and data-processing tasks.
+     - built-in functions** and avoid unnecessary loops.
+     - multiprocessingng **concurrent.futureses** for CPU-bound tasks to take advantage of multiple processors.
+     - generator expressions** instead of list comprehensions for memory efficiency.
+     - memoizationon **caching** (via functools.lru_cache or custom caching) to avoid redundant computations.
      - Profile code using the cProfile module to identify and optimize bottlenecks.
 
-###What are some ways to handle exceptions in Python?n?**
- Answerer**: In Python, exceptions are handled using try, except, else, and finally blocks.
+###What are some ways to handle exceptions in Python?
+**Answerer**: In Python, exceptions are handled using try, except, else, and finally blocks.
      - try: Contains code that may raise an exception.
      - except: Catches and handles the exception.
      - else: Runs if no exception was raised in the try block.
@@ -315,7 +315,8 @@ print(LowerCaseTuple(['HELLO', 'MEDIUM']))
        print("This runs no matter what.")
 ```
    
-### 10. **What are Python's contextlib and contextmanager?AnswerAnswer**: contextlib is a standard library module that provides utilities for creating and working with context managers. The contextmanager decorator is used to define a simple context manager using a generator function.
+### 10. **What** are Python's contextlib and contextmanager?
+**Answer**: contextlib is a standard library module that provides utilities for creating and working with context managers. The contextmanager decorator is used to define a simple context manager using a generator function.
 
    Example:
 ```  
@@ -333,7 +334,8 @@ print(LowerCaseTuple(['HELLO', 'MEDIUM']))
        print(f.read())
 ```
    
-What are Python descriptors, and how do they work? work?AnswerAnswer**: A descriptor is an object attribute with "binding behavior" that customizes how an attribute is accessed or modified. Descriptors implement any of the methods __get__, __set__, or __delete__ to define how attribute access is managed.
+### 11. What are Python descriptors, and how do they work?
+**Answer**: A descriptor is an object attribute with "binding behavior" that customizes how an attribute is accessed or modified. Descriptors implement any of the methods __get__, __set__, or __delete__ to define how attribute access is managed.
 
    Example:
 ```  
@@ -348,7 +350,8 @@ What are Python descriptors, and how do they work? work?AnswerAnswer**: A descri
    print(obj.attr)  # 'Attribute accessed'
 ```
    
-### 12. **What is the purpose of the functools module, and what are some common functions it contaAnswer- **Answer**: The functools module provides higher-order functions that operate on other functions or callable objects. Some common functions include:
+### 12. **What is the purpose of the functools module, and what are some common functions it contaAnswer- 
+**Answer**: The functools module provides higher-order functions that operate on other functions or callable objects. Some common functions include:
      - lru_cache: Caches function results to improve performance for expensive functions.
      - partial: Creates a new function by fixing some arguments of an existing function.
      - reduce: Applies a binary function cumulatively to a sequence.
@@ -370,7 +373,9 @@ What are Python descriptors, and how do they work? work?AnswerAnswer**: A descri
      - Using **__slots__** in classes to avoid the overhead of instance dictionaries.
      - Avoiding the creation of unnecessary copies of data (e.g., use in-place operations).
      - Using **array** or **numpy** arrays for numerical data instead of lists.
-     -memoryviewmemoryview** objects to work with large binary data efficientlHow does Python handle namespaces and variable scope?ble scAnswer- **Answer**: Python uses namespaces to manage variable scope. Each function, module, and class has its own
+     - **memoryview** objects to work with large binary data efficientlHow does Python handle namespaces and variable scope?ble scAnswer-
+
+**Answer**: Python uses namespaces to manage variable scope. Each function, module, and class has its own
 
 Here are some advanced practical Python interview questions that can assess both your understanding of complex Python concepts and your ability to solve real-world problems using Python:
 
