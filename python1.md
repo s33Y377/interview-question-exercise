@@ -350,7 +350,7 @@ print(LowerCaseTuple(['HELLO', 'MEDIUM']))
    print(obj.attr)  # 'Attribute accessed'
 ```
    
-### 12. **What is the purpose of the functools module, and what are some common functions it contaAnswer- 
+### 12. **What is the purpose of the functools module, and what are some common functions it contain- 
 **Answer**: The functools module provides higher-order functions that operate on other functions or callable objects. Some common functions include:
      - lru_cache: Caches function results to improve performance for expensive functions.
      - partial: Creates a new function by fixing some arguments of an existing function.
@@ -395,15 +395,15 @@ Here are some advanced practical Python interview questions that can assess both
        return wrapper
 
    @measure_time
-   def long_running_task():
+   def long_running_task(*args, **kwargs):
        time.sleep(2)
 
    long_running_task()  # Output: Execution time: 2.000xx seconds
 ```
    
 ### 2. **Implement a Custom Iterator Class**
- Problemem**: Implement a custom iterator that returns squares of numbers from 1 to n.
- Solutionon**:
+**Problem**: Implement a custom iterator that returns squares of numbers from 1 to n.
+ Solution**:
 ```  
    class SquareIterator:
        def __init__(self, n):
