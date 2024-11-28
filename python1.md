@@ -57,13 +57,19 @@ class MyClass:
         self.age = age
         self.a = a
 
-m = MyClass("Sarvesh", 25, 1)
+m = MyClass("abc", 25, 1)
 
 o/p
+class MyClass:
+    __slots__ = ['name', 'age']
+    def __init__(self, name, age, a):
+        self.name = name
+        self.age = age
+        self.a = a
 
 Traceback (most recent call last):
   File "/home/main.py", line 8, in <module>
-    m = MyClass("Sarvesh", 25, 1)
+    m = MyClass("abc", 25, 1)
   File "/home/main.py", line 6, in __init__
     self.a = a
 AttributeError: 'MyClass' object has no attribute 'a'
