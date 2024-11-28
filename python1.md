@@ -287,7 +287,7 @@ print(LowerCaseTuple(['HELLO', 'MEDIUM']))
    print(c.area)    # 78.53975
 ```
    
-###How can you improve the performance of Python code involving large datasets?
+### 8. How can you improve the performance of Python code involving large datasets?
 **Answerer**: Some strategies to optimize performance include:
      - NumPy **Pandas** for large numerical and data-processing tasks.
      - built-in functions** and avoid unnecessary loops.
@@ -296,7 +296,7 @@ print(LowerCaseTuple(['HELLO', 'MEDIUM']))
      - memoizationon **caching** (via functools.lru_cache or custom caching) to avoid redundant computations.
      - Profile code using the cProfile module to identify and optimize bottlenecks.
 
-###What are some ways to handle exceptions in Python?
+### 9. What are some ways to handle exceptions in Python?
 **Answerer**: In Python, exceptions are handled using try, except, else, and finally blocks.
      - try: Contains code that may raise an exception.
      - except: Catches and handles the exception.
