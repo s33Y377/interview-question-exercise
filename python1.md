@@ -425,7 +425,7 @@ Here are some advanced practical Python interview questions that can assess both
        print(square)  # Output: 1 4 9 16 25
 ```
    
-###Design and Implement a Cache with LRU (Least Recently Used) Evictionon**
+### 3. Design and Implement a Cache with LRU (Least Recently Used) Evictionon**
  Problemem**: Implement an LRU cache using Python's collections.OrderedDict or your own implementation.
  Solutionon**:
 ```  
@@ -457,9 +457,9 @@ Here are some advanced practical Python interview questions that can assess both
    cache.put(3, 3)
    print(cache.get(2))  # Output: -1 (evicted)
 ```   
-###Write a Python Function to Perform Deep Copying of Nested Dictionarieses**
- Problemem**: Write a function that performs a deep copy of a nested dictionary.
- Solutionon**:
+### 4. Write a Python Function to Perform Deep Copying of Nested Dictionarieses
+**Problem**: Write a function that performs a deep copy of a nested dictionary.
+**Solution**:
  
 ```  
    def deep_copy(d):
@@ -475,7 +475,7 @@ Here are some advanced practical Python interview questions that can assess both
    print(copy)      # Output: {'a': 1, 'b': {'x': 10, 'y': 3}}
 ```
    
-###Implement a Function to Flatten a Nested List (of arbitrary depth)h)**
+### 5. Implement a Function to Flatten a Nested List (of arbitrary depth)h)**
  Problemem**: Write a function that takes a nested list (of arbitrary depth) and flattens it into a single list.
  Solutionon**:
 ```  
@@ -491,7 +491,7 @@ Here are some advanced practical Python interview questions that can assess both
    print(flat_list)  # Output: [1, 2, 3, 4, 5, 6]
 ```
    
-###Write a Python Function to Find the Longest Substring Without Repeating Charactersrs**
+### 6. Write a Python Function to Find the Longest Substring Without Repeating Charactersrs**
  Problemem**: Given a string, write a function that finds the length of the longest substring without repeating characters.
  Solutionon**:
 ```
