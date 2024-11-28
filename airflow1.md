@@ -644,3 +644,342 @@ These exercises cover several advanced concepts in Apache Airflow. Mastering the
 - Handle cross-DAG dependencies using external task sensors.
 
 Airflow is incredibly flexible, and with these advanced techniques, you can design highly modular, maintainable, and robust workflows.
+
+
+Below is an example of how you can create a simple Airflow DAG (Directed Acyclic Graph) that orchestrates a data pipeline using Python.
+
+### Problem:
+You need to create an Airflow DAG to orchestrate a data pipeline. The pipeline should:
+1. Extract data from a file (for simplicity, assume it's a CSV file).
+2. Process the data (e.g., filter rows or compute some transformation).
+3. Load the processed data to a destination (e.g., a database or output file).
+
+### Steps:
+1. **Install Airflow**: 
+   If you don't have Airflow installed, you can install it using pip:
+   ```bash
+   pip install apache-airflow
+   ```
+
+2. **Set up the Airflow environment**: 
+   Initialize the Airflow database (once):
+   ```bash
+   airflow db init
+   ```
+
+3. **Define the DAG**: 
+
+   The DAG will contain three tasks:
+   - Extract task: Extracts data from a CSV file.
+   - Process task: Processes the data (e.g., filters out empty rows).
+   - Load task: Loads the processed data to another location (e.g., stores it back in a different file).
+
+4. **Airflow DAG Code**:
+
+   ```python
+   from airflow import DAG
+   from airflow.operators.python import PythonOperator
+   from datetime import datetime
+   import pandas as pd
+
+   # Function to extract data from a CSV file
+   def extract_data(**kwargs):
+       # Simulating extraction from a file
+       data = pd.read_csv('/path/to/input_data.csv')
+       kwargs['ti'].xcom_push(key='raw_data', value=data)
+       print("Data Extracted")
+       return data
+
+   # Function to process the data
+   def process_data(**kwargs):
+       # Get raw data from the previous task
+       ti = kwargs['ti']
+       raw_data = ti.xcom_pull(task_ids='extract_data', key='raw_data')
+       
+       # Simulate processing by filtering rows with missing values
+       processed_data = raw_data.dropna()
+       kwargs['ti'].xcom_push(key='processed_data', value=processed_data)
+       print("Data Processed")
+       return processed_data
+
+   # Function to load the data (write to a new CSV file in this example)
+   def load_data(**kwargs):
+       # Get processed data from the previous task
+       ti = kwargs['ti']
+       processed_data = ti.xcom_pull(task_ids='process_data', key='processed_data')
+       
+       # Write the processed data to a new CSV
+       processed_data.to_csv('/path/to/output_data.csv', index=False)
+       print("Data Loaded")
+
+   # Define the DAG
+   default_args = {
+       'owner': 'airflow',
+       'retries': 1,
+       'start_date': datetime(2024, 11, 28),
+   }
+
+   with DAG(
+       dag_id='simple_data_pipeline',
+       default_args=default_args,
+       description='A simple data pipeline orchestrated by Airflow',
+       schedule_interval=None,  # Runs manually
+       catchup=False,
+   ) as dag:
+       
+       # Define the tasks
+       extract_task = PythonOperator(
+           task_id='extract_data',
+           python_callable=extract_data,
+           provide_context=True,
+       )
+       
+       process_task = PythonOperator(
+           task_id='process_data',
+           python_callable=process_data,
+           provide_context=True,
+       )
+       
+       load_task = PythonOperator(
+           task_id='load_data',
+           python_callable=load_data,
+           provide_context=True,
+       )
+       
+       # Set up task dependencies
+       extract_task >> process_task >> load_task
+   ```
+
+### Explanation:
+- **DAG definition**: The `DAG` is defined using the `DAG` class in Airflow. The DAG has an ID (`simple_data_pipeline`) and is set to run manually (`schedule_interval=None`).
+- **PythonOperator**: Each task in the pipeline is created using the `PythonOperator`. These operators execute Python functions when triggered.
+- **XCom**: Airflow uses **XCom** (short for "cross-communication") to allow tasks to share data. In this case, XCom is used to pass the extracted and processed data between tasks.
+- **Task dependencies**: `extract_task >> process_task >> load_task` sets up the sequence in which the tasks should run. The process task will not run until the extract task has completed, and similarly, the load task will only run after the process task is done.
+
+### How to run:
+1. **Start Airflow**:
+   Start the Airflow web server and scheduler:
+   ```bash
+   airflow webserver --port 8080
+   airflow scheduler
+   ```
+
+2. **Trigger the DAG**:
+   You can trigger the DAG manually using the Airflow UI or from the command line:
+   ```bash
+   airflow dags trigger simple_data_pipeline
+   ```
+
+3. **Monitor the DAG**:
+   - Open the Airflow UI by visiting `http://localhost:8080` in your browser.
+   - You will be able to monitor the status of your DAG and its tasks from there.
+
+### Solution Highlights:
+- **Data Extraction**: The `extract_data` function reads data from a CSV file using `pandas.read_csv()`.
+- **Data Processing**: The `process_data` function filters out rows with missing values using `dropna()`.
+- **Data Loading**: The `load_data` function saves the processed data to a new CSV file using `to_csv()`.
+
+This is a basic example of how Airflow can be used to orchestrate a data pipeline. You can extend it by adding more complex tasks like data validation, transformations, or loading to different data stores (databases, APIs, etc.).
+
+
+Here’s an advanced Apache Airflow exercise for building a data pipeline, along with its solution:
+
+### **Exercise: Build a Data Pipeline with Apache Airflow**
+
+**Problem Statement:**
+
+You need to build a data pipeline in Apache Airflow that performs the following tasks:
+
+1. **Extract**: Fetch data from a public API (for instance, an API that returns weather data).
+2. **Transform**: Clean and transform the data. This may involve filtering out unnecessary fields, renaming columns, and converting data types.
+3. **Load**: Store the transformed data into a PostgreSQL database (or another relational database).
+4. **Error Handling**: Ensure that the pipeline handles failures gracefully and retries a specified number of times in case of errors.
+5. **Logging**: Log the important steps (data extraction, transformation, and loading) and store logs for future reference.
+6. **Scheduling**: Schedule the pipeline to run every hour.
+
+---
+
+### **Solution:**
+
+Here’s how to implement this with Apache Airflow.
+
+#### **1. Setup the environment**
+
+Ensure the following dependencies are installed:
+
+```bash
+pip install apache-airflow
+pip install apache-airflow-providers-postgres
+pip install requests
+pip install pandas
+```
+
+#### **2. Create the DAG**
+
+```python
+from airflow import DAG
+from airflow.providers.postgres.operators.postgres import PostgresOperator
+from airflow.operators.python import PythonOperator
+from airflow.utils.dates import days_ago
+from airflow.hooks.postgres_hook import PostgresHook
+import requests
+import pandas as pd
+import logging
+from datetime import timedelta
+
+# Define default arguments for the DAG
+default_args = {
+    'owner': 'airflow',
+    'retries': 3,  # Retry 3 times in case of failure
+    'retry_delay': timedelta(minutes=5),
+    'email_on_failure': True,
+    'email_on_retry': False,
+}
+
+# Define the DAG
+dag = DAG(
+    'weather_data_pipeline',
+    default_args=default_args,
+    description='A data pipeline to extract, transform, and load weather data',
+    schedule_interval=timedelta(hours=1),
+    start_date=days_ago(1),
+    catchup=False,
+)
+
+# Function to extract weather data from API
+def extract_weather_data():
+    url = "https://api.openweathermap.org/data/2.5/weather?q=London&appid=your_api_key"
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        data = response.json()
+        logging.info("Data extraction successful.")
+        return data
+    except requests.exceptions.RequestException as e:
+        logging.error(f"Error while fetching data: {e}")
+        raise
+
+# Function to transform the extracted data
+def transform_weather_data(data):
+    try:
+        # Convert to a pandas DataFrame
+        df = pd.json_normalize(data)
+        
+        # Extract relevant fields
+        df = df[['name', 'main.temp', 'main.humidity', 'wind.speed', 'weather.0.description']]
+        
+        # Rename columns
+        df.columns = ['city', 'temperature', 'humidity', 'wind_speed', 'description']
+        
+        # Convert temperature to Celsius
+        df['temperature'] = df['temperature'] - 273.15
+        
+        logging.info("Data transformation successful.")
+        return df
+    except Exception as e:
+        logging.error(f"Error during data transformation: {e}")
+        raise
+
+# Function to load the transformed data into PostgreSQL
+def load_weather_data_to_db(df):
+    try:
+        # PostgreSQL connection
+        hook = PostgresHook(postgres_conn_id='my_postgres_conn')
+        conn = hook.get_conn()
+        cursor = conn.cursor()
+        
+        # Insert data into PostgreSQL table
+        for _, row in df.iterrows():
+            cursor.execute("""
+                INSERT INTO weather_data (city, temperature, humidity, wind_speed, description)
+                VALUES (%s, %s, %s, %s, %s)
+                ON CONFLICT (city) DO UPDATE SET
+                    temperature = EXCLUDED.temperature,
+                    humidity = EXCLUDED.humidity,
+                    wind_speed = EXCLUDED.wind_speed,
+                    description = EXCLUDED.description;
+            """, (row['city'], row['temperature'], row['humidity'], row['wind_speed'], row['description']))
+        
+        conn.commit()
+        logging.info("Data loaded successfully into PostgreSQL.")
+    except Exception as e:
+        logging.error(f"Error during data loading: {e}")
+        raise
+    finally:
+        cursor.close()
+        conn.close()
+
+# Define the tasks
+extract_task = PythonOperator(
+    task_id='extract_weather_data',
+    python_callable=extract_weather_data,
+    dag=dag,
+)
+
+transform_task = PythonOperator(
+    task_id='transform_weather_data',
+    python_callable=transform_weather_data,
+    op_args=['{{ task_instance.xcom_pull(task_ids="extract_weather_data") }}'],
+    dag=dag,
+)
+
+load_task = PythonOperator(
+    task_id='load_weather_data',
+    python_callable=load_weather_data_to_db,
+    op_args=['{{ task_instance.xcom_pull(task_ids="transform_weather_data") }}'],
+    dag=dag,
+)
+
+# Task dependencies
+extract_task >> transform_task >> load_task
+```
+
+### **Explanation:**
+
+1. **DAG definition**: The DAG is scheduled to run every hour with `schedule_interval=timedelta(hours=1)`. We also specify default arguments for retries, email alerts, etc.
+
+2. **Extract task**: This PythonOperator calls the `extract_weather_data` function, which fetches data from the weather API.
+
+3. **Transform task**: The data fetched from the API is passed to the `transform_weather_data` function via `XCom`, where it is cleaned and transformed into the required format (e.g., converting temperature to Celsius).
+
+4. **Load task**: The transformed data is loaded into PostgreSQL using the `load_weather_data_to_db` function.
+
+5. **Error handling**: If any step fails (during extraction, transformation, or loading), the task will retry based on the specified retry logic.
+
+6. **Logging**: Logs are generated at each step, so you can track the progress of the data pipeline.
+
+7. **PostgreSQL**: The database is used to store the processed weather data. You need to configure the PostgreSQL connection (`my_postgres_conn`) in Airflow's Admin interface (`Connections`).
+
+---
+
+### **PostgreSQL Table Structure:**
+
+You need a PostgreSQL table to store the data. Here's an SQL script to create it:
+
+```sql
+CREATE TABLE weather_data (
+    id SERIAL PRIMARY KEY,
+    city VARCHAR(255),
+    temperature FLOAT,
+    humidity INT,
+    wind_speed FLOAT,
+    description VARCHAR(255),
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(city)
+);
+```
+
+### **Execution Flow:**
+
+- **Extract**: Every hour, the pipeline pulls the weather data from the API.
+- **Transform**: The data is transformed to calculate temperature in Celsius and is filtered to include only the necessary fields.
+- **Load**: The transformed data is inserted into the PostgreSQL table. If the data already exists for a city, it updates the record.
+
+This pipeline is modular and can be easily extended with more data sources, transformations, or different storage backends.
+
+---
+
+### **Summary:**
+
+This solution demonstrates a basic but scalable ETL pipeline in Apache Airflow using Python and PostgreSQL. You can build more complex workflows by adding more tasks for data validation, enrichment, or notifications.
+
