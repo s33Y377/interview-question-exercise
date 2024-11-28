@@ -456,8 +456,9 @@ Here are some advanced practical Python interview questions that can assess both
    print(cache.get(1))  # Output: 1
    cache.put(3, 3)
    print(cache.get(2))  # Output: -1 (evicted)
-```   
-### 4. Write a Python Function to Perform Deep Copying of Nested Dictionarieses
+```
+
+### 4. Write a Python Function to Perform Deep Copying of Nested Dictionaries
 **Problem**: Write a function that performs a deep copy of a nested dictionary.
 **Solution**:
  
