@@ -3034,3 +3034,38 @@ print(dog2.age)  # 3 (remains unchanged for dog2)
 ### Key Takeaways:
 - Class attributes are shared across all instances of the class.
 - Instance attributes are unique to each instance and are typically initializedinit__init__ method.
+
+
+```
+class MethodTypes:
+
+    name = "Ragnar"
+
+    def instanceMethod(self):
+        # Creates an instance atribute through keyword self
+        self.lastname = "Lothbrock"
+        print(self.name)
+        print(self.lastname)
+
+    @classmethod
+    def classMethod(cls):
+        # Access a class atribute through keyword cls
+        print(MethodTypes.name)
+        cls.name = "Lagertha"
+        print(cls.name)
+        
+
+    @staticmethod
+    def staticMethod():
+        print("This is a static method")
+
+# Creates an instance of the class
+m = MethodTypes()
+# Calls instance method
+m.instanceMethod()
+
+print()
+
+MethodTypes.classMethod()
+MethodTypes.staticMethod()
+```
