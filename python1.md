@@ -1,71 +1,84 @@
-Here are some advanced Python interview questions that could be asked to assess deep knowledge of the language:
+## Here are some advanced Python interview questions that could be asked to assess deep knowledge of the language
 
 [Source1](https://www.webasha.com/blog/advanced-python-interview-questions)
 
 ### 1. What are metaclasses in Python, and how do they work?
-   - Answer: A metaclass in Python is a class that defines how other classes are created. It allows you to modify class creation behavior, such as adding or modifying attributes, methods, or class-level properties. Metaclasses can be defined by inheriting from type, and you can override methods like __new__ and __init__ to control class instantiation.
+
+   **Answer** : A metaclass in Python is a class that defines how other classes are created. It allows you to modify class creation behavior, such as adding or modifying attributes, methods, or class-level properties. Metaclasses can be defined by inheriting from type, and you can override methods like **new** and **init** to control class instantiation.
 
 ---
 
-### 2. Explain the Global Interpreter Lock (GIL) and its impact on multi-threading in Python.
-   - Answer: The GIL is a mechanism that prevents multiple native threads from executing Python bytecodes at once in CPython (the default implementation). This means that, in CPython, even though you can have multiple threads, only one thread can execute Python bytecode at a time. This limits concurrency in CPU-bound programs but does not affect I/O-bound operations significantly.
+### 2. Explain the Global Interpreter Lock (GIL) and its impact on multi-threading in Python
+
+   **Answer** : The GIL is a mechanism that prevents multiple native threads from executing Python bytecodes at once in CPython (the default implementation). This means that, in CPython, even though you can have multiple threads, only one thread can execute Python bytecode at a time. This limits concurrency in CPU-bound programs but does not affect I/O-bound operations significantly.
 
 ---
 
-### 3. **What is the difference between deepcopy and copy in Python?**
- Answerer**: The copy() function creates a shallow copy of an object, meaning that if the original object contains other objects (like lists inside a list), the references to those inner objects are copied, not the actual inner objects. The deepcopy() function, on the other hand, creates a completely new copy of the object along with all objects nested within it.
+### 3. What is the difference between deepcopy and copy in Python?
+
+**Answer**: The copy() function creates a shallow copy of an object, meaning that if the original object contains other objects (like lists inside a list), the references to those inner objects are copied, not the actual inner objects. The deepcopy() function, on the other hand, creates a completely new copy of the object along with all objects nested within it.
 
 ---
 
-### 4. What are Python decorators and how do they work?k?**
- Answerer**: Decorators are a way to modify or enhance functions or methods without changing their source code. A decorator is a function that takes another function as an argument and returns a new function. Decorators are commonly used for logging, access control, memoization, etc.
+### 4. What are Python decorators and how do they work?
+
+**Answerer**: Decorators are a way to modify or enhance functions or methods without changing their source code. A decorator is a function that takes another function as an argument and returns a new function. Decorators are commonly used for logging, access control, memoization, etc.
 
    Example:
-```  
-   def decorator_function(original_function):
-       def wrapper_function():
-           print("Wrapper executed this before {}".format(original_function.__name__))
-           return original_function()
-       return wrapper_function
+
+```python
+def decorator_function(original_function):
+    def wrapper_function():
+        print("Wrapper executed this before {}".format(original_function.__name__))
+        return original_function()
+    return wrapper_function
 ```
-   
-### 5. **Explain Python's garbage collection mechanism.m.**
+
+### 5. **Explain Python's garbage collection mechanism**
+
  Answerer**: Python uses reference counting and garbage collection (GC) to manage memory. When an object's reference count drops to zero, it is automatically deallocated. Additionally, Python uses a cyclic garbage collector to handle circular references. The garbage collection process is handled by the gc module.
 
 ---
 
-### 6. **What are the differences between @staticmethod and @classmethod in Python?AnswerAnswer**:
-     - @staticmethod: It is used to define a method that doesn't depend on the instance or the class. It doesn’t take self or cls as the first parameter.
-     - @classmethod: It is used to define a method that receives the class itself as the first argument (represented as cls), and it can access class-level attributes or methods.
+### 6. **What are the differences between @staticmethod and @classmethod in Python?
+
+**Answer**\
+    - **@staticmethod**: It is used to define a method that doesn't depend on the instance or the class. It doesn’t take self or cls as the first parameter.\
+    - **@classmethod** : It is used to define a method that receives the class itself as the first argument (represented as cls), and it can access class-level attributes or methods.
 
 ---
 
-### 7. What are Python generators and how do they work? work?AnswerAnswer**: A generator is a function that returns an iterator, and it yields values one at a time using the yield keyword. Unlike normal functions that return a value and exit, generators maintain their state between calls and can be resumed. They are memory-efficient as they yield items lazily.
+### 7. What are Python generators and how do they work?
 
-   Example:
-```  
-   def count_up_to(max):
-       count = 1
-       while count <= max:
-           yield count
-           count += 1
+**Answer**: A generator is a function that returns an iterator, and it yields values one at a time using the yield keyword. Unlike normal functions that return a value and exit, generators maintain their state between calls and can be resumed. They are memory-efficient as they yield items lazily
+
+Example:
+
+```python
+def count_up_to(max):
+    count = 1
+    while count <= max:
+        yield count
+        count += 1
 ```
 
 ---
 
-### 8. **What is theslotsof __slots__ in Python
-Answer- slots*: __slots__ is used to limit the attributes of a class to a predefined set, which can save memory by preventing the creation of dictult __dict__ for each instance. This is especially useful when dealing with a large number of instances and known attributes.
+### 8. What is the slots of **slots** in Python
+
+**Answer** - **slots** is used to limit the attributes of a class to a predefined set, which can save memory by preventing the creation of dictult **dict** for each instance. This is especially useful when dealing with a large number of instances and known attributes.
 
    Example:
-```  
-   class MyClass:
-       __slots__ = ['name', 'age']
-       def __init__(self, name, age):
-           self.name = name
-           self.age = age
+
+```python
+class MyClass:
+    __slots__ = ['name', 'age']
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
 ```
 
-```
+```python
 class MyClass:
     __slots__ = ['name', 'age']
     def __init__(self, name, age, a):
@@ -75,7 +88,7 @@ class MyClass:
 
 m = MyClass("abc", 25, 1)
 
-o/p
+O/P =>
 
 Traceback (most recent call last):
   File "/home/main.py", line 8, in <module>
@@ -88,173 +101,191 @@ AttributeError: 'MyClass' object has no attribute 'a'
 ---
 
 ### 9. How does Python handle multiple inheritance and method resolution order (MRO)?
-   - Answer: Python uses the C3 linearization algorithm (also known as C3 superclass linearization) to determine the method resolution order (MRO) when dealing with multiple inheritance. The MRO determines the order in which base classes are searched when a method is called. You can view the MRO of a class using the mro() method or __mro__ attribute.
+
+- Answer: Python uses the C3 linearization algorithm (also known as C3 superclass linearization) to determine the method resolution order (MRO) when dealing with multiple inheritance. The MRO determines the order in which base classes are searched when a method is called. You can view the MRO of a class using the mro() method or **mro** attribute.
+
+[Link](https://docs.python.org/3/howto/mro.html)
 
    Example:
-```  
-   class A: pass
-   class B(A): pass
-   class C(A): pass
-   class D(B, C): pass
-   print(D.mro())
+
+```python
+class A: pass
+class B(A): pass
+class C(A): pass
+class D(B, C): pass
+print(D.mro())
 ```
 
-```
+```python
 [<class '__main__.D'>, <class '__main__.B'>, <class '__main__.C'>, <class '__main__.A'>, <class 'object'>]
 ```
 
 ---
 
 ### 10. What is a context manager in Python?
-   - Answer: A context manager is a Python object that allows you to manage resources, such as files or database connections, using the with statement. It defines methods __enter__() and __exit__() to allocate and release resources.
+
+- Answer: A context manager is a Python object that allows you to manage resources, such as files or database connections, using the with statement. It defines methods **enter**() and **exit**() to allocate and release resources.
 
    Example:
-```  
+
+```python
 class MyContextManager:
     def __enter__(self):
         print("Entering the context")
         return self
+
     def __exit__(self, exc_type, exc_value, traceback):
         print("Exiting the context")
+
 with MyContextManager():
     print("Inside the context")
 ```
 
 ---
 
-### 11. Explain the concept of 'duck typing' in Python.
-   - Answer: Duck typing is a concept where the type or class of an object is determined by its behavior (methods and properties) rather than its inheritance or explicit type. If an object behaves like a certain type, it can be treated as that type, regardless of its actual class.
+### 11. Explain the concept of 'duck typing' in Python
+
+- Answer: Duck typing is a concept where the type or class of an object is determined by its behavior (methods and properties) rather than its inheritance or explicit type. If an object behaves like a certain type, it can be treated as that type, regardless of its actual class.
 
    Example:
-```  
-   class Bird:
-       def fly(self):
-           print("Flying")
 
-   class Airplane:
-       def fly(self):
-           print("Flying like an airplane")
+```python
+class Bird:
+    def fly(self):
+        print("Flying")
 
-   def take_off(flyable):
-       flyable.fly()  # Works if the object has a fly method
+class Airplane:
+    def fly(self):
+        print("Flying like an airplane")
+
+def take_off(flyable):
+    flyable.fly()  # Works if the object has a fly method
 ```
-```
+
+```python
 take_off(Bird())
 ```
 
 ---
-   
+
 ### 12. **What is the difference between is and == in Python?**
- Answerer**: The == operator checks if the values of two objects are the same, while the is operator checks if two references point to the same object in memory. 
+
+**Answerer**: The == operator checks if the values of two objects are the same, while the is operator checks if two references point to the same object in memory.
 
    Example:
-```  
-   a = [1, 2, 3]
-   b = [1, 2, 3]
-   print(a == b)  # True (values are equal)
-   print(a is b)  # False (they are different objects)
+
+```python
+a = [1, 2, 3]
+b = [1, 2, 3]
+print(a == b)  # True (values are equal)
+print(a is b)  # False (they are different objects)
 ```
 
 ---
 
-### 13. **How does Python's asyncio module work, and what is the difference between async and await?AnswerAnswer**: The asyncio module is used for writing asynchronous code. It allows you to run I/O-bound operations without blocking the execution of other tasks. The async keyword defines an asynchronous function, while await is used to pause the function's execution until the awaited result is available.
+### 13. **How does Python's asyncio module work, and what is the difference between async and await?AnswerAnswer**: The asyncio module is used for writing asynchronous code. It allows you to run I/O-bound operations without blocking the execution of other tasks. The async keyword defines an asynchronous function, while await is used to pause the function's execution until the awaited result is available
 
    Example:
-```  
-   import asyncio
 
-   async def fetch_data():
-       await asyncio.sleep(2)  # Simulates an I/O operation
-       return "Data fetched"
+```python
+import asyncio
 
-   async def main():
-       data = await fetch_data()
-       print(data)
+async def fetch_data():
+    await asyncio.sleep(2)  # Simulates an I/O operation
+    return "Data fetched"
 
-   asyncio.run(main())
+async def main():
+    data = await fetch_data()
+    print(data)
+
+asyncio.run(main())
 ```
 
 ---
 
-### 14. **What are f-strings in Python, and why are they preferred over other string formatting methAnswer- 
+### 14. **What are f-strings in Python, and why are they preferred over other string formatting methAnswer-
+
 **Answer**: f-strings (formatted string literals) are a concise and efficient way to embed expressions inside string literals, introduced in Python 3.6. They are preferred over older methods (like % formatting or str.format()) because they are more readable and generally faster.
 
    Example:
-```  
-   name = "John"
-   age = 30
-   print(f"My name is {name} and I am {age} years old.")
+
+```python
+name = "John"
+age = 30
+print(f"My name is {name} and I am {age} years old.")
 ```
 
 ---
 
-### 15. **How can you optimize the performance of Python
-   - **Answer**: Some ways to optimize Python code include:
-     - Using built-in functions and libraries, as they are often optimized.
-     - Avoiding global variables and using local variables where possible.
-     - Using list comprehensions or generator expressions instead of loops for better performance.
-     - Profiling the code using cProfile and focusing on optimizing the bottlenecks.
-     - Using libraries like NumPy for mathematical operations and multiprocessing for parallelism in CPU-bound tasks.
+### 16. **What is the difference between **del** and **exit** in Python?
 
+**Answerer** : del **del** and **exit** are used for cleanup purposes, but they are used in different contedel
 
-Here are more advanced Python interview questions, focusing on deeper concepts, design patterns, and performance considerations:
+- **del** is a destructor method called when an object is about to be destroyed. It is part of Python’s garbage collection mechanism and is not guaranteed to be called immediately after an object is no longer referen exit
+
+- **exit** is used in the context of a context manager and is part of the with statement. It ensures that the resources are cleaned up when exiting the context, even if an exception occurs.
 
 ---
 
-
-### 16. **What is the difference between __del__ and __exit__ in Python?
-**Answerer** del __del__ and __exit__ are used for cleanup purposes, but they are used in different contedel   - __del__ is a destructor method called when an object is about to be destroyed. It is part of Python’s garbage collection mechanism and is not guaranteed to be called immediately after an object is no longer referenexit  - __exit__ is used in the context of a context manager and is part of the with statement. It ensures that the resources are cleaned up when exiting the context, even if an exception occurs.
-
-   
 ### 17. **What is the purpose of the abc module in Python?
+
 **Answer**: The abc (Abstract Base Classes) module in Python provides a mechanism for defining abstract classes. An abstract class is one that cannot be instantiated directly and is intended to be subclassed. The module allows you to define abstract methods, which must be implemented by any subclass.
-   
+
    Example:
-```  
-   from abc import ABC, abstractmethod
 
-   class Animal(ABC):
-       @abstractmethod
-       def make_sound(self):
-           pass
+```python
+from abc import ABC, abstractmethod
 
-   class Dog(Animal):
-       def make_sound(self):
-           print("Woof")
+class Animal(ABC):
+    @abstractmethod
+    def make_sound(self):
+        pass
 
-   # animal = Animal()  # Will raise an error, as Animal is abstract
-   dog = Dog()
-   dog.make_sound()  # "Woof"
+class Dog(Animal):
+    def make_sound(self):
+        print("Woof")
+
+# animal = Animal()  # Will raise an error, as Animal is abstract
+dog = Dog()
+dog.make_sound()  # "Woof"
 ```
-   
-### 4. **Explain** Python's yield from expression- 
+
+---
+
+### 18. **Explain** Python's yield from expression
+
 **Answer**: The yield from expression simplifies delegating part of a generator’s operations to another iterable or generator. It allows a generator to yield all values from another iterable or generator without explicitly looping through it.
-   
+
    Example:
-```  
-   def generator1():
-       yield 1
-       yield 2
 
-   def generator2():
-       yield 3
-       yield 4
+```python
+def generator1():
+    yield 1
+    yield 2
 
-   def combined():
-       yield from generator1()
-       yield from generator2()
+def generator2():
+    yield 3
+    yield 4
 
-   for value in combined():
-       print(value)  # 1, 2, 3, 4
+def combined():
+    yield from generator1()
+    yield from generator2()
+
+for value in combined():
+    print(value)  # 1, 2, 3, 4
 ```
-   
-### 5. **What is the difnew between __new__ and __init__ in Answer
-   **newer**:
-     - __new__ is the method responsible for creating a new instance of a class. initialised before __init__ and is typically used in metaclasses or when subclassing immutable types like int, str, or tuple.
-     - __init__ is called after the object new  (i.e., after __new__) and is used to initialize the object's attributes.
+
+---
+
+### 19. What is the difference between new and init
+
+**Answer**:
+    - **new** is the method responsible for creating a new instance of a class. initialised before **init** and is typically used in metaclasses or when subclassing immutable types like int, str, or tuple.
+    - **init** is called after the object new  (i.e., after **new**) and is used to initialize the object's attributes.
 
    Example:
-```  
+
+```python
 class MyClass:
     def __new__(cls):
         print("Creating instance")
@@ -265,12 +296,12 @@ class MyClass:
 
 obj = MyClass()
 
-# Output:
-# Creating instance
-# Initializing instance
+Output:
+Creating instance
+Initializing instance
 ```
 
-```
+```python
 class LowerCaseTuple(tuple):
     def __new__(cls, iterable):
        lower_iterable = (l.lower() for l in iterable)
@@ -279,63 +310,102 @@ class LowerCaseTuple(tuple):
 print(LowerCaseTuple(['HELLO', 'MEDIUM']))
 
 ```
+
 [Dunder method](https://docs.python.org/3/reference/datamodel.html#basic-customization)
 
-   
-### 6. **What** is a "closure"?
-   - **Answer**: A closure is a function that "remembers" the environment in which it was created, even after that environment has finished execution. This means that the function has access to variables that were in scope when the function was defined, even if they are no longer in scope when the function is called.
+### 20. **What** is a "closure"?
+
+- **Answer**: A closure is a function that "remembers" the environment in which it was created, even after that environment has finished execution. This means that the function has access to variables that were in scope when the function was defined, even if they are no longer in scope when the function is called.
 
    Example:
-```  
-   def outer(x):
-       def inner(y):
-           return x + y
-       return inner
 
-   closure = outer(10)
-   print(closure(5))  # Output: 15
+```python
+def outer(x):
+    def inner(y):
+        return x + y
+    return inner
+
+closure = outer(10)
+print(closure(5))  # Output: 15
 ```
 
-### 7. **What is the @property decorator, and how is it used?
+---
+
+### 21. What is the @property decorator, and how is it used?
+
 **Answerer**: The @property decorator is used to define a method as a read-only attribute. It allows you to define a method that can be accessed like an attribute, without explicitly calling the method.
-   
-   Example:
-```  
-   class Circle:
-       def __init__(self, radius):
-           self._radius = radius
 
-       @property
-       def radius(self):
-           return self._radius
+Example:
 
-       @property
-       def area(self):
-           return 3.14159 * self._radius ** 2
+```python
+class Circle:
+    def __init__(self, radius):
+        self._radius = radius
 
-   c = Circle(5)
-   print(c.radius)  # 5
-   print(c.area)    # 78.53975
+    @property
+    def radius(self):
+        return self._radius
+
+    @property
+    def area(self):
+        return 3.14159 * self._radius ** 2
+
+c = Circle(5)
+print(c.radius)  # 5
+print(c.area)    # 78.53975
 ```
-   
-### 8. How can you improve the performance of Python code involving large datasets?
-**Answerer**: Some strategies to optimize performance include:
-     - NumPy **Pandas** for large numerical and data-processing tasks.
-     - built-in functions** and avoid unnecessary loops.
-     - multiprocessingng **concurrent.futureses** for CPU-bound tasks to take advantage of multiple processors.
-     - generator expressions** instead of list comprehensions for memory efficiency.
-     - memoizationon **caching** (via functools.lru_cache or custom caching) to avoid redundant computations.
-     - Profile code using the cProfile module to identify and optimize bottlenecks.
 
-### 9. What are some ways to handle exceptions in Python?
+---
+
+### 22. How can you improve the performance of Python code involving large datasets?
+
+**Answerer**: Some strategies to optimize performance include:
+
+- NumPy **Pandas** for large numerical and data-processing tasks.
+- built-in functions**and avoid unnecessary loops.
+- multiprocessingng **concurrent.futureses** for CPU-bound tasks to take advantage of multiple processors.
+- generator expressions** instead of list comprehensions for memory efficiency.
+- memoizationon **caching** (via functools.lru_cache or custom caching) to avoid redundant computations.
+- Profile code using the cProfile module to identify and optimize bottlenecks.
+
+---
+
+### 23. What are some ways to optimize memory usage in Python?
+
+**Answer**: Techniques for optimizing memory usage include:
+
+- Using generators instead of lists when working with large datasets.
+- Using ****slots**** in classes to avoid the overhead of instance dictionaries.
+- Avoiding the creation of unnecessary copies of data (e.g., use in-place operations).
+- Using **array** or **numpy** arrays for numerical data instead of lists.
+- **memoryview** objects to work with large binary data efficientlHow does Python handle namespaces and variable scope?ble scAnswer-
+
+---
+
+### 24. How can you optimize the performance of Python
+
+**Answer**: Some ways to optimize Python code include:
+
+- Using built-in functions and libraries, as they are often optimized.
+- Avoiding global variables and using local variables where possible.
+- Using list comprehensions or generator expressions instead of loops for better performance.
+- Profiling the code using cProfile and focusing on optimizing the bottlenecks.
+- Using libraries like NumPy for mathematical operations and multiprocessing for parallelism in CPU-bound tasks.
+
+---
+
+### 25. What are some ways to handle exceptions in Python?
+
 **Answerer**: In Python, exceptions are handled using try, except, else, and finally blocks.
-     - try: Contains code that may raise an exception.
-     - except: Catches and handles the exception.
-     - else: Runs if no exception was raised in the try block.
-     - finally: Executes code after the try block, regardless of whether an exception was raised or not.
+
+- try: Contains code that may raise an exception.
+- except: Catches and handles the exception.
+- else: Runs if no exception was raised in the try block.
+- finally: Executes code after the try block, regardless of whether an exception was raised or not.
 
    Example:
-```  
+
+```python
    try:
        x = 1 / 0
    except ZeroDivisionError:
@@ -345,155 +415,296 @@ print(LowerCaseTuple(['HELLO', 'MEDIUM']))
    finally:
        print("This runs no matter what.")
 ```
-   
-### 10. **What** are Python's contextlib and contextmanager?
+
+### 26. **What** are Python's contextlib and contextmanager?
+
 **Answer**: contextlib is a standard library module that provides utilities for creating and working with context managers. The contextmanager decorator is used to define a simple context manager using a generator function.
 
    Example:
-```  
-   from contextlib import contextmanager
 
-   @contextmanager
-   def open_file(filename):
-       f = open(filename, 'r')
-       try:
-           yield f
-       finally:
-           f.close()
+```python
+from contextlib import contextmanager
 
-   with open_file('file.txt') as f:
-       print(f.read())
+@contextmanager
+def open_file(filename):
+    f = open(filename, 'r')
+    try:
+        yield f
+    finally:
+        f.close()
+
+with open_file('file.txt') as f:
+    print(f.read())
 ```
-   
-### 11. What are Python descriptors, and how do they work?
-**Answer**: A descriptor is an object attribute with "binding behavior" that customizes how an attribute is accessed or modified. Descriptors implement any of the methods __get__, __set__, or __delete__ to define how attribute access is managed.
+
+### 27. What are Python descriptors, and how do they work?
+
+**Answer**: A descriptor is an object attribute with "binding behavior" that customizes how an attribute is accessed or modified. Descriptors implement any of the methods **get**, **set**, or **delete** to define how attribute access is managed.
 
    Example:
-```  
-   class Descriptor:
-       def __get__(self, instance, owner):
-           return 'Attribute accessed'
 
-   class MyClass:
-       attr = Descriptor()
+```python
+class Descriptor:
+    def __get__(self, instance, owner):
+        return 'Attribute accessed'
 
-   obj = MyClass()
-   print(obj.attr)  # 'Attribute accessed'
+class MyClass:
+    attr = Descriptor()
+
+obj = MyClass()
+print(obj.attr)  # 'Attribute accessed'
 ```
-   
-### 12. **What is the purpose of the functools module, and what are some common functions it contain- 
+
+```python
+class UppercaseDescriptor:
+    def __init__(self, name=''):
+        self.name = name
+
+    def __get__(self, instance, owner):
+        return instance.__dict__.get(self.name, "").upper()
+
+    def __set__(self, instance, value):
+        instance.__dict__[self.name] = value
+
+class MyClass:
+    name = UppercaseDescriptor("name")
+
+obj = MyClass()
+obj.name = "hello"
+print(obj.name)  # Output: "HELLO"
+```
+
+---
+
+### 27. What is the purpose of the functools module, and what are some common functions it contain
+
 **Answer**: The functools module provides higher-order functions that operate on other functions or callable objects. Some common functions include:
-     - lru_cache: Caches function results to improve performance for expensive functions.
-     - partial: Creates a new function by fixing some arguments of an existing function.
-     - reduce: Applies a binary function cumulatively to a sequence.
 
-   Example:
-```  
-   from functools import partial
+- lru_cache: Caches function results to improve performance for expensive functions.
+- partial: Creates a new function by fixing some arguments of an existing function.
+- reduce: Applies a binary function cumulatively to a sequence.
 
-   def power(base, exponent):
-       return base ** exponent
+Example:
 
-   square = partial(power, exponent=2)
-   print(square(4))  # Output: 16
+```python
+from functools import partial
+
+def power(base, exponent):
+    return base ** exponent
+
+square = partial(power, exponent=2)
+print(square(4))  # Output: 16
 ```
 
-### 13. What are some ways to optimize memory usage in Python?
-   - Answer: Techniques for optimizing memory usage include:
-     - Using generators instead of lists when working with large datasets.
-     - Using **__slots__** in classes to avoid the overhead of instance dictionaries.
-     - Avoiding the creation of unnecessary copies of data (e.g., use in-place operations).
-     - Using **array** or **numpy** arrays for numerical data instead of lists.
-     - **memoryview** objects to work with large binary data efficientlHow does Python handle namespaces and variable scope?ble scAnswer-
+**lru_cache** :
 
-**Answer**: Python uses namespaces to manage variable scope. Each function, module, and class has its own
+```python
+from functools import lru_cache
 
-Here are some advanced practical Python interview questions that can assess both your understanding of complex Python concepts and your ability to solve real-world problems using Python:
+@lru_cache(maxsize=3)
+def expensive_function(x):
+    print(f"Calculating {x}...")
+    return x * 2
 
-### 1. Implement a Decorator that Measures the Execution Time of a Function
-   - Problem: Write a decorator that measures how long a function takes to execute.
-   - Solution:
-```  
-   import time
-
-   def measure_time(func):
-       def wrapper(*args, **kwargs):
-           start_time = time.time()
-           result = func(*args, **kwargs)
-           end_time = time.time()
-           print(f"Execution time: {end_time - start_time} seconds")
-           return result
-       return wrapper
-
-   @measure_time
-   def long_running_task(*args, **kwargs):
-       time.sleep(2)
-
-   long_running_task()  # Output: Execution time: 2.000xx seconds
+# Example usage
+print(expensive_function(1))  # Cache miss
+print(expensive_function(2))  # Cache miss
+print(expensive_function(3))  # Cache miss
+print(expensive_function(1))  # Cache hit (from the cache)
+print(expensive_function(4))  # Cache miss (evicts 2)
 ```
-   
+
+**Custom cache** :
+
+```python
+def cache_decorator(func):
+    cache = {}
+    
+    def wrapper(*args):
+        if args not in cache:
+            print(f"Cache miss for {args}")
+            cache[args] = func(*args)
+        else:
+            print(f"Cache hit for {args}")
+        return cache[args]
+    
+    wrapper.clear_cache = lambda: cache.clear()
+    return wrapper
+
+@cache_decorator
+def expensive_function(x):
+    return x * x
+
+# Test
+print(expensive_function(4))  # Cache miss
+print(expensive_function(4))  # Cache hit
+print(expensive_function(5))  # Cache miss
+expensive_function.clear_cache()  # Manually clear cache
+print(expensive_function(4))  # Cache miss again
+```
+
+---
+
+### 27. Implement a Decorator that Measures the Execution Time of a Function
+
+- Problem: Write a decorator that measures how long a function takes to execute.
+- Solution:
+
+```python
+import time
+
+def measure_time(func):
+    def wrapper(*args, **kwargs):
+        start_time = time.time()
+        result = func(*args, **kwargs)
+        end_time = time.time()
+        print(f"Execution time: {end_time - start_time} seconds")
+        return result
+    return wrapper
+
+@measure_time
+def long_running_task(*args, **kwargs):
+    time.sleep(2)
+
+long_running_task()  # Output: Execution time: 2.000xx seconds
+```
+
 ### 2. **Implement a Custom Iterator Class**
+
 **Problem**: Implement a custom iterator that returns squares of numbers from 1 to n.
  Solution**:
-```  
-   class SquareIterator:
-       def __init__(self, n):
-           self.n = n
-           self.current = 1
 
-       def __iter__(self):
-           return self
+```python
+class SquareIterator:
+    def __init__(self, n):
+        self.n = n
+        self.current = 
+        
+    def __iter__(self):
+        return 
+        
+    def __next__(self):
+        if self.current > self.n:
+            raise StopIteration
+        result = self.current ** 2
+        self.current += 1
+        return result
 
-       def __next__(self):
-           if self.current > self.n:
-               raise StopIteration
-           result = self.current ** 2
-           self.current += 1
-           return result
-
-   squares = SquareIterator(5)
-   for square in squares:
-       print(square)  # Output: 1 4 9 16 25
+squares = SquareIterator(5)
+for square in squares:
+    print(square)  # Output: 1 4 9 16 25
 ```
-   
+
+### 2. The OrderedDict is a part of Python's collections module. It is similar to a regular dictionary, but it maintains the order of keys as they are inserted. It was introduced in Python 3.1 to ensure that dictionaries retain their insertion order. Starting from Python 3.7, the built-in dict also maintains insertion order, but OrderedDict provides additional methods specific to its functionality
+
+```python
+from collections import OrderedDict
+
+# 1. Creating OrderedDict
+ordered_dict = OrderedDict([('apple', 1), ('banana', 2), ('cherry', 3)])
+print("Original OrderedDict:", ordered_dict)
+
+# 2. Adding item
+ordered_dict['date'] = 4
+print("After adding 'date':", ordered_dict)
+
+# 3. Move item to the end
+ordered_dict.move_to_end('apple')
+print("After moving 'apple' to end:", ordered_dict)
+
+# 4. Move item to the start
+ordered_dict.move_to_end('banana', last=False)
+print("After moving 'banana' to start:", ordered_dict)
+
+# 5. Deleting an item
+del ordered_dict['cherry']
+print("After deleting 'cherry':", ordered_dict)
+
+# 6. Pop item
+popped_item = ordered_dict.pop('banana')
+print("Popped item:", popped_item)
+print("After pop:", ordered_dict)
+
+# 7. Reversing the order
+reversed_dict = OrderedDict(reversed(ordered_dict.items()))
+print("Reversed OrderedDict:", reversed_dict)
+
+# 8. Copying OrderedDict
+copied_dict = ordered_dict.copy()
+print("Copied OrderedDict:", copied_dict)
+
+# 9. Equality comparison
+ordered_dict2 = OrderedDict([('date', 4), ('apple', 1)])
+print("Are the two OrderedDicts equal?", ordered_dict == ordered_dict2)
+
+# 10. Using with defaultdict
+from collections import defaultdict
+ordered_dict = defaultdict(int)  # Default value is 0
+ordered_dict['apple'] += 1
+ordered_dict['banana'] += 2
+ordered_dict['apple'] += 3
+print("Defaultdict-like OrderedDict:", ordered_dict)
+```
+
+```python
+Original OrderedDict: OrderedDict([('apple', 1), ('banana', 2), ('cherry', 3)])
+After adding 'date': OrderedDict([('apple', 1), ('banana', 2), ('cherry', 3), ('date', 4)])
+After moving 'apple' to end: OrderedDict([('banana', 2), ('cherry', 3), ('date', 4), ('apple', 1)])
+After moving 'banana' to start: OrderedDict([('cherry', 3), ('date', 4), ('apple', 1), ('banana', 2)])
+After deleting 'cherry': OrderedDict([('date', 4), ('apple', 1), ('banana', 2)])
+Popped item: 2
+After pop: OrderedDict([('date', 4), ('apple', 1)])
+Reversed OrderedDict: OrderedDict([('apple', 1), ('date', 4)])
+Copied OrderedDict: OrderedDict([('date', 4), ('apple', 1)])
+Are the two OrderedDicts equal? False
+Defaultdict-like OrderedDict: defaultdict(<class 'int'>, {'apple': 4, 'banana': 2})
+
+```
+
+---
+
 ### 3. Design and Implement a Cache with LRU (Least Recently Used) Evictionon**
+
  Problemem**: Implement an LRU cache using Python's collections.OrderedDict or your own implementation.
  Solutionon**:
-```  
-   from collections import OrderedDict
 
-   class LRUCache:
-       def __init__(self, capacity: int):
-           self.cache = OrderedDict()
-           self.capacity = capacity
+```python
+from collections import OrderedDict
 
-       def get(self, key: int) -> int:
-           if key not in self.cache:
-               return -1
-           self.cache.move_to_end(key)
-           return self.cache[key]
+class LRUCache:
+    def __init__(self, capacity: int):
+        self.cache = OrderedDict()
+        self.capacity = capacity
 
-       def put(self, key: int, value: int):
-           if key in self.cache:
-               self.cache.move_to_end(key)
-           self.cache[key] = value
-           if len(self.cache) > self.capacity:
-               self.cache.popitem(last=False)
+    def get(self, key: int) -> int:
+        if key not in self.cache:
+            return -1
+        self.cache.move_to_end(key)
+        return self.cache[key]
 
-   # Example usage
-   cache = LRUCache(2)
-   cache.put(1, 1)
-   cache.put(2, 2)
-   print(cache.get(1))  # Output: 1
-   cache.put(3, 3)
-   print(cache.get(2))  # Output: -1 (evicted)
+    def put(self, key: int, value: int):
+        if key in self.cache:
+            self.cache.move_to_end(key)
+        self.cache[key] = value
+        if len(self.cache) > self.capacity:
+            self.cache.popitem(last=False)
+
+# Example usage
+cache = LRUCache(2)
+cache.put(1, 1)
+cache.put(2, 2)
+print(cache.get(1))  # Output: 1
+cache.put(3, 3)
+print(cache.get(2))  # Output: -1 (evicted)
 ```
 
 ### 4. Write a Python Function to Perform Deep Copying of Nested Dictionaries
+
 **Problem**: Write a function that performs a deep copy of a nested dictionary.
+
 **Solution**:
- 
-```  
+
+```python
    def deep_copy(d):
        if isinstance(d, dict):
            return {key: deep_copy(value) for key, value in d.items()}
@@ -506,10 +717,12 @@ Here are some advanced practical Python interview questions that can assess both
    print(original)  # Output: {'a': 1, 'b': {'x': 2, 'y': 3}}
    print(copy)      # Output: {'a': 1, 'b': {'x': 10, 'y': 3}}
 ```
-   
+
 ### 5. Implement a Function to Flatten a Nested List (of arbitrary depth)h)**
+
  Problemem**: Write a function that takes a nested list (of arbitrary depth) and flattens it into a single list.
  Solutionon**:
+
 ```  
    def flatten(lst):
        for item in lst:
@@ -522,10 +735,12 @@ Here are some advanced practical Python interview questions that can assess both
    flat_list = list(flatten(nested_list))
    print(flat_list)  # Output: [1, 2, 3, 4, 5, 6]
 ```
-   
+
 ### 6. Write a Python Function to Find the Longest Substring Without Repeating Charactersrs**
+
  Problemem**: Given a string, write a function that finds the length of the longest substring without repeating characters.
  Solutionon**:
+
 ```
    def longest_substring(s: str) -> int:
        seen = {}
@@ -543,8 +758,9 @@ Here are some advanced practical Python interview questions that can assess both
 ```  
 
 ### 7. **Implement a Python Generator for Fibonacci Sequence**
-   - **Problem**: Write a generator function that generates the Fibonacci sequence up to `n` numbers.
-   - **Solution**:
+
+- **Problem**: Write a generator function that generates the Fibonacci sequence up to `n` numbers.
+- **Solution**:
 
 ```
 python
@@ -560,9 +776,10 @@ python
 ```
 
 ### 8. **Write a Python Program to Merge Two Sorted Lists into a Single Sorted List**
-   - **Problem**: Given two sorted lists, merge them into a single sorted list.
-   - **Solution**:
-   
+
+- **Problem**: Given two sorted lists, merge them into a single sorted list.
+- **Solution**:
+
 ```
    def merge_sorted_lists(list1, list2):
        merged = []
@@ -584,9 +801,10 @@ python
 ```  
 
 ### 9. **Implement a Binary Search Algorithm**
-   - **Problem**: Write a function that implements binary search on a sorted list.
-   - **Solution**:
-   
+
+- **Problem**: Write a function that implements binary search on a sorted list.
+- **Solution**:
+
 ```
    def binary_search(arr, target):
        left, right = 0, len(arr) - 1
@@ -605,9 +823,10 @@ python
 ```  
 
 ### 10. **Write a Python Function to Sort a List of Tuples by the Second Element**
-   - **Problem**: Sort a list of tuples based on the second element in each tuple.
-   - **Solution**:
-   
+
+- **Problem**: Sort a list of tuples based on the second element in each tuple.
+- **Solution**:
+
 ```
    def sort_by_second_element(tuples):
        return sorted(tuples, key=lambda x: x[1])
@@ -617,11 +836,11 @@ python
    # Output: [(3, 1), (2, 2), (1, 3)]
 ```
   
-
 ### 11. **Implement a Python Function to Check if a String is a Palindrome**
-   - **Problem**: Write a function that checks if a given string is a palindrome (reads the same forwards and backwards).
-   - **Solution**:
-   
+
+- **Problem**: Write a function that checks if a given string is a palindrome (reads the same forwards and backwards).
+- **Solution**:
+
 ```
    def is_palindrome(s: str) -> bool:
        s = ''.join(e for e in s if e.isalnum()).lower()  # Remove non-alphanumeric characters and make lowercase
@@ -631,9 +850,10 @@ python
 ```  
 
 ### 12. **Write a Python Function to Convert a List of Strings into a Single String (Concatenation)**
-   - **Problem**: Given a list of strings, write a function that concatenates all strings into a single string.
-   - **Solution**:
-   
+
+- **Problem**: Given a list of strings, write a function that concatenates all strings into a single string.
+- **Solution**:
+
 ```
    def concat_strings(str_list):
        return ''.join(str_list)
@@ -643,9 +863,9 @@ python
 ```
 
 ### 13. **Write a Python Function to Find the Most Frequent Element in a List**
-   - **Problem**: Write a function that finds the most frequent element in a list.
-   - **Solution**:
 
+- **Problem**: Write a function that finds the most frequent element in a list.
+- **Solution**:
 
 ```
    from collections import Counter
@@ -664,9 +884,11 @@ Here are some advanced Python exercises that cover a range of topics such as dec
 ---
 
 ### 1. **Custom Decorator for Timing Function Execution**
+
 Write a decorator that measures the execution time of a function and logs it. The decorator should print the function name, arguments, and execution time. Use the `time` module.
 
 **Requirements:**
+
 - Decorator should handle both positional and keyword arguments.
 - It should print out the function name, arguments, and execution time.
 
@@ -695,9 +917,11 @@ slow_function(3, 4)
 ---
 
 ### 2. **Generator for Fibonacci Sequence**
+
 Create a generator function that yields Fibonacci numbers up to a given number `n`. The generator should use the `yield` keyword.
 
 **Requirements:**
+
 - The generator should continue yielding Fibonacci numbers until `n` is reached.
 - It should stop when the next Fibonacci number exceeds `n`.
 
@@ -716,6 +940,7 @@ for num in fibonacci_generator(100):
 ---
 
 ### 3. **Context Manager for File Handling**
+
 Create a context manager that automatically closes a file after writing some content into it. You should use the `with` statement to handle file writing and ensure that the file is properly closed after the operation.
 
 ```python
@@ -738,9 +963,11 @@ with FileWriter('output.txt') as file:
 ---
 
 ### 4. **Metaclass to Enforce Singleton Pattern**
+
 Write a metaclass that ensures only one instance of a class can exist at any given time. The class should raise an exception if a new instance is created after the first one.
 
 **Requirements:**
+
 - The metaclass should manage the instance and ensure that only one instance of the class is allowed.
 - Use the `__call__` method of the metaclass to manage instance creation.
 
@@ -768,9 +995,11 @@ print(obj1 is obj2)  # True
 ---
 
 ### 5. **Advanced Sorting with Custom Key Functions**
+
 Create a function that sorts a list of dictionaries by multiple keys, where each key has a different sort order (ascending or descending). You should use the `sorted()` function with a custom key.
 
 **Requirements:**
+
 - The function should accept a list of dictionaries.
 - The sort order should be specified by a list of tuples, where each tuple contains the key and the desired order (`True` for ascending, `False` for descending).
 
@@ -796,9 +1025,11 @@ print(sorted_data)
 ---
 
 ### 6. **Custom Iterator for Prime Numbers**
+
 Write a custom iterator that generates prime numbers. The iterator should yield the next prime number each time it’s called.
 
 **Requirements:**
+
 - The iterator should use the `__next__` method to yield the next prime number.
 - The iterator should be able to be reset to start from the first prime number again.
 
@@ -835,9 +1066,11 @@ for _ in range(10):
 ---
 
 ### 7. **Dynamic Class Creation Using `type()`**
+
 Use the `type()` function to dynamically create a class at runtime. The class should inherit from a base class and have a method that prints a message.
 
 **Requirements:**
+
 - The dynamic class should inherit from a given base class.
 - The class should have a method that prints a custom message.
 
@@ -860,9 +1093,11 @@ obj.custom_method()  # Output: DynamicClass instance created!
 ---
 
 ### 8. **Implementing a Linked List**
+
 Implement a simple singly linked list with methods to insert nodes, delete nodes, and print the list. Define a `Node` class and a `LinkedList` class.
 
 **Requirements:**
+
 - The `Node` class should represent a node in the list.
 - The `LinkedList` class should have methods like `insert`, `delete`, and `print_list`.
 
@@ -915,11 +1150,12 @@ ll.print_list()  # Output: 30 -> 10 -> None
 
 These exercises touch on several advanced Python topics and will challenge you to apply your knowledge of Python's features like decorators, generators, context managers, metaclasses, and more. Try to implement them step-by-step, and experiment with different variations to fully grasp these concepts!
 
-
 Sure! Here are a few advanced exercises related to dunder methods (special methods) in Python. These exercises will help you get more comfortable working with the Python data model.
 
 ### Exercise 1: Custom Complex Number Class
+
 Create a custom class `MyComplex` that represents a complex number, and implement the following dunder methods:
+
 - `__init__(self, real, imag)` – for initializing a complex number.
 - `__repr__(self)` – for string representation of the complex number.
 - `__add__(self, other)` – to add two complex numbers.
@@ -980,7 +1216,9 @@ print(c1 == c2) # Should print False
 ---
 
 ### Exercise 2: Custom String Formatter
+
 Create a class `MyString` that behaves like a string but adds additional functionality. Implement the following dunder methods:
+
 - `__init__(self, value)` – for initializing the string value.
 - `__str__(self)` – for string representation.
 - `__add__(self, other)` – to concatenate two strings.
@@ -1027,7 +1265,9 @@ print(s1())        # Should return the string in uppercase
 ---
 
 ### Exercise 3: Implementing Iterable Class
+
 Create a custom iterable class `MyRange` that behaves like `range()` but with custom behavior. Implement the following dunder methods:
+
 - `__init__(self, start, stop, step)` – for initializing the range.
 - `__iter__(self)` – to return the iterator object.
 - `__next__(self)` – to return the next value in the range.
@@ -1066,6 +1306,7 @@ print(5 in r)  # Should print: False
 ---
 
 ### Exercise 4: Custom Context Manager
+
 Implement a custom context manager using `__enter__` and `__exit__`. The context manager will log when the code enters and exits a block, and handle exceptions.
 
 ```python
@@ -1088,6 +1329,7 @@ with MyContextManager():
 ```
 
 **Expected output without an exception:**
+
 ```
 Entering the context
 Inside the context
@@ -1095,6 +1337,7 @@ Exiting the context
 ```
 
 **Expected output with an exception:**
+
 ```
 Entering the context
 Inside the context
@@ -1105,7 +1348,9 @@ An exception occurred: Something went wrong
 ---
 
 ### Exercise 5: Custom Descriptor
+
 Create a class `Age` that acts as a descriptor to enforce age constraints in another class `Person`. Implement the following:
+
 - `__get__(self, instance, owner)` – returns the value of age.
 - `__set__(self, instance, value)` – sets the value of age, but ensures it's between 0 and 120.
 - `__delete__(self, instance)` – deletes the age attribute.
@@ -1143,7 +1388,9 @@ del p.age     # Should delete the age attribute
 ---
 
 ### Exercise 6: Implementing `__call__`
+
 Create a class `Counter` that increments a counter value each time it is called. Implement:
+
 - `__init__(self)` – for initializing the counter value.
 - `__call__(self)` – for incrementing and returning the counter.
 
@@ -1163,7 +1410,6 @@ print(counter())  # Should print: 2
 print(counter())  # Should print: 3
 ```
 
-
 In Python, Object-Oriented Programming (OOP) allows you to structure your code in a way that mimics real-world objects and their interactions. The advanced concepts in OOP include things like multiple inheritance, method resolution order (MRO), mixins, abstract base classes (ABCs), class methods, static methods, and decorators.
 
 Here's an explanation of these concepts with implementation examples:
@@ -1172,7 +1418,8 @@ Here's an explanation of these concepts with implementation examples:
 
 Multiple inheritance occurs when a class inherits from more than one base class. Python uses the C3 linearization algorithm to resolve method calls in a way that respects the inheritance hierarchy.
 
-#### Example of Multiple Inheritance:
+#### Example of Multiple Inheritance
+
 ```python
 class Animal:
     def sound(self):
@@ -1200,7 +1447,8 @@ In the code above, `Dog` inherits from both `Animal` and `Bird`. The method reso
 
 A mixin is a class designed to be inherited by other classes to provide functionality, but it’s not meant to be instantiated on its own. Mixins usually provide reusable functionality for multiple classes.
 
-#### Example of a Mixin:
+#### Example of a Mixin
+
 ```python
 class CanFly:
     def fly(self):
@@ -1227,7 +1475,8 @@ In this example, `Duck` inherits from two mixins, `CanFly` and `CanSwim`, which 
 
 Abstract base classes define methods that must be implemented in subclasses. This ensures that subclasses follow a certain interface.
 
-#### Example of ABC:
+#### Example of ABC
+
 ```python
 from abc import ABC, abstractmethod
 
@@ -1264,7 +1513,8 @@ Class methods and static methods allow for defining methods that are not bound t
 - **Class Methods**: Operate on the class itself, not an instance, and have access to the class state.
 - **Static Methods**: Do not operate on the class or instance at all and are independent methods.
 
-#### Example of Class and Static Methods:
+#### Example of Class and Static Methods
+
 ```python
 class Calculator:
     base_value = 10
@@ -1300,7 +1550,8 @@ In this example, `set_base_value` is a class method that modifies the class-leve
 
 The `property` decorator allows you to define getter, setter, and deleter methods for attributes, making them more manageable and controlled.
 
-#### Example of Property Decorators:
+#### Example of Property Decorators
+
 ```python
 class Circle:
     def __init__(self, radius):
@@ -1338,7 +1589,8 @@ Here, `radius` is a property, and `area` is another property that calculates the
 
 You can create classes dynamically at runtime using the built-in `type()` function.
 
-#### Example of Dynamic Class Creation:
+#### Example of Dynamic Class Creation
+
 ```python
 # Dynamically creating a class
 Person = type('Person', (object,), {'greet': lambda self: "Hello!"})
@@ -1354,7 +1606,8 @@ In this case, `Person` is created dynamically using `type()`. The class has a `g
 
 Python allows you to overload operators (such as `+`, `-`, `*`, etc.) by defining special methods in the class.
 
-#### Example of Operator Overloading:
+#### Example of Operator Overloading
+
 ```python
 class Vector:
     def __init__(self, x, y):
@@ -1380,10 +1633,11 @@ In this example, the `+` operator is overloaded to add two `Vector` objects.
 
 ---
 
-These are some advanced OOP concepts in Python that help create more flexible, reusable, and maintainable code. If you want more detail on any specific topic or additional examples, feel free to ask!
+These are some advanced OOP concepts in Python that help create more flexible, reusable, and maintainable code. If you want more detail on any specific topic or additional examples, feel free to ask
 ---
 
 ### Bonus Exercise: Metaclass Example
+
 Create a metaclass `UppercaseMeta` that automatically converts all class variable names to uppercase when a class is created.
 
 ```python
@@ -1406,7 +1660,6 @@ print(hasattr(MyClass, "LOWERCASE"))  # Should print True
 
 These exercises will provide you with a deeper understanding of Python’s special methods and how they fit into the language’s data model. Have fun implementing and experimenting!
 
-
 Here's an advanced Python interview exercise that tests deep knowledge of Python's features, including object-oriented programming (OOP), generators, decorators, context managers, and functional programming concepts.
 
 ---
@@ -1420,6 +1673,7 @@ Write a context manager that ensures the following conditions:
 3. If any exception occurs within the context, it should log the error message and re-raise the exception after releasing the lock.
 
 **Requirements**:
+
 - Implement this using Python's `with` statement and context manager protocol (`__enter__` and `__exit__`).
 - Simulate file locking with print statements.
 
@@ -1455,6 +1709,7 @@ def lazy_square(n: int):
 ```
 
 **Test Case**:
+
 ```python
 squares = lazy_square(5)
 for square in squares:
@@ -1462,6 +1717,7 @@ for square in squares:
 ```
 
 **Expected Output**:
+
 ```
 0
 1
@@ -1524,6 +1780,7 @@ class Rectangle:
 ```
 
 Test case:
+
 ```python
 rect = Rectangle.from_string("4.5,3.2")
 print(rect.width, rect.height)  # Output: 4.5 3.2
@@ -1564,6 +1821,7 @@ class PrimeGenerator:
 ```
 
 Test case:
+
 ```python
 primes = PrimeGenerator(30)
 for prime in primes:
@@ -1571,6 +1829,7 @@ for prime in primes:
 ```
 
 **Expected Output**:
+
 ```
 2
 3
@@ -1588,7 +1847,7 @@ for prime in primes:
 
 ### Problem 6: Custom Deserialization
 
-Create a custom `JSONDecoder` that deserializes JSON-like strings to Python dictionaries, handling both the basic types (`int`, `float`, `str`, `bool`, `None`) and lists or dictionaries. 
+Create a custom `JSONDecoder` that deserializes JSON-like strings to Python dictionaries, handling both the basic types (`int`, `float`, `str`, `bool`, `None`) and lists or dictionaries.
 
 You may assume that the input string is well-formed and use Python's built-in `json` library for comparison.
 
@@ -1603,6 +1862,7 @@ class CustomJSONDecoder:
 ```
 
 Test case:
+
 ```python
 decoder = CustomJSONDecoder()
 data = '{"name": "Alice", "age": 30, "is_employee": true, "skills": ["Python", "Java"]}'
@@ -1610,6 +1870,7 @@ print(decoder.decode(data))
 ```
 
 **Expected Output**:
+
 ```python
 {'name': 'Alice', 'age': 30, 'is_employee': True, 'skills': ['Python', 'Java']}
 ```
@@ -1618,11 +1879,10 @@ print(decoder.decode(data))
 
 These exercises test a candidate's knowledge of advanced Python features such as context managers, generators, decorators, static/class methods, iterators, and custom deserialization logic. Be sure to implement and test each solution independently!
 
-
-
 Here are some advanced Python exercises that many people may not know, but which will challenge your understanding of Python concepts such as metaprogramming, decorators, context managers, and advanced data structures.
 
 ### 1. **Metaclasses and Dynamic Class Creation**
+
 Metaclasses allow you to control the creation of classes in Python. This exercise involves creating a metaclass that automatically adds a `__str__` method to any class that doesn't have it.
 
 **Exercise:**
@@ -1644,6 +1904,7 @@ print(obj)  # Should print: "MyClass instance"
 ```
 
 ### 2. **Custom Context Manager with `__enter__` and `__exit__`**
+
 Context managers are useful for managing resources like file handles, network connections, or database sessions. You can create a custom context manager to handle operations automatically.
 
 **Exercise:**
@@ -1667,6 +1928,7 @@ with TimerContextManager() as timer:
 ```
 
 ### 3. **Function Caching with a Custom Decorator**
+
 Python's built-in `functools.lru_cache` decorator caches results of functions. But you can write your own caching decorator to implement caching based on custom logic.
 
 **Exercise:**
@@ -1700,6 +1962,7 @@ print(expensive_function(4))  # Cache miss again
 ```
 
 ### 4. **Creating a Singleton Class**
+
 A singleton is a design pattern where a class ensures only one instance is created. You can implement a singleton pattern using a metaclass.
 
 **Exercise:**
@@ -1725,6 +1988,7 @@ print(obj1 is obj2)  # Should be True
 ```
 
 ### 5. **Descriptors and Property Management**
+
 Descriptors are a low-level mechanism that allows customization of attribute access, which can be used for validation, lazy loading, etc.
 
 **Exercise:**
@@ -1752,6 +2016,7 @@ obj.positive_value = -5  # Raises ValueError
 ```
 
 ### 6. **Lazy Evaluation with `__iter__`**
+
 Lazy evaluation is a programming technique where you delay computation until the result is actually needed. This is often used in situations like large datasets or infinite sequences.
 
 **Exercise:**
@@ -1776,6 +2041,7 @@ for i, num in zip(range(10), fib):
 ```
 
 ### 7. **Advanced Comprehensions and Generator Expressions**
+
 You can use advanced comprehension techniques to handle complex data transformations and filtering.
 
 **Exercise:**
@@ -1790,6 +2056,7 @@ print(pairs)  # Should print [(1, 6), (2, 5), (3, 4)]
 ```
 
 ### 8. **Handling Circular Imports**
+
 Circular imports are a common issue in larger Python projects. You can design your program to handle circular imports gracefully.
 
 **Exercise:**
@@ -1821,6 +2088,7 @@ def call_b():
 ```
 
 ### 9. **Context-Sensitive Logger**
+
 Build a logger that can dynamically adjust its logging level based on the context.
 
 **Exercise:**
@@ -1860,23 +2128,23 @@ class ContextSensitiveLogger:
             logging.getLogger().setLevel(logging.DEBUG)
 ```
 
-
 These exercises will help you explore some advanced Python techniques that are not as commonly used. Mastering them can significantly improve your ability to write efficient, elegant, and highly Pythonic code.
-
-
 
 Here are some advanced Python string exercises often encountered in interviews, along with their examples and solutions. These exercises test your understanding of Python string manipulation techniques, such as regular expressions, slicing, formatting, and working with more complex scenarios.
 
 ### 1. **Reverse Words in a String**
+
 **Problem**: Given a string, reverse the order of words while maintaining the order of characters within each word.
 
-#### Example:
+#### Example
+
 ```python
 Input: "The quick brown fox"
 Output: "fox brown quick The"
 ```
 
-#### Solution:
+#### Solution
+
 ```python
 def reverse_words(s: str) -> str:
     # Split the string by spaces and reverse the list of words
@@ -1889,15 +2157,18 @@ print(reverse_words(input_str))  # Output: "fox brown quick The"
 ```
 
 ### 2. **Check if a String is a Palindrome**
+
 **Problem**: Check whether a given string is a palindrome (ignoring spaces, punctuation, and case sensitivity).
 
-#### Example:
+#### Example
+
 ```python
 Input: "A man, a plan, a canal, Panama"
 Output: True
 ```
 
-#### Solution:
+#### Solution
+
 ```python
 import re
 
@@ -1912,16 +2183,19 @@ print(is_palindrome(input_str))  # Output: True
 ```
 
 ### 3. **Count Occurrences of a Substring in a String**
+
 **Problem**: Given a string and a substring, count how many times the substring appears in the string without overlapping.
 
-#### Example:
+#### Example
+
 ```python
 Input: "ababcabcab"
 Substring: "ab"
 Output: 3
 ```
 
-#### Solution:
+#### Solution
+
 ```python
 def count_substring(s: str, sub: str) -> int:
     return s.count(sub)
@@ -1933,15 +2207,18 @@ print(count_substring(input_str, substring))  # Output: 3
 ```
 
 ### 4. **Longest Palindromic Substring**
+
 **Problem**: Given a string, find the longest substring which is a palindrome.
 
-#### Example:
+#### Example
+
 ```python
 Input: "babad"
 Output: "bab" or "aba" (both are correct)
 ```
 
-#### Solution:
+#### Solution
+
 ```python
 def longest_palindromic_substring(s: str) -> str:
     def expand_around_center(left, right):
@@ -1968,15 +2245,18 @@ print(longest_palindromic_substring(input_str))  # Output: "bab" or "aba"
 ```
 
 ### 5. **Remove Duplicate Characters**
+
 **Problem**: Given a string, remove all duplicate characters while keeping the first occurrence of each character.
 
-#### Example:
+#### Example
+
 ```python
 Input: "aabbccabc"
 Output: "abc"
 ```
 
-#### Solution:
+#### Solution
+
 ```python
 def remove_duplicates(s: str) -> str:
     return ''.join(sorted(set(s), key=s.index))
@@ -1987,15 +2267,18 @@ print(remove_duplicates(input_str))  # Output: "abc"
 ```
 
 ### 6. **Find the First Non-Repeating Character**
+
 **Problem**: Given a string, find the first character that does not repeat in the string.
 
-#### Example:
+#### Example
+
 ```python
 Input: "geeksforgeeks"
 Output: "f"
 ```
 
-#### Solution:
+#### Solution
+
 ```python
 from collections import Counter
 
@@ -2013,15 +2296,18 @@ print(first_non_repeating(input_str))  # Output: "f"
 ```
 
 ### 7. **String Compression**
+
 **Problem**: Given a string, compress it using the counts of repeated characters. For example, "aabcccccaaa" becomes "a2b1c5a3". If the compressed string is not smaller than the original string, return the original string.
 
-#### Example:
+#### Example
+
 ```python
 Input: "aabcccccaaa"
 Output: "a2b1c5a3"
 ```
 
-#### Solution:
+#### Solution
+
 ```python
 def compress_string(s: str) -> str:
     compressed = []
@@ -2043,15 +2329,18 @@ print(compress_string(input_str))  # Output: "a2b1c5a3"
 ```
 
 ### 8. **Find All Anagrams of a String in Another String**
+
 **Problem**: Given two strings `s` and `p`, return all the start indices of `p`'s anagrams in `s`. Strings consists of lowercase English letters.
 
-#### Example:
+#### Example
+
 ```python
 Input: s = "cbaebabacd", p = "abc"
 Output: [0, 6]
 ```
 
-#### Solution:
+#### Solution
+
 ```python
 from collections import Counter
 
@@ -2081,8 +2370,6 @@ print(find_anagrams(s, p))  # Output: [0, 6]
 
 These exercises are commonly used in coding interviews to assess problem-solving skills, familiarity with string operations, and the ability to write efficient code. They also help to test knowledge of Python libraries like `re` for regular expressions and `collections.Counter` for counting occurrences in strings.
 
-
-
 In Python, the term "oops" refers to **Object-Oriented Programming (OOP)**, a programming paradigm that uses objects and classes to organize code. The advanced concepts in OOP typically include the following:
 
 1. **Inheritance**
@@ -2098,6 +2385,7 @@ In Python, the term "oops" refers to **Object-Oriented Programming (OOP)**, a pr
 Let's go over these concepts with code examples:
 
 ### 1. Inheritance
+
 Inheritance allows one class to inherit the attributes and methods of another class.
 
 ```python
@@ -2114,6 +2402,7 @@ print(dog.speak())  # Output: Bark
 ```
 
 ### 2. Polymorphism
+
 Polymorphism allows methods to have different implementations based on the object type.
 
 ```python
@@ -2127,6 +2416,7 @@ for animal in animals:
 ```
 
 ### 3. Encapsulation
+
 Encapsulation is the bundling of data and methods that operate on the data within a class, and restricting direct access to some of the object's components.
 
 ```python
@@ -2151,6 +2441,7 @@ print(p.get_age())  # Output: 35
 ```
 
 ### 4. Abstraction
+
 Abstraction allows hiding complex implementation details and exposing only necessary parts.
 
 ```python
@@ -2173,6 +2464,7 @@ print(circle.area())  # Output: 78.5
 ```
 
 ### 5. Method Overriding
+
 Method overriding occurs when a subclass provides its own implementation of a method that is already defined in the parent class.
 
 ```python
@@ -2189,6 +2481,7 @@ print(dog.speak())  # Output: Bark (Overridden method)
 ```
 
 ### 6. Multiple Inheritance
+
 Multiple inheritance allows a class to inherit from more than one parent class.
 
 ```python
@@ -2209,6 +2502,7 @@ print(dog.walk())   # Output: Walking on 4 legs
 ```
 
 ### 7. Using `super()`
+
 `super()` allows calling methods from a parent class in the child class.
 
 ```python
@@ -2225,6 +2519,7 @@ print(dog.speak())  # Output: Animal sound and Bark
 ```
 
 ### 8. Static Methods and Class Methods
+
 - **Static methods**: Do not operate on an instance of the class.
 - **Class methods**: Operate on the class itself.
 
@@ -2243,6 +2538,7 @@ print(MyClass.class_method())   # Output: This is a class method of MyClass
 ```
 
 ### 9. Magic Methods (Dunder Methods)
+
 Magic methods are special methods that have double underscores before and after their name. They are used to define how instances of the class behave in certain operations.
 
 ```python
@@ -2264,15 +2560,17 @@ print(point1 + point2)  # Output: Point(6, 8)
 ```
 
 ### Conclusion
-These advanced OOP concepts in Python help structure and manage complex programs. Understanding inheritance, polymorphism, encapsulation, abstraction, and method overriding can greatly enhance your ability to design and maintain object-oriented systems.
 
+These advanced OOP concepts in Python help structure and manage complex programs. Understanding inheritance, polymorphism, encapsulation, abstraction, and method overriding can greatly enhance your ability to design and maintain object-oriented systems.
 
 Here is a comprehensive guide to **Python sorting algorithms**, including explanations, example exercises, and their solutions.
 
 ### 1. **Bubble Sort**
+
 Bubble sort is a simple comparison-based sorting algorithm. It repeatedly steps through the list, compares adjacent elements, and swaps them if they are in the wrong order. This process is repeated until the list is sorted.
 
-#### Example Code:
+#### Example Code
+
 ```python
 def bubble_sort(arr):
     n = len(arr)
@@ -2287,10 +2585,12 @@ def bubble_sort(arr):
     return arr
 ```
 
-#### Exercise:
+#### Exercise
+
 Sort the following list using Bubble Sort: `[64, 34, 25, 12, 22, 11, 90]`
 
-#### Solution:
+#### Solution
+
 ```python
 arr = [64, 34, 25, 12, 22, 11, 90]
 sorted_arr = bubble_sort(arr)
@@ -2300,9 +2600,11 @@ print(sorted_arr)  # Output: [11, 12, 22, 25, 34, 64, 90]
 ---
 
 ### 2. **Selection Sort**
+
 Selection sort is another comparison-based sorting algorithm. It repeatedly selects the smallest (or largest) element from the unsorted portion of the list and swaps it with the first unsorted element.
 
-#### Example Code:
+#### Example Code
+
 ```python
 def selection_sort(arr):
     n = len(arr)
@@ -2315,10 +2617,12 @@ def selection_sort(arr):
     return arr
 ```
 
-#### Exercise:
+#### Exercise
+
 Sort the following list using Selection Sort: `[29, 10, 14, 37, 13]`
 
-#### Solution:
+#### Solution
+
 ```python
 arr = [29, 10, 14, 37, 13]
 sorted_arr = selection_sort(arr)
@@ -2328,9 +2632,11 @@ print(sorted_arr)  # Output: [10, 13, 14, 29, 37]
 ---
 
 ### 3. **Insertion Sort**
+
 Insertion sort works by taking one element at a time from the unsorted portion and inserting it into the correct position in the sorted portion.
 
-#### Example Code:
+#### Example Code
+
 ```python
 def insertion_sort(arr):
     for i in range(1, len(arr)):
@@ -2343,10 +2649,12 @@ def insertion_sort(arr):
     return arr
 ```
 
-#### Exercise:
+#### Exercise
+
 Sort the following list using Insertion Sort: `[12, 11, 13, 5, 6]`
 
-#### Solution:
+#### Solution
+
 ```python
 arr = [12, 11, 13, 5, 6]
 sorted_arr = insertion_sort(arr)
@@ -2356,9 +2664,11 @@ print(sorted_arr)  # Output: [5, 6, 11, 12, 13]
 ---
 
 ### 4. **Merge Sort**
+
 Merge sort is a divide-and-conquer algorithm. It divides the list into two halves, recursively sorts them, and then merges the sorted halves.
 
-#### Example Code:
+#### Example Code
+
 ```python
 def merge_sort(arr):
     if len(arr) > 1:
@@ -2393,10 +2703,12 @@ def merge_sort(arr):
     return arr
 ```
 
-#### Exercise:
+#### Exercise
+
 Sort the following list using Merge Sort: `[38, 27, 43, 3, 9, 82, 10]`
 
-#### Solution:
+#### Solution
+
 ```python
 arr = [38, 27, 43, 3, 9, 82, 10]
 sorted_arr = merge_sort(arr)
@@ -2406,9 +2718,11 @@ print(sorted_arr)  # Output: [3, 9, 10, 27, 38, 43, 82]
 ---
 
 ### 5. **Quick Sort**
+
 Quick sort is a divide-and-conquer algorithm that works by selecting a 'pivot' element and partitioning the array around it.
 
-#### Example Code:
+#### Example Code
+
 ```python
 def quick_sort(arr):
     if len(arr) <= 1:
@@ -2420,10 +2734,12 @@ def quick_sort(arr):
     return quick_sort(left) + middle + quick_sort(right)
 ```
 
-#### Exercise:
+#### Exercise
+
 Sort the following list using Quick Sort: `[3, 6, 8, 10, 1, 2, 1]`
 
-#### Solution:
+#### Solution
+
 ```python
 arr = [3, 6, 8, 10, 1, 2, 1]
 sorted_arr = quick_sort(arr)
@@ -2433,9 +2749,11 @@ print(sorted_arr)  # Output: [1, 1, 2, 3, 6, 8, 10]
 ---
 
 ### 6. **Heap Sort**
+
 Heap sort is a comparison-based sorting algorithm that uses a binary heap data structure. It first builds a max heap and then repeatedly extracts the maximum element.
 
-#### Example Code:
+#### Example Code
+
 ```python
 import heapq
 
@@ -2444,10 +2762,12 @@ def heap_sort(arr):
     return [heapq.heappop(arr) for _ in range(len(arr))]
 ```
 
-#### Exercise:
+#### Exercise
+
 Sort the following list using Heap Sort: `[4, 10, 3, 5, 1]`
 
-#### Solution:
+#### Solution
+
 ```python
 arr = [4, 10, 3, 5, 1]
 sorted_arr = heap_sort(arr)
@@ -2457,19 +2777,23 @@ print(sorted_arr)  # Output: [1, 3, 4, 5, 10]
 ---
 
 ### 7. **Tim Sort**
+
 Tim Sort is a hybrid sorting algorithm derived from merge sort and insertion sort. It is used in Python’s built-in sorting functions (`sorted()` and `.sort()`).
 
-#### Example Code (Using Python's Built-In Sorting):
+#### Example Code (Using Python's Built-In Sorting)
+
 ```python
 arr = [7, 1, 3, 9, 5]
 arr.sort()
 print(arr)  # Output: [1, 3, 5, 7, 9]
 ```
 
-#### Exercise:
+#### Exercise
+
 Sort the following list using Tim Sort: `[3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5]`
 
-#### Solution:
+#### Solution
+
 ```python
 arr = [3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5]
 arr.sort()
@@ -2479,9 +2803,11 @@ print(arr)  # Output: [1, 1, 2, 3, 3, 4, 5, 5, 5, 6, 9]
 ---
 
 ### 8. **Radix Sort**
+
 Radix sort is a non-comparative integer sorting algorithm. It processes each digit of the number starting from the least significant digit to the most significant digit.
 
-#### Example Code:
+#### Example Code
+
 ```python
 def counting_sort(arr, exp):
     n = len(arr)
@@ -2514,10 +2840,12 @@ def radix_sort(arr):
     return arr
 ```
 
-#### Exercise:
+#### Exercise
+
 Sort the following list using Radix Sort: `[170, 45, 75, 90, 802, 24, 2, 66]`
 
-#### Solution:
+#### Solution
+
 ```python
 arr = [170, 45, 75, 90, 802, 24, 2, 66]
 sorted_arr = radix_sort(arr)
@@ -2527,20 +2855,22 @@ print(sorted_arr)  # Output: [2, 24, 45, 66, 75, 90, 170, 802]
 ---
 
 ### Conclusion
-These are common Python sorting algorithms, each with its own strengths and weaknesses. You can practice sorting different arrays using the given algorithms to understand their behavior and performance.
 
+These are common Python sorting algorithms, each with its own strengths and weaknesses. You can practice sorting different arrays using the given algorithms to understand their behavior and performance.
 
 Here is a list of common Python searching algorithms with explanations, exercises, and solutions:
 
 ### 1. **Linear Search**
 
-#### Explanation:
+#### Explanation
+
 Linear search is the simplest search algorithm. It checks each element in the list one by one until the desired element is found or the end of the list is reached.
 
-#### Exercise:
+#### Exercise
+
 - Implement a function `linear_search(arr, target)` that returns the index of the target element if it exists in the list, otherwise returns `-1`.
 
-#### Solution:
+#### Solution
 
 ```python
 def linear_search(arr, target):
@@ -2559,13 +2889,15 @@ print(linear_search(arr, target))  # Output: 2
 
 ### 2. **Binary Search**
 
-#### Explanation:
+#### Explanation
+
 Binary search works only on sorted arrays. It divides the array into halves and eliminates half of the search space after each comparison.
 
-#### Exercise:
+#### Exercise
+
 - Implement a function `binary_search(arr, target)` that returns the index of the target element if it exists, otherwise returns `-1`.
 
-#### Solution:
+#### Solution
 
 ```python
 def binary_search(arr, target):
@@ -2590,13 +2922,15 @@ print(binary_search(arr, target))  # Output: 2
 
 ### 3. **Jump Search**
 
-#### Explanation:
+#### Explanation
+
 Jump search is an algorithm for searching a sorted array. It works by jumping ahead by a fixed number of steps (called `block size`), then performing a linear search within that block.
 
-#### Exercise:
+#### Exercise
+
 - Implement a function `jump_search(arr, target)` that searches for the target element in a sorted array.
 
-#### Solution:
+#### Solution
 
 ```python
 import math
@@ -2627,13 +2961,15 @@ print(jump_search(arr, target))  # Output: 2
 
 ### 4. **Exponential Search**
 
-#### Explanation:
+#### Explanation
+
 Exponential search is an algorithm for searching a sorted array. It starts by checking the first element, then exponentially increases the search range.
 
-#### Exercise:
+#### Exercise
+
 - Implement a function `exponential_search(arr, target)` that searches for a target in a sorted array using exponential search.
 
-#### Solution:
+#### Solution
 
 ```python
 def exponential_search(arr, target):
@@ -2668,13 +3004,15 @@ print(exponential_search(arr, target))  # Output: 2
 
 ### 5. **Interpolation Search**
 
-#### Explanation:
+#### Explanation
+
 Interpolation search is similar to binary search but instead of dividing the array into two halves, it tries to estimate where the value might be based on the distribution of the numbers.
 
-#### Exercise:
+#### Exercise
+
 - Implement a function `interpolation_search(arr, target)` for searching the target in a sorted array using interpolation search.
 
-#### Solution:
+#### Solution
 
 ```python
 def interpolation_search(arr, target):
@@ -2699,13 +3037,15 @@ print(interpolation_search(arr, target))  # Output: 2
 
 ### 6. **Ternary Search**
 
-#### Explanation:
+#### Explanation
+
 Ternary search is similar to binary search but divides the array into three parts instead of two.
 
-#### Exercise:
+#### Exercise
+
 - Implement a function `ternary_search(arr, target)` for searching the target element in a sorted array using ternary search.
 
-#### Solution:
+#### Solution
 
 ```python
 def ternary_search(arr, target):
@@ -2736,13 +3076,15 @@ print(ternary_search(arr, target))  # Output: 2
 
 ### 7. **Fibonacci Search**
 
-#### Explanation:
+#### Explanation
+
 Fibonacci search is a divide-and-conquer algorithm that uses Fibonacci numbers to calculate the mid-point of the array. It is similar to binary search but instead of halving the search range, it reduces the range based on Fibonacci numbers.
 
-#### Exercise:
+#### Exercise
+
 - Implement a function `fibonacci_search(arr, target)` to find the target element using Fibonacci search.
 
-#### Solution:
+#### Solution
 
 ```python
 def fibonacci_search(arr, target):
@@ -2785,7 +3127,6 @@ print(fibonacci_search(arr, target))  # Output: 2
 
 These are some of the most commonly used searching algorithms in Python. Each algorithm has its own use case based on the input data and its properties (e.g., sorted or unsorted arrays).
 
-
 Here's an advanced Python interview exercise focusing on **tuples** and their various features. This exercise tests understanding of how to manipulate tuples, their immutability, and how they can be used in various scenarios.
 
 ---
@@ -2813,7 +3154,7 @@ data = [("apple", 7), ("banana", 3), ("orange", 9), ("pear", 2), ("grape", 8)]
 
 ---
 
-### Solution:
+### Solution
 
 ```python
 def advanced_tuple_manipulation(data):
@@ -2839,10 +3180,10 @@ result = advanced_tuple_manipulation(data)
 print(result)
 ```
 
-### Explanation:
+### Explanation
 
 1. **Sorting**: We sort the list of tuples based on the second item (integer) using the `sorted()` function with a custom sorting key (`lambda x: x[1]`).
-   
+
 2. **Filtering**: We use a list comprehension to filter out tuples where the second element (integer) is less than or equal to 5.
 
 3. **Dictionary Conversion**: After filtering, we convert the list of tuples into a dictionary using the `dict()` function. The first element of each tuple becomes the key, and the second element becomes the value.
@@ -2851,7 +3192,7 @@ print(result)
 
 ---
 
-### Expected Output:
+### Expected Output
 
 For the input:
 
@@ -2872,9 +3213,9 @@ The final output will be:
 (('apple', 7), ('grape', 8))
 ```
 
-### Complexity Analysis:
+### Complexity Analysis
 
-- **Time Complexity**: 
+- **Time Complexity**:
   - Sorting takes \(O(n \log n)\), where \(n\) is the number of tuples.
   - Filtering takes \(O(n)\).
   - Converting the list to a dictionary takes \(O(n)\).
@@ -2882,15 +3223,17 @@ The final output will be:
   
 Thus, the overall time complexity is \(O(n \log n)\), dominated by the sorting step.
 
-- **Space Complexity**: 
+- **Space Complexity**:
   - The space complexity is \(O(n)\) due to the space required for the filtered list, sorted list, and dictionary.
 
 In Python, **set operations** allow you to perform various mathematical operations on sets, such as union, intersection, difference, and symmetric difference. Here's a breakdown of all the common set operations with examples:
 
 ### 1. **Union (`|` or `union()`)**
+
 The union of two sets returns a new set containing all the unique elements from both sets.
 
-#### Example:
+#### Example
+
 ```python
 set1 = {1, 2, 3}
 set2 = {3, 4, 5}
@@ -2904,9 +3247,11 @@ print(union_result_method)   # Output: {1, 2, 3, 4, 5}
 ```
 
 ### 2. **Intersection (`&` or `intersection()`)**
+
 The intersection of two sets returns a new set with elements that are common to both sets.
 
-#### Example:
+#### Example
+
 ```python
 set1 = {1, 2, 3}
 set2 = {3, 4, 5}
@@ -2920,9 +3265,11 @@ print(intersection_result_method)   # Output: {3}
 ```
 
 ### 3. **Difference (`-` or `difference()`)**
+
 The difference between two sets returns a new set containing elements that are in the first set but not in the second set.
 
-#### Example:
+#### Example
+
 ```python
 set1 = {1, 2, 3}
 set2 = {3, 4, 5}
@@ -2936,9 +3283,11 @@ print(difference_result_method)   # Output: {1, 2}
 ```
 
 ### 4. **Symmetric Difference (`^` or `symmetric_difference()`)**
+
 The symmetric difference of two sets returns a new set containing elements that are in either of the sets but not in both.
 
-#### Example:
+#### Example
+
 ```python
 set1 = {1, 2, 3}
 set2 = {3, 4, 5}
@@ -2952,9 +3301,11 @@ print(symmetric_difference_result_method)   # Output: {1, 2, 4, 5}
 ```
 
 ### 5. **Subset (`<=` or `issubset()`)**
+
 A set is a subset of another if all elements of the first set are contained within the second set.
 
-#### Example:
+#### Example
+
 ```python
 set1 = {1, 2}
 set2 = {1, 2, 3, 4}
@@ -2968,9 +3319,11 @@ print(is_subset_method)   # Output: True
 ```
 
 ### 6. **Superset (`>=` or `issuperset()`)**
+
 A set is a superset of another if it contains all elements of the second set.
 
-#### Example:
+#### Example
+
 ```python
 set1 = {1, 2, 3, 4}
 set2 = {2, 3}
@@ -2984,9 +3337,11 @@ print(is_superset_method)   # Output: True
 ```
 
 ### 7. **Disjoint Sets (`isdisjoint()`)**
+
 Two sets are disjoint if they have no common elements.
 
-#### Example:
+#### Example
+
 ```python
 set1 = {1, 2, 3}
 set2 = {4, 5, 6}
@@ -2997,9 +3352,11 @@ print(are_disjoint)  # Output: True
 ```
 
 ### 8. **Adding and Removing Elements**
+
 You can add or remove elements from a set using methods like `add()`, `remove()`, `discard()`, and `pop()`.
 
-#### Example:
+#### Example
+
 ```python
 set1 = {1, 2, 3}
 
@@ -3022,9 +3379,11 @@ print(set1)  # Output: remaining elements
 ```
 
 ### 9. **Clear All Elements (`clear()`)**
+
 This method removes all elements from a set.
 
-#### Example:
+#### Example
+
 ```python
 set1 = {1, 2, 3}
 set1.clear()  # Clears the set
@@ -3032,6 +3391,7 @@ print(set1)  # Output: set()
 ```
 
 ### Summary
+
 - **Union**: Combines elements of both sets.
 - **Intersection**: Finds common elements between two sets.
 - **Difference**: Finds elements that are in the first set but not in the second.
@@ -3043,20 +3403,22 @@ print(set1)  # Output: set()
 
 These operations are powerful tools for manipulating sets in Python!
 
-
 In Python, class attributes and instance attributes are two types of attributes that can be associated with a class. Let's break down the difference with an example.
 
 ### Class Attribute
+
 - A class attribute is shared by all instances of the class.
 - It is defined inside the class but outside of any instance methods.
 - Class attributes are accessed by ClassName.attribute or by instances.
 
 ### Instance Attribute
+
 - An instance attribute is specific to an individual instance of the class.
-- It is defined inside the constructor (__init__) or in any method that modifies it for a particular instance.
+- It is defined inside the constructor (**init**) or in any method that modifies it for a particular instance.
 - Instance attributes are accessed using the instance of the class, like instance.attribute.
 
 Here's an example demonstrating the difference:
+
 ```
 class Dog:
     # Class attribute (shared by all instances of Dog)
@@ -3086,36 +3448,40 @@ print(dog2.age)   # 3
 ```
 
 # Modify class attribute via class name
+
 ```
 Dog.species = "Canis lupus familiaris"
 ```
 
 # After modifying, class attribute is updated for all instances
+
 ```
 print(dog1.species)  # "Canis lupus familiaris"
 print(dog2.species)  # "Canis lupus familiaris"
 ```
 
 # Modify instance attribute via instance
+
 ```
 dog1.age = 6
 print(dog1.age)  # 6 (only changed for dog1)
 print(dog2.age)  # 3 (remains unchanged for dog2)
 ```
 
-### Explanation:
+### Explanation
+
 1. Class Attribute (species):
    - The species attribute is defined at the class level, outside any methods. This means that it's shared by all instances of Dog.
    - You can access it through the class (Dog.species) or through an instance (dog1.species), but it remains the same for all instances unless explicitly modified at the class level.
 
 2. Instance Attributes (name and age):
-   - The name and age attributes are defined as __init__ method. These are specific to each instance and can be different for each Dog.
+   - The name and age attributes are defined as **init** method. These are specific to each instance and can be different for each Dog.
    - When you modify dog1.age, it only affects dog1, not dog2, because each instance has its own copy of the instance attributes.
 
-### Key Takeaways:
+### Key Takeaways
+
 - Class attributes are shared across all instances of the class.
 - Instance attributes are unique to each instance and are typically initializedinit__init__ method.
-
 
 ```
 class MethodTypes:
@@ -3246,4 +3612,3 @@ In this case, we've added a new method `method_two` to `MyClass` via monkey patc
 - **Document Changes**: Clearly document any monkey patches to ensure that other developers understand why the patch was applied and what it does.
 
 In summary, while monkey patching can be useful in certain scenarios, it's important to weigh the pros and cons and consider whether it's the best solution for your problem.
-
