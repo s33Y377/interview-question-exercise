@@ -3028,7 +3028,7 @@ In Python, class attributes and instance attributes are two types of attributes 
 - Instance attributes are accessed using the instance of the class, like instance.attribute.
 
 Here's an example demonstrating the difference:
-
+```
 class Dog:
     # Class attribute (shared by all instances of Dog)
     species = "Canis familiaris"
@@ -3054,25 +3054,33 @@ print(dog1.name)  # "Buddy"
 print(dog2.name)  # "Lucy"
 print(dog1.age)   # 5
 print(dog2.age)   # 3
+```
 
 # Modify class attribute via class name
+```
 Dog.species = "Canis lupus familiaris"
+```
 
 # After modifying, class attribute is updated for all instances
+```
 print(dog1.species)  # "Canis lupus familiaris"
 print(dog2.species)  # "Canis lupus familiaris"
+```
 
 # Modify instance attribute via instance
+```
 dog1.age = 6
 print(dog1.age)  # 6 (only changed for dog1)
 print(dog2.age)  # 3 (remains unchanged for dog2)
+```
+
 ### Explanation:
 1. Class Attribute (species):
    - The species attribute is defined at the class level, outside any methods. This means that it's shared by all instances of Dog.
    - You can access it through the class (Dog.species) or through an instance (dog1.species), but it remains the same for all instances unless explicitly modified at the class level.
 
 2. Instance Attributes (name and age):
-   - The name and age attributes are defined insinit__init__ method. These are specific to each instance and can be different for each Dog.
+   - The name and age attributes are defined as __init__ method. These are specific to each instance and can be different for each Dog.
    - When you modify dog1.age, it only affects dog1, not dog2, because each instance has its own copy of the instance attributes.
 
 ### Key Takeaways:
