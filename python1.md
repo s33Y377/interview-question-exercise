@@ -15,6 +15,8 @@ Here are some advanced Python interview questions that could be asked to assess 
 ### 3. **What is the difference between deepcopy and copy in Python?**
  Answerer**: The copy() function creates a shallow copy of an object, meaning that if the original object contains other objects (like lists inside a list), the references to those inner objects are copied, not the actual inner objects. The deepcopy() function, on the other hand, creates a completely new copy of the object along with all objects nested within it.
 
+---
+
 ### 4. What are Python decorators and how do they work?k?**
  Answerer**: Decorators are a way to modify or enhance functions or methods without changing their source code. A decorator is a function that takes another function as an argument and returns a new function. Decorators are commonly used for logging, access control, memoization, etc.
 
@@ -30,9 +32,14 @@ Here are some advanced Python interview questions that could be asked to assess 
 ### 5. **Explain Python's garbage collection mechanism.m.**
  Answerer**: Python uses reference counting and garbage collection (GC) to manage memory. When an object's reference count drops to zero, it is automatically deallocated. Additionally, Python uses a cyclic garbage collector to handle circular references. The garbage collection process is handled by the gc module.
 
+---
+
 ### 6. **What are the differences between @staticmethod and @classmethod in Python?AnswerAnswer**:
      - @staticmethod: It is used to define a method that doesn't depend on the instance or the class. It doesn’t take self or cls as the first parameter.
      - @classmethod: It is used to define a method that receives the class itself as the first argument (represented as cls), and it can access class-level attributes or methods.
+
+---
+
 ### 7. What are Python generators and how do they work? work?AnswerAnswer**: A generator is a function that returns an iterator, and it yields values one at a time using the yield keyword. Unlike normal functions that return a value and exit, generators maintain their state between calls and can be resumed. They are memory-efficient as they yield items lazily.
 
    Example:
@@ -43,7 +50,9 @@ Here are some advanced Python interview questions that could be asked to assess 
            yield count
            count += 1
 ```
-   
+
+---
+
 ### 8. **What is theslotsof __slots__ in Python
 Answer- slots*: __slots__ is used to limit the attributes of a class to a predefined set, which can save memory by preventing the creation of dictult __dict__ for each instance. This is especially useful when dealing with a large number of instances and known attributes.
 
@@ -76,6 +85,8 @@ Traceback (most recent call last):
 AttributeError: 'MyClass' object has no attribute 'a'
 ```
 
+---
+
 ### 9. How does Python handle multiple inheritance and method resolution order (MRO)?
    - Answer: Python uses the C3 linearization algorithm (also known as C3 superclass linearization) to determine the method resolution order (MRO) when dealing with multiple inheritance. The MRO determines the order in which base classes are searched when a method is called. You can view the MRO of a class using the mro() method or __mro__ attribute.
 
@@ -92,6 +103,8 @@ AttributeError: 'MyClass' object has no attribute 'a'
 [<class '__main__.D'>, <class '__main__.B'>, <class '__main__.C'>, <class '__main__.A'>, <class 'object'>]
 ```
 
+---
+
 ### 10. What is a context manager in Python?
    - Answer: A context manager is a Python object that allows you to manage resources, such as files or database connections, using the with statement. It defines methods __enter__() and __exit__() to allocate and release resources.
 
@@ -106,7 +119,9 @@ class MyContextManager:
 with MyContextManager():
     print("Inside the context")
 ```
-   
+
+---
+
 ### 11. Explain the concept of 'duck typing' in Python.
    - Answer: Duck typing is a concept where the type or class of an object is determined by its behavior (methods and properties) rather than its inheritance or explicit type. If an object behaves like a certain type, it can be treated as that type, regardless of its actual class.
 
@@ -127,6 +142,7 @@ with MyContextManager():
 take_off(Bird())
 ```
 
+---
    
 ### 12. **What is the difference between is and == in Python?**
  Answerer**: The == operator checks if the values of two objects are the same, while the is operator checks if two references point to the same object in memory. 
@@ -138,7 +154,9 @@ take_off(Bird())
    print(a == b)  # True (values are equal)
    print(a is b)  # False (they are different objects)
 ```
-   
+
+---
+
 ### 13. **How does Python's asyncio module work, and what is the difference between async and await?AnswerAnswer**: The asyncio module is used for writing asynchronous code. It allows you to run I/O-bound operations without blocking the execution of other tasks. The async keyword defines an asynchronous function, while await is used to pause the function's execution until the awaited result is available.
 
    Example:
@@ -155,7 +173,9 @@ take_off(Bird())
 
    asyncio.run(main())
 ```
-   
+
+---
+
 ### 14. **What are f-strings in Python, and why are they preferred over other string formatting methAnswer- 
 **Answer**: f-strings (formatted string literals) are a concise and efficient way to embed expressions inside string literals, introduced in Python 3.6. They are preferred over older methods (like % formatting or str.format()) because they are more readable and generally faster.
 
@@ -165,7 +185,9 @@ take_off(Bird())
    age = 30
    print(f"My name is {name} and I am {age} years old.")
 ```
-   
+
+---
+
 ### 15. **How can you optimize the performance of Python
    - **Answer**: Some ways to optimize Python code include:
      - Using built-in functions and libraries, as they are often optimized.
@@ -177,11 +199,14 @@ take_off(Bird())
 
 Here are more advanced Python interview questions, focusing on deeper concepts, design patterns, and performance considerations:
 
-### 1. **What is the difference between __del__ and __exit__ in Python?
+---
+
+
+### 16. **What is the difference between __del__ and __exit__ in Python?
 **Answerer** del __del__ and __exit__ are used for cleanup purposes, but they are used in different contedel   - __del__ is a destructor method called when an object is about to be destroyed. It is part of Python’s garbage collection mechanism and is not guaranteed to be called immediately after an object is no longer referenexit  - __exit__ is used in the context of a context manager and is part of the with statement. It ensures that the resources are cleaned up when exiting the context, even if an exception occurs.
 
    
-### 3. **What is the purpose of the abc module in Python?
+### 17. **What is the purpose of the abc module in Python?
 **Answer**: The abc (Abstract Base Classes) module in Python provides a mechanism for defining abstract classes. An abstract class is one that cannot be instantiated directly and is intended to be subclassed. The module allows you to define abstract methods, which must be implemented by any subclass.
    
    Example:
