@@ -3121,3 +3121,100 @@ print()
 MethodTypes.classMethod()
 MethodTypes.staticMethod()
 ```
+
+Monkey patching in Python refers to the practice of modifying or extending existing classes or modules at runtime. This is done by dynamically changing or adding behavior to classes, methods, or functions, typically without modifying the original source code. While monkey patching can be a powerful technique, it should be used cautiously as it can lead to unexpected side effects, maintenance challenges, and harder-to-debug code.
+
+Here are some examples to understand monkey patching in Python:
+
+### 1. **Monkey Patching a Method**
+
+You can modify the behavior of an existing method in a class by reassigning it to a new function.
+
+```python
+class MyClass:
+    def greet(self):
+        print("Hello!")
+
+# Instance of MyClass
+obj = MyClass()
+obj.greet()  # Output: Hello!
+
+# Monkey patching the greet method
+def new_greet(self):
+    print("Hi there!")
+
+MyClass.greet = new_greet  # Patch the method
+
+obj.greet()  # Output: Hi there!
+```
+
+In this example, the method `greet` of `MyClass` is replaced at runtime with `new_greet`. Now, any instance of `MyClass` will use the patched `greet` method.
+
+### 2. **Monkey Patching a Function**
+
+You can also monkey patch functions. This is often done with functions from external libraries.
+
+```python
+import math
+
+# Original function
+print(math.sqrt(16))  # Output: 4.0
+
+# Monkey patching math.sqrt
+def custom_sqrt(x):
+    print("Calculating square root...")
+    return x ** 0.5
+
+math.sqrt = custom_sqrt  # Patch the function
+
+print(math.sqrt(16))  # Output: Calculating square root... 4.0
+```
+
+Here, we've replaced the `sqrt` function from the `math` module with our own `custom_sqrt` function. Now, whenever `math.sqrt` is called, it will invoke the custom function.
+
+### 3. **Monkey Patching to Add New Functionality**
+
+Monkey patching can be used to add new functionality to a class or module.
+
+```python
+class MyClass:
+    def method_one(self):
+        print("Original method")
+
+# Instance of MyClass
+obj = MyClass()
+obj.method_one()  # Output: Original method
+
+# Adding a new method using monkey patching
+def method_two(self):
+    print("New method added")
+
+MyClass.method_two = method_two  # Add new method
+
+obj.method_two()  # Output: New method added
+```
+
+In this case, we've added a new method `method_two` to `MyClass` via monkey patching.
+
+### Use Cases for Monkey Patching
+
+- **Testing**: Monkey patching is often used in unit tests to mock or stub methods and functions, especially when dealing with external services, APIs, or third-party libraries.
+  
+- **Bug Fixes**: In some rare cases, monkey patching can be used to fix bugs or issues in libraries without having to wait for an official update or patch.
+
+- **Changing Behavior**: You can use monkey patching to modify or extend the behavior of third-party libraries or built-in classes without modifying the original code.
+
+### Drawbacks of Monkey Patching
+
+1. **Risk of Breaking Code**: If not carefully managed, it can lead to unexpected behavior or break other parts of the codebase.
+2. **Difficult Debugging**: Since monkey patching changes the behavior of existing code, debugging becomes harder as the modifications are done at runtime.
+3. **Unintended Side Effects**: Other parts of the program (or other libraries) might depend on the original behavior, and monkey patching could cause conflicts or bugs.
+
+### Best Practices
+
+- **Use with Caution**: Only use monkey patching when necessary and if no other solution is viable.
+- **Limit Scope**: Apply monkey patches as locally as possible, ideally only within the scope of tests or limited areas of the application.
+- **Document Changes**: Clearly document any monkey patches to ensure that other developers understand why the patch was applied and what it does.
+
+In summary, while monkey patching can be useful in certain scenarios, it's important to weigh the pros and cons and consider whether it's the best solution for your problem.
+
