@@ -1,5 +1,7 @@
 Here are some advanced Python interview questions that could be asked to assess deep knowledge of the language:
 
+[Source1](https://www.webasha.com/blog/advanced-python-interview-questions)
+
 ### 1. What are metaclasses in Python, and how do they work?
    - Answer: A metaclass in Python is a class that defines how other classes are created. It allows you to modify class creation behavior, such as adding or modifying attributes, methods, or class-level properties. Metaclasses can be defined by inheriting from type, and you can override methods like __new__ and __init__ to control class instantiation.
 
