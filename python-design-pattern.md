@@ -853,3 +853,349 @@ proxy.request()
 
 These structural patterns help in organizing and managing complex systems in Python by providing flexible ways of composing and interacting with objects.
 
+
+### Behavioral Design Patterns: Overview
+
+Behavioral design patterns are a category of design patterns that focus on how objects communicate and interact with each other. These patterns aim to:
+
+1. **Simplify communication** between objects.
+2. **Distribute responsibilities** among objects in a way that reduces coupling.
+3. **Control object interaction**, making the behavior of objects more flexible and dynamic.
+
+Some of the most common behavioral design patterns include:
+
+- **Chain of Responsibility**
+- **Command**
+- **Interpreter**
+- **Iterator**
+- **Mediator**
+- **Memento**
+- **Observer**
+- **State**
+- **Strategy**
+- **Template Method**
+- **Visitor**
+
+Each of these patterns solves a particular type of problem in object-oriented design. Below is an explanation of each pattern along with an example solution in Python.
+
+---
+
+### 1. **Chain of Responsibility Pattern**
+
+The Chain of Responsibility pattern allows multiple objects to handle a request, passing it along the chain until one of them processes it.
+
+**Example Problem**: You have a series of event handlers that can handle certain types of events. You don't want to hard-code which handler will process the event.
+
+#### Solution:
+```python
+class Handler:
+    def __init__(self, successor=None):
+        self.successor = successor
+
+    def handle_request(self, request):
+        if self.successor:
+            self.successor.handle_request(request)
+
+class ConcreteHandlerA(Handler):
+    def handle_request(self, request):
+        if request == "A":
+            print("Handler A processed the request")
+        elif self.successor:
+            self.successor.handle_request(request)
+
+class ConcreteHandlerB(Handler):
+    def handle_request(self, request):
+        if request == "B":
+            print("Handler B processed the request")
+        elif self.successor:
+            self.successor.handle_request(request)
+
+# Usage
+handler_chain = ConcreteHandlerA(ConcreteHandlerB())
+handler_chain.handle_request("A")
+```
+
+---
+
+### 2. **Command Pattern**
+
+The Command pattern turns a request into a stand-alone object. This object contains all the information about the request, such as which action to take.
+
+**Example Problem**: You need to decouple the sender of a request from the object that processes it.
+
+#### Solution:
+```python
+class Command:
+    def execute(self):
+        pass
+
+class LightOnCommand(Command):
+    def __init__(self, light):
+        self.light = light
+
+    def execute(self):
+        self.light.turn_on()
+
+class Light:
+    def turn_on(self):
+        print("Light is ON")
+
+class RemoteControl:
+    def __init__(self):
+        self.command = None
+
+    def set_command(self, command):
+        self.command = command
+
+    def press_button(self):
+        self.command.execute()
+
+# Usage
+light = Light()
+light_on_command = LightOnCommand(light)
+remote = RemoteControl()
+remote.set_command(light_on_command)
+remote.press_button()
+```
+
+---
+
+### 3. **Iterator Pattern**
+
+The Iterator pattern provides a way to access the elements of a collection without exposing its underlying representation.
+
+**Example Problem**: You have a collection (like a list or set), and you want to iterate over it without exposing its internal structure.
+
+#### Solution:
+```python
+class Iterator:
+    def __init__(self, collection):
+        self.collection = collection
+        self.index = 0
+
+    def has_next(self):
+        return self.index < len(self.collection)
+
+    def next(self):
+        if self.has_next():
+            item = self.collection[self.index]
+            self.index += 1
+            return item
+        raise StopIteration
+
+# Usage
+collection = [1, 2, 3, 4]
+iterator = Iterator(collection)
+
+while iterator.has_next():
+    print(iterator.next())
+```
+
+---
+
+### 4. **Observer Pattern**
+
+The Observer pattern allows a subject to notify its observers automatically when its state changes.
+
+**Example Problem**: You have an object whose state changes, and you want multiple objects to be notified of these changes without tightly coupling them.
+
+#### Solution:
+```python
+class Observer:
+    def update(self, message):
+        pass
+
+class ConcreteObserver(Observer):
+    def __init__(self, name):
+        self.name = name
+
+    def update(self, message):
+        print(f"Observer {self.name} received message: {message}")
+
+class Subject:
+    def __init__(self):
+        self._observers = []
+
+    def add_observer(self, observer):
+        self._observers.append(observer)
+
+    def remove_observer(self, observer):
+        self._observers.remove(observer)
+
+    def notify_observers(self, message):
+        for observer in self._observers:
+            observer.update(message)
+
+# Usage
+subject = Subject()
+observer1 = ConcreteObserver("A")
+observer2 = ConcreteObserver("B")
+
+subject.add_observer(observer1)
+subject.add_observer(observer2)
+
+subject.notify_observers("State changed!")
+```
+
+---
+
+### 5. **State Pattern**
+
+The State pattern allows an object to alter its behavior when its internal state changes.
+
+**Example Problem**: You need to change the behavior of an object based on its current state without adding excessive `if` or `switch` statements.
+
+#### Solution:
+```python
+class State:
+    def handle(self):
+        pass
+
+class ConcreteStateA(State):
+    def handle(self):
+        print("State A handling request")
+
+class ConcreteStateB(State):
+    def handle(self):
+        print("State B handling request")
+
+class Context:
+    def __init__(self):
+        self.state = ConcreteStateA()
+
+    def set_state(self, state):
+        self.state = state
+
+    def request(self):
+        self.state.handle()
+
+# Usage
+context = Context()
+context.request()
+
+context.set_state(ConcreteStateB())
+context.request()
+```
+
+---
+
+### 6. **Strategy Pattern**
+
+The Strategy pattern defines a family of algorithms and allows them to be interchangeable, enabling the algorithm to vary independently from the client.
+
+**Example Problem**: You have multiple algorithms to solve the same problem, and you want to select one dynamically at runtime.
+
+#### Solution:
+```python
+class Strategy:
+    def execute(self, a, b):
+        pass
+
+class ConcreteStrategyAdd(Strategy):
+    def execute(self, a, b):
+        return a + b
+
+class ConcreteStrategyMultiply(Strategy):
+    def execute(self, a, b):
+        return a * b
+
+class Context:
+    def __init__(self, strategy):
+        self.strategy = strategy
+
+    def set_strategy(self, strategy):
+        self.strategy = strategy
+
+    def execute_strategy(self, a, b):
+        return self.strategy.execute(a, b)
+
+# Usage
+context = Context(ConcreteStrategyAdd())
+print(context.execute_strategy(3, 4))
+
+context.set_strategy(ConcreteStrategyMultiply())
+print(context.execute_strategy(3, 4))
+```
+
+---
+
+### 7. **Template Method Pattern**
+
+The Template Method pattern defines the skeleton of an algorithm in a method, deferring some steps to subclasses.
+
+**Example Problem**: You want to define the basic steps of an algorithm while allowing subclasses to implement certain parts.
+
+#### Solution:
+```python
+class AbstractClass:
+    def template_method(self):
+        self.step1()
+        self.step2()
+        self.step3()
+
+    def step1(self):
+        pass
+
+    def step2(self):
+        pass
+
+    def step3(self):
+        print("Final step")
+
+class ConcreteClass(AbstractClass):
+    def step1(self):
+        print("Step 1 implementation")
+
+    def step2(self):
+        print("Step 2 implementation")
+
+# Usage
+concrete = ConcreteClass()
+concrete.template_method()
+```
+
+---
+
+### 8. **Visitor Pattern**
+
+The Visitor pattern allows you to add further operations to objects without changing them.
+
+**Example Problem**: You have a group of objects with different types, and you want to apply an operation to all of them without modifying their classes.
+
+#### Solution:
+```python
+class Visitor:
+    def visit(self, element):
+        pass
+
+class ConcreteVisitor(Visitor):
+    def visit(self, element):
+        print(f"Visiting {element}")
+
+class Element:
+    def accept(self, visitor):
+        pass
+
+class ConcreteElementA(Element):
+    def accept(self, visitor):
+        visitor.visit("Element A")
+
+class ConcreteElementB(Element):
+    def accept(self, visitor):
+        visitor.visit("Element B")
+
+# Usage
+visitor = ConcreteVisitor()
+element_a = ConcreteElementA()
+element_b = ConcreteElementB()
+
+element_a.accept(visitor)
+element_b.accept(visitor)
+```
+
+---
+
+### Conclusion
+
+Behavioral design patterns are valuable tools in object-oriented design, helping manage object communication, control behavior flow, and improve flexibility. The patterns outlined above are only a subset, and depending on the complexity of your application, others like **Memento**, **Mediator**, or **Interpreter** can also provide essential solutions for complex interaction scenarios.
+
