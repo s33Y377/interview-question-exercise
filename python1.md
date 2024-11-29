@@ -5,8 +5,12 @@ Here are some advanced Python interview questions that could be asked to assess 
 ### 1. What are metaclasses in Python, and how do they work?
    - Answer: A metaclass in Python is a class that defines how other classes are created. It allows you to modify class creation behavior, such as adding or modifying attributes, methods, or class-level properties. Metaclasses can be defined by inheriting from type, and you can override methods like __new__ and __init__ to control class instantiation.
 
+---
+
 ### 2. Explain the Global Interpreter Lock (GIL) and its impact on multi-threading in Python.
    - Answer: The GIL is a mechanism that prevents multiple native threads from executing Python bytecodes at once in CPython (the default implementation). This means that, in CPython, even though you can have multiple threads, only one thread can execute Python bytecode at a time. This limits concurrency in CPU-bound programs but does not affect I/O-bound operations significantly.
+
+---
 
 ### 3. **What is the difference between deepcopy and copy in Python?**
  Answerer**: The copy() function creates a shallow copy of an object, meaning that if the original object contains other objects (like lists inside a list), the references to those inner objects are copied, not the actual inner objects. The deepcopy() function, on the other hand, creates a completely new copy of the object along with all objects nested within it.
