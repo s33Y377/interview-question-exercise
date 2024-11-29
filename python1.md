@@ -705,25 +705,25 @@ print(cache.get(2))  # Output: -1 (evicted)
 **Solution**:
 
 ```python
-   def deep_copy(d):
-       if isinstance(d, dict):
-           return {key: deep_copy(value) for key, value in d.items()}
-       else:
-           return d
+def deep_copy(d):
+    if isinstance(d, dict):
+        return {key: deep_copy(value) for key, value in d.items()}
+    else:
+        return d
 
-   original = {'a': 1, 'b': {'x': 2, 'y': 3}}
-   copy = deep_copy(original)
-   copy['b']['x'] = 10
-   print(original)  # Output: {'a': 1, 'b': {'x': 2, 'y': 3}}
-   print(copy)      # Output: {'a': 1, 'b': {'x': 10, 'y': 3}}
+original = {'a': 1, 'b': {'x': 2, 'y': 3}}
+copy = deep_copy(original)
+copy['b']['x'] = 10
+print(original)  # Output: {'a': 1, 'b': {'x': 2, 'y': 3}}
+print(copy)      # Output: {'a': 1, 'b': {'x': 10, 'y': 3}}
 ```
 
-### 5. Implement a Function to Flatten a Nested List (of arbitrary depth)h)**
+### 5. Implement a Function to Flatten a Nested List (of arbitrary depth)**
 
  Problemem**: Write a function that takes a nested list (of arbitrary depth) and flattens it into a single list.
  Solutionon**:
 
-```  
+```python
    def flatten(lst):
        for item in lst:
            if isinstance(item, list):
@@ -741,20 +741,19 @@ print(cache.get(2))  # Output: -1 (evicted)
  Problemem**: Given a string, write a function that finds the length of the longest substring without repeating characters.
  Solutionon**:
 
-```
-   def longest_substring(s: str) -> int:
-       seen = {}
-       left = 0
-       max_len = 0
-       for right, char in enumerate(s):
-           if char in seen and seen[char] >= left:
-               left = seen[char] + 1
-           seen[char] = right
-           max_len = max(max_len, right - left + 1)
-
-       return max_len
-
-   print(longest_substring("abcabcbb"))  # Output: 3 ("abc")
+```python
+def longest_substring(s: str) -> int:
+    seen = {}
+    left = 0
+    max_len = 0
+    for right, char in enumerate(s):
+        if char in seen and seen[char] >= left:
+            left = seen[char] + 1
+        seen[char] = right
+        max_len = max(max_len, right - left + 1)
+    return max_len
+    
+print(longest_substring("abcabcbb"))  # Output: 3 ("abc")
 ```  
 
 ### 7. **Implement a Python Generator for Fibonacci Sequence**
