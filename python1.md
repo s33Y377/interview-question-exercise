@@ -3418,7 +3418,7 @@ In Python, class attributes and instance attributes are two types of attributes 
 
 Here's an example demonstrating the difference:
 
-```
+```python
 class Dog:
     # Class attribute (shared by all instances of Dog)
     species = "Canis familiaris"
@@ -3448,20 +3448,20 @@ print(dog2.age)   # 3
 
 # Modify class attribute via class name
 
-```
+```python
 Dog.species = "Canis lupus familiaris"
 ```
 
 # After modifying, class attribute is updated for all instances
 
-```
+```python
 print(dog1.species)  # "Canis lupus familiaris"
 print(dog2.species)  # "Canis lupus familiaris"
 ```
 
 # Modify instance attribute via instance
 
-```
+```python
 dog1.age = 6
 print(dog1.age)  # 6 (only changed for dog1)
 print(dog2.age)  # 3 (remains unchanged for dog2)
@@ -3482,7 +3482,7 @@ print(dog2.age)  # 3 (remains unchanged for dog2)
 - Class attributes are shared across all instances of the class.
 - Instance attributes are unique to each instance and are typically initializedinit__init__ method.
 
-```
+```python
 class MethodTypes:
 
     name = "Ragnar"
