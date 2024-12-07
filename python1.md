@@ -2294,6 +2294,26 @@ input_str = "geeksforgeeks"
 print(first_non_repeating(input_str))  # Output: "f"
 ```
 
+### 7. **Find Anagram of two string**
+
+#### Example
+
+```python
+Input: "listen" and "silent"
+Output: True / False
+```
+
+```python
+from collections import Counter
+
+class Solution:
+    def isAnagram(self, s: str, t: str) -> bool:
+        return Counter(s) == Counter(t)
+        
+```
+
+---
+
 ### 7. **String Compression**
 
 **Problem**: Given a string, compress it using the counts of repeated characters. For example, "aabcccccaaa" becomes "a2b1c5a3". If the compressed string is not smaller than the original string, return the original string.
