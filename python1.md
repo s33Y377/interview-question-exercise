@@ -3179,6 +3179,14 @@ result = advanced_tuple_manipulation(data)
 print(result)
 ```
 
+output
+
+```text
+(('apple', 7), ('grape', 8))
+```
+
+---
+
 ### Explanation
 
 1. **Sorting**: We sort the list of tuples based on the second item (integer) using the `sorted()` function with a custom sorting key (`lambda x: x[1]`).
@@ -3377,6 +3385,16 @@ print(popped_element)  # Output: arbitrary element (e.g., 1)
 print(set1)  # Output: remaining elements
 ```
 
+output
+
+```text
+{1, 2, 3, 4}
+{1, 3, 4}
+{1, 3, 4}
+1
+{3, 4}
+```
+
 ### 9. **Clear All Elements (`clear()`)**
 
 This method removes all elements from a set.
@@ -3516,6 +3534,17 @@ MethodTypes.classMethod()
 MethodTypes.staticMethod()
 ```
 
+output
+
+```text
+Ragnar
+Lothbrock
+
+Ragnar
+Lagertha
+This is a static method
+```
+
 Monkey patching in Python refers to the practice of modifying or extending existing classes or modules at runtime. This is done by dynamically changing or adding behavior to classes, methods, or functions, typically without modifying the original source code. While monkey patching can be a powerful technique, it should be used cautiously as it can lead to unexpected side effects, maintenance challenges, and harder-to-debug code.
 
 Here are some examples to understand monkey patching in Python:
@@ -3586,6 +3615,13 @@ def method_two(self):
 MyClass.method_two = method_two  # Add new method
 
 obj.method_two()  # Output: New method added
+```
+
+output
+
+```python
+Original method
+New method added
 ```
 
 In this case, we've added a new method `method_two` to `MyClass` via monkey patching.
