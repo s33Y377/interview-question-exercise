@@ -3667,3 +3667,370 @@ In this case, we've added a new method `method_two` to `MyClass` via monkey patc
 - **Document Changes**: Clearly document any monkey patches to ensure that other developers understand why the patch was applied and what it does.
 
 In summary, while monkey patching can be useful in certain scenarios, it's important to weigh the pros and cons and consider whether it's the best solution for your problem.
+
+---
+
+Here are some advanced examples of using arrays and hashing in Python:
+
+### 1. Finding Two Numbers that Add Up to a Target (Using Hashing)
+
+Problem: Given an array of integers and a target sum, find two numbers such that their sum equals the target.
+
+def two_sum(nums, target):
+    num_dict = {}
+    for i, num in enumerate(nums):
+        complement = target - num
+        if complement in num_dict:
+            return [num_dict[complement], i]
+        num_dict[num] = i
+    return None
+
+nums = [2, 7, 11, 15]
+target = 9
+result = two_sum(nums, target)
+print(result)  # Output: [0, 1] -> because nums[0] + nums[1] = 9
+### 2. Group Anagrams (Using Hashing)
+
+Problem: Given a list of strings, group the anagrams together.
+
+from collections import defaultdict
+
+def group_anagrams(strs):
+    anagrams = defaultdict(list)
+    
+    for s in strs:
+        sorted_str = ''.join(sorted(s))  # Sorting the string to use as key
+        anagrams[sorted_str].append(s)
+    
+    return list(anagrams.values())
+
+strs = ["eat", "tea", "tan", "ate", "nat", "bat"]
+result = group_anagrams(strs)
+print(result)
+# Output: [['eat', 'tea', 'ate'], ['tan', 'nat'], ['bat']]
+### 3. Find All Subarrays with Zero Sum (Using Hashing)
+
+Problem: Find all subarrays in an array whose sum is zero.
+
+def find_zero_sum_subarrays(arr):
+    sum_dict = {}
+    current_sum = 0
+    result = []
+    
+    for i in range(len(arr)):
+        current_sum += arr[i]
+        
+        if current_sum == 0:
+            result.append(arr[:i+1])  # Subarray from 0 to i
+        
+        if current_sum in sum_dict:
+            result.append(arr[sum_dict[current_sum]+1:i+1])
+        
+        sum_dict[current_sum] = i
+    
+    return result
+
+arr = [6, -1, 3, -2, 2, -3, 1]
+result = find_zero_sum_subarrays(arr)
+print(result)
+# Output: [[6, -1, -3], [3, -2, -1], [2, -3, 1]]
+### 4. Longest Substring Without Repeating Characters (Using Hashing)
+
+Problem: Given a string, find the length of the longest substring without repeating characters.
+
+def longest_substring_without_repeating(s):
+    char_index_map = {}
+    start = 0
+    max_length = 0
+    
+    for end, char in enumerate(s):
+        if char in char_index_map and char_index_map[char] >= start:
+            start = char_index_map[char] + 1
+        char_index_map[char] = end
+        max_length = max(max_length, end - start + 1)
+    
+    return max_length
+
+s = "abcabcbb"
+result = longest_substring_without_repeating(s)
+print(result)  # Output: 3 ("abc")
+### 5. Find the Intersection of Two Arrays (Using Hashing)
+
+Problem: Given two arrays, find their intersection (elements that appear in both arrays).
+
+def intersection(nums1, nums2):
+    set1 = set(nums1)
+    set2 = set(nums2)
+    
+    return list(set1 & set2)
+
+nums1 = [1, 2, 2, 1]
+nums2 = [2, 2]
+result = intersection(nums1, nums2)
+print(result)  # Output: [2]
+### 6. Subarray Sum Equals K (Using Prefix Sum and Hashing)
+
+Problem: Find the total number of subarrays whose sum equals k.
+
+from collections import defaultdict
+
+def subarray_sum_equals_k(nums, k):
+    sum_count = defaultdict(int)
+    current_sum = 0
+    result = 0
+    
+    for num in nums:
+        current_sum += num
+        
+        if current_sum == k:
+            result += 1
+        
+        if current_sum - k in sum_count:
+            result += sum_count[current_sum - k]
+        
+        sum_count[current_sum] += 1
+    
+    return result
+
+nums = [1, 2, 3]
+k = 3
+result = subarray_sum_equals_k(nums, k)
+print(result)  # Output: 2 ([1, 2] and [3])
+
+### 7. Find the Majority Element (Using Hashing)
+
+Problem: Given an array of size n, find the majority element, i.e., the element that appears more than n//2 times.
+
+from collections import Counter
+
+def majority_element(nums):
+    count = Counter(nums)
+    for num, cnt in count.items():
+        if cnt > len(nums) // 2:
+            return num
+    return None
+
+nums = [3, 2, 3]
+result = majority_element(nums)
+print(result)  # Output: 3
+
+### 8. Happy Number (Using Hashing)
+
+Problem: Determine whether a number is a happy number. A happy number is a number where repeatedly replacing the number with the sum of the squares of its digits eventually leads to 1.
+
+def is_happy(n):
+    seen = set()
+    
+    while n != 1 and n not in seen:
+        seen.add(n)
+        n = sum(int(digit) ** 2 for digit in str(n))
+    
+    return n == 1
+
+n = 19
+result = is_happy(n)
+print(result)  # Output: True
+### 9. Find the First Non-Repeating Character (Using Hashing)
+
+Problem: Given a string, find the first non-repeating character in it.
+
+from collections import Counter
+
+def first_non_repeating(s):
+    count = Counter(s)
+    
+    for char in s:
+        if count[char] == 1:
+            return char
+    return None
+
+s = "loveleetcode"
+result = first_non_repeating(s)
+print(result)  # Output: 'v'
+### 10. Top K Frequent Elements (Using Hashing and Heap)
+
+Problem: Given a non-empty array of integers, return the k most frequent elements.
+
+from collections import Counter
+import heapq
+
+def top_k_frequent(nums, k):
+    count = Counter(nums)
+    return heapq.nlargest(k, count.keys(), key=count.get)
+
+nums = [1,1,1,2,2,3]
+k = 2
+result = top_k_frequent(nums, k)
+print(result)  # Output: [1, 2]
+---
+
+These examples illustrate advanced applications of arrays and hashing in Python. Hashing helps in improving the time complexity of various problems, particularly those involving lookups, counting, and mapping, while arrays are used for efficient traversal and manipulation of data.
+
+
+Two-pointer technique is a popular approach to solving problems efficiently by using two pointers to traverse a collection, typically in linear time. It is commonly used for problems involving arrays or linked lists.
+
+Here are some advanced examples of the two-pointer technique in Python:
+
+### 1. Trapping Rain Water
+This is a classic problem where you need to calculate how much water can be trapped between the elevation bars in a histogram. The two-pointer technique is used to track the maximum heights to the left and right of each bar.
+
+def trap(height):
+    left, right = 0, len(height) - 1
+    left_max, right_max = 0, 0
+    water_trapped = 0
+    
+    while left <= right:
+        if height[left] <= height[right]:
+            if height[left] >= left_max:
+                left_max = height[left]
+            else:
+                water_trapped += left_max - height[left]
+            left += 1
+        else:
+            if height[right] >= right_max:
+                right_max = height[right]
+            else:
+                water_trapped += right_max - height[right]
+            right -= 1
+    
+    return water_trapped
+
+# Example usage:
+height = [0,1,0,2,1,0,1,3,2,1,2,1]
+print(trap(height))  # Output: 6
+### 2. 3Sum
+Given an array of integers, find all unique triplets in the array which gives the sum of zero. This problem can be solved using the two-pointer technique to find pairs that sum up to a target.
+
+def three_sum(nums):
+    nums.sort()  # Sort the array first
+    result = []
+    
+    for i in range(len(nums) - 2):
+        if i > 0 and nums[i] == nums[i-1]:
+            continue  # Skip duplicates
+        
+        left, right = i + 1, len(nums) - 1
+        while left < right:
+            total = nums[i] + nums[left] + nums[right]
+            if total < 0:
+                left += 1
+            elif total > 0:
+                right -= 1
+            else:
+                result.append([nums[i], nums[left], nums[right]])
+                left += 1
+                right -= 1
+                while left < right and nums[left] == nums[left - 1]:  # Skip duplicates
+                    left += 1
+                while left < right and nums[right] == nums[right + 1]:  # Skip duplicates
+                    right -= 1
+
+    return result
+
+# Example usage:
+nums = [-1, 0, 1, 2, -1, -4]
+print(three_sum(nums))  # Output: [[-1, -1, 2], [-1, 0, 1]]
+### 3. Container With Most Water
+This problem asks you to find the maximum area of water that can be contained between two lines, where the height of each line is given as an array. The two-pointer approach helps you efficiently calculate this.
+
+def max_area(height):
+    left, right = 0, len(height) - 1
+    max_area = 0
+    
+    while left < right:
+        width = right - left
+        current_area = min(height[left], height[right]) * width
+        max_area = max(max_area, current_area)
+        
+        if height[left] < height[right]:
+            left += 1
+        else:
+            right -= 1
+    
+    return max_area
+
+# Example usage:
+height = [1,8,6,2,5,4,8,3,7]
+print(max_area(height))  # Output: 49
+### 4. Minimum Size Subarray Sum
+Given an array of positive integers and a target sum, find the length of the smallest contiguous subarray whose sum is greater than or equal to the target. You can solve this efficiently using a sliding window with two pointers.
+
+def min_subarray_len(target, nums):
+    left = 0
+    current_sum = 0
+    min_len = float('inf')
+    
+    for right in range(len(nums)):
+        current_sum += nums[right]
+        
+        while current_sum >= target:
+            min_len = min(min_len, right - left + 1)
+            current_sum -= nums[left]
+            left += 1
+    
+    return min_len if min_len != float('inf') else 0
+
+# Example usage:
+nums = [2,3,1,2,4,3]
+target = 7
+print(min_subarray_len(target, nums))  # Output: 2
+
+
+### 5. Palindrome Linked List
+This problem requires checking whether a singly linked list is a palindrome. The two-pointer technique is used to compare values from the beginning and the end of the list.
+
+class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+def is_palindrome(head):
+    # Fast and slow pointer to find the middle of the list
+    slow, fast = head, head
+    while fast and fast.next:
+        slow = slow.next
+        fast = fast.next.next
+    
+    # Reverse the second half of the list
+    prev = None
+    while slow:
+        next_node = slow.next
+        slow.next = prev
+        prev = slow
+        slow = next_node
+    
+    # Compare both halves
+    left, right = head, prev
+    while right:  # Only need to check the second half
+        if left.val != right.val:
+            return False
+        left = left.next
+        right = right.next
+    
+    return True
+
+# Example usage:
+head = ListNode(1, ListNode(2, ListNode(2, ListNode(1))))
+print(is_palindrome(head))  # Output: True
+### 6. Remove Duplicates from Sorted Array
+This is a classic problem where you are asked to remove duplicates from a sorted array and return the new length. The two-pointer approach is used to overwrite duplicates in-place.
+
+def remove_duplicates(nums):
+    if not nums:
+        return 0
+    
+    # The slow pointer (i) keeps track of the unique elements
+    i = 0
+    for j in range(1, len(nums)):
+        if nums[i] != nums[j]:
+            i += 1
+            nums[i] = nums[j]
+    
+    return i + 1
+
+# Example usage:
+nums = [1,1,2]
+print(remove_duplicates(nums))  # Output: 2, nums = [1, 2]
+---
+
+These examples illustrate the versatility of the two-pointer technique in solving different types of problems efficiently, including array manipulation, linked list operations, and more.
