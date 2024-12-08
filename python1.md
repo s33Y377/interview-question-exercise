@@ -3670,12 +3670,13 @@ In summary, while monkey patching can be useful in certain scenarios, it's impor
 
 ---
 
-Here are some advanced examples of using arrays and hashing in Python:
+## Here are some advanced examples of using arrays and hashing in Python
 
 ### 1. Finding Two Numbers that Add Up to a Target (Using Hashing)
 
 Problem: Given an array of integers and a target sum, find two numbers such that their sum equals the target.
 
+```python
 def two_sum(nums, target):
     num_dict = {}
     for i, num in enumerate(nums):
@@ -3684,15 +3685,20 @@ def two_sum(nums, target):
             return [num_dict[complement], i]
         num_dict[num] = i
     return None
+```
 
+```python
 nums = [2, 7, 11, 15]
 target = 9
 result = two_sum(nums, target)
 print(result)  # Output: [0, 1] -> because nums[0] + nums[1] = 9
+```
+
 ### 2. Group Anagrams (Using Hashing)
 
 Problem: Given a list of strings, group the anagrams together.
 
+```python
 from collections import defaultdict
 
 def group_anagrams(strs):
@@ -3703,15 +3709,19 @@ def group_anagrams(strs):
         anagrams[sorted_str].append(s)
     
     return list(anagrams.values())
+```
 
+```python
 strs = ["eat", "tea", "tan", "ate", "nat", "bat"]
 result = group_anagrams(strs)
-print(result)
-# Output: [['eat', 'tea', 'ate'], ['tan', 'nat'], ['bat']]
+print(result) # Output: [['eat', 'tea', 'ate'], ['tan', 'nat'], ['bat']]
+```
+
 ### 3. Find All Subarrays with Zero Sum (Using Hashing)
 
 Problem: Find all subarrays in an array whose sum is zero.
 
+```python
 def find_zero_sum_subarrays(arr):
     sum_dict = {}
     current_sum = 0
@@ -3729,15 +3739,19 @@ def find_zero_sum_subarrays(arr):
         sum_dict[current_sum] = i
     
     return result
+```
 
+```python
 arr = [6, -1, 3, -2, 2, -3, 1]
 result = find_zero_sum_subarrays(arr)
-print(result)
-# Output: [[6, -1, -3], [3, -2, -1], [2, -3, 1]]
+print(result) # Output: [[6, -1, -3], [3, -2, -1], [2, -3, 1]]
+```
+
 ### 4. Longest Substring Without Repeating Characters (Using Hashing)
 
 Problem: Given a string, find the length of the longest substring without repeating characters.
 
+```python
 def longest_substring_without_repeating(s):
     char_index_map = {}
     start = 0
@@ -3750,28 +3764,38 @@ def longest_substring_without_repeating(s):
         max_length = max(max_length, end - start + 1)
     
     return max_length
+```
 
+```python
 s = "abcabcbb"
 result = longest_substring_without_repeating(s)
 print(result)  # Output: 3 ("abc")
+```
+
 ### 5. Find the Intersection of Two Arrays (Using Hashing)
 
 Problem: Given two arrays, find their intersection (elements that appear in both arrays).
 
+```python
 def intersection(nums1, nums2):
     set1 = set(nums1)
     set2 = set(nums2)
     
     return list(set1 & set2)
+```
 
+```python
 nums1 = [1, 2, 2, 1]
 nums2 = [2, 2]
 result = intersection(nums1, nums2)
 print(result)  # Output: [2]
+```
+
 ### 6. Subarray Sum Equals K (Using Prefix Sum and Hashing)
 
 Problem: Find the total number of subarrays whose sum equals k.
 
+```python
 from collections import defaultdict
 
 def subarray_sum_equals_k(nums, k):
@@ -3791,16 +3815,20 @@ def subarray_sum_equals_k(nums, k):
         sum_count[current_sum] += 1
     
     return result
+```
 
+```python
 nums = [1, 2, 3]
 k = 3
 result = subarray_sum_equals_k(nums, k)
 print(result)  # Output: 2 ([1, 2] and [3])
+```
 
 ### 7. Find the Majority Element (Using Hashing)
 
 Problem: Given an array of size n, find the majority element, i.e., the element that appears more than n//2 times.
 
+```python
 from collections import Counter
 
 def majority_element(nums):
@@ -3809,15 +3837,19 @@ def majority_element(nums):
         if cnt > len(nums) // 2:
             return num
     return None
+```
 
+```python
 nums = [3, 2, 3]
 result = majority_element(nums)
 print(result)  # Output: 3
+```
 
 ### 8. Happy Number (Using Hashing)
 
 Problem: Determine whether a number is a happy number. A happy number is a number where repeatedly replacing the number with the sum of the squares of its digits eventually leads to 1.
 
+```python
 def is_happy(n):
     seen = set()
     
@@ -3826,14 +3858,19 @@ def is_happy(n):
         n = sum(int(digit) ** 2 for digit in str(n))
     
     return n == 1
+```
 
+```python
 n = 19
 result = is_happy(n)
 print(result)  # Output: True
+```
+
 ### 9. Find the First Non-Repeating Character (Using Hashing)
 
 Problem: Given a string, find the first non-repeating character in it.
 
+```python
 from collections import Counter
 
 def first_non_repeating(s):
@@ -3843,14 +3880,19 @@ def first_non_repeating(s):
         if count[char] == 1:
             return char
     return None
+```
 
+```python
 s = "loveleetcode"
 result = first_non_repeating(s)
 print(result)  # Output: 'v'
+```
+
 ### 10. Top K Frequent Elements (Using Hashing and Heap)
 
 Problem: Given a non-empty array of integers, return the k most frequent elements.
 
+```python
 from collections import Counter
 import heapq
 
@@ -3858,10 +3900,15 @@ def top_k_frequent(nums, k):
     count = Counter(nums)
     return heapq.nlargest(k, count.keys(), key=count.get)
 
+```
+
+```python
 nums = [1,1,1,2,2,3]
 k = 2
 result = top_k_frequent(nums, k)
 print(result)  # Output: [1, 2]
+```
+
 ---
 
 These examples illustrate advanced applications of arrays and hashing in Python. Hashing helps in improving the time complexity of various problems, particularly those involving lookups, counting, and mapping, while arrays are used for efficient traversal and manipulation of data.
@@ -3874,6 +3921,7 @@ Here are some advanced examples of the two-pointer technique in Python:
 ### 1. Trapping Rain Water
 This is a classic problem where you need to calculate how much water can be trapped between the elevation bars in a histogram. The two-pointer technique is used to track the maximum heights to the left and right of each bar.
 
+```python
 def trap(height):
     left, right = 0, len(height) - 1
     left_max, right_max = 0, 0
@@ -3894,13 +3942,17 @@ def trap(height):
             right -= 1
     
     return water_trapped
+```
 
-# Example usage:
+```python
 height = [0,1,0,2,1,0,1,3,2,1,2,1]
 print(trap(height))  # Output: 6
+```
+
 ### 2. 3Sum
 Given an array of integers, find all unique triplets in the array which gives the sum of zero. This problem can be solved using the two-pointer technique to find pairs that sum up to a target.
 
+```python
 def three_sum(nums):
     nums.sort()  # Sort the array first
     result = []
@@ -3926,13 +3978,17 @@ def three_sum(nums):
                     right -= 1
 
     return result
+```
 
-# Example usage:
+```python
 nums = [-1, 0, 1, 2, -1, -4]
 print(three_sum(nums))  # Output: [[-1, -1, 2], [-1, 0, 1]]
+```
+
 ### 3. Container With Most Water
 This problem asks you to find the maximum area of water that can be contained between two lines, where the height of each line is given as an array. The two-pointer approach helps you efficiently calculate this.
 
+```python
 def max_area(height):
     left, right = 0, len(height) - 1
     max_area = 0
@@ -3948,13 +4004,17 @@ def max_area(height):
             right -= 1
     
     return max_area
+```
 
-# Example usage:
+```python
 height = [1,8,6,2,5,4,8,3,7]
 print(max_area(height))  # Output: 49
+```
+
 ### 4. Minimum Size Subarray Sum
 Given an array of positive integers and a target sum, find the length of the smallest contiguous subarray whose sum is greater than or equal to the target. You can solve this efficiently using a sliding window with two pointers.
 
+```python
 def min_subarray_len(target, nums):
     left = 0
     current_sum = 0
@@ -3969,16 +4029,18 @@ def min_subarray_len(target, nums):
             left += 1
     
     return min_len if min_len != float('inf') else 0
+```
 
-# Example usage:
+```python
 nums = [2,3,1,2,4,3]
 target = 7
 print(min_subarray_len(target, nums))  # Output: 2
-
+```
 
 ### 5. Palindrome Linked List
 This problem requires checking whether a singly linked list is a palindrome. The two-pointer technique is used to compare values from the beginning and the end of the list.
 
+```python
 class ListNode:
     def __init__(self, val=0, next=None):
         self.val = val
@@ -4008,13 +4070,17 @@ def is_palindrome(head):
         right = right.next
     
     return True
+```
 
-# Example usage:
+```python
 head = ListNode(1, ListNode(2, ListNode(2, ListNode(1))))
 print(is_palindrome(head))  # Output: True
+```
+
 ### 6. Remove Duplicates from Sorted Array
 This is a classic problem where you are asked to remove duplicates from a sorted array and return the new length. The two-pointer approach is used to overwrite duplicates in-place.
 
+```python
 def remove_duplicates(nums):
     if not nums:
         return 0
@@ -4027,10 +4093,213 @@ def remove_duplicates(nums):
             nums[i] = nums[j]
     
     return i + 1
+```
 
-# Example usage:
+```python
 nums = [1,1,2]
 print(remove_duplicates(nums))  # Output: 2, nums = [1, 2]
+```
+
 ---
 
 These examples illustrate the versatility of the two-pointer technique in solving different types of problems efficiently, including array manipulation, linked list operations, and more.
+
+---
+
+The sliding window technique is a powerful tool used to solve problems involving sequences or arrays efficiently. It's often used to reduce the time complexity of problems from O(n^2) to O(n). Below are some advanced examples of the sliding window approach in Python:
+
+### 1. **Longest Substring Without Repeating Characters**
+
+Given a string, find the length of the longest substring without repeating characters.
+
+#### Problem:
+Given a string `s`, return the length of the longest substring without repeating characters.
+
+#### Solution (Sliding Window with a HashMap):
+
+```python
+def lengthOfLongestSubstring(s: str) -> int:
+    char_set = set()
+    left = 0
+    max_len = 0
+    
+    for right in range(len(s)):
+        while s[right] in char_set:
+            char_set.remove(s[left])
+            left += 1
+        char_set.add(s[right])
+        max_len = max(max_len, right - left + 1)
+    
+    return max_len
+
+# Example usage:
+s = "abcabcbb"
+print(lengthOfLongestSubstring(s))  # Output: 3 ("abc")
+```
+
+### Explanation:
+- We use a sliding window (using `left` and `right` pointers).
+- The `right` pointer iterates through the string.
+- If a duplicate character is found (i.e., the character at `right` exists in the window), the `left` pointer is incremented to remove characters until the duplicate is eliminated.
+- The length of the window (`right - left + 1`) is compared with the current maximum length, updating it when necessary.
+
+### 2. **Maximum Sum of Subarray of Size K**
+
+Given an array of integers, find the maximum sum of a subarray of size `k`.
+
+#### Problem:
+Given an array `arr` and a number `k`, find the maximum sum of any contiguous subarray of size `k`.
+
+#### Solution (Sliding Window):
+
+```python
+def maxSumSubarray(arr: list, k: int) -> int:
+    if len(arr) < k:
+        return 0  # or raise an exception, depending on constraints
+    
+    window_sum = sum(arr[:k])  # Sum of the first window
+    max_sum = window_sum
+    
+    for i in range(k, len(arr)):
+        window_sum += arr[i] - arr[i - k]  # Slide the window
+        max_sum = max(max_sum, window_sum)
+    
+    return max_sum
+
+# Example usage:
+arr = [2, 1, 5, 1, 3, 2]
+k = 3
+print(maxSumSubarray(arr, k))  # Output: 9 (subarray [5, 1, 3])
+```
+
+### Explanation:
+- We start by calculating the sum of the first `k` elements.
+- Then, we slide the window by subtracting the element that is left behind (i.e., `arr[i - k]`) and adding the next element (`arr[i]`).
+- The `max_sum` keeps track of the maximum sum encountered.
+
+### 3. **Find All Anagrams in a String**
+
+Given two strings `s` and `p`, find all the start indices of `p`'s anagrams in `s`.
+
+#### Problem:
+Given a string `s` and a string `p`, return all the start indices of `p`'s anagrams in `s`. The order of output does not matter.
+
+#### Solution (Sliding Window with Frequency Count):
+
+```python
+from collections import Counter
+
+def findAnagrams(s: str, p: str):
+    result = []
+    p_count = Counter(p)  # Frequency count of characters in p
+    window_count = Counter()
+    k = len(p)
+    
+    for i in range(len(s)):
+        window_count[s[i]] += 1
+        
+        # Remove the character that goes out of the window
+        if i >= k:
+            if window_count[s[i - k]] == 1:
+                del window_count[s[i - k]]
+            else:
+                window_count[s[i - k]] -= 1
+        
+        # If the window matches the frequency count of p, it's an anagram
+        if window_count == p_count:
+            result.append(i - k + 1)
+    
+    return result
+
+# Example usage:
+s = "cbaebabacd"
+p = "abc"
+print(findAnagrams(s, p))  # Output: [0, 6]
+```
+
+### Explanation:
+- We use two `Counter` objects to track the frequency of characters in `p` and the current sliding window in `s`.
+- As we move the window, we update the character counts, and once the window matches `p`'s frequency count, we add the starting index to the result list.
+
+### 4. **Longest Subarray with At Most K Distinct Characters**
+
+Given an array of integers, find the length of the longest subarray that contains at most `k` distinct characters.
+
+#### Problem:
+Given a string `s` and an integer `k`, return the length of the longest substring that contains at most `k` distinct characters.
+
+#### Solution (Sliding Window with HashMap):
+
+```python
+from collections import defaultdict
+
+def longestSubstringKDistinct(s: str, k: int) -> int:
+    if k == 0:
+        return 0
+    
+    char_count = defaultdict(int)
+    left = 0
+    max_len = 0
+    
+    for right in range(len(s)):
+        char_count[s[right]] += 1
+        
+        # Shrink the window until we have at most k distinct characters
+        while len(char_count) > k:
+            char_count[s[left]] -= 1
+            if char_count[s[left]] == 0:
+                del char_count[s[left]]
+            left += 1
+        
+        # Update max_len with the current window size
+        max_len = max(max_len, right - left + 1)
+    
+    return max_len
+
+# Example usage:
+s = "eceba"
+k = 2
+print(longestSubstringKDistinct(s, k))  # Output: 3 (substring "ece")
+```
+
+### Explanation:
+- We maintain a sliding window using the `left` and `right` pointers.
+- We keep a count of characters in the window with a `defaultdict`.
+- If the number of distinct characters exceeds `k`, we move the `left` pointer to shrink the window and ensure there are at most `k` distinct characters.
+
+### 5. **Smallest Subarray with a Sum Greater than or Equal to Target**
+
+Given an array of positive integers `nums` and a target sum `S`, find the length of the smallest contiguous subarray whose sum is greater than or equal to `S`. If no such subarray exists, return 0.
+
+#### Solution (Sliding Window):
+
+```python
+def minSubArrayLen(target: int, nums: list) -> int:
+    left = 0
+    window_sum = 0
+    min_length = float('inf')
+    
+    for right in range(len(nums)):
+        window_sum += nums[right]
+        
+        # Shrink the window from the left as long as the sum is >= target
+        while window_sum >= target:
+            min_length = min(min_length, right - left + 1)
+            window_sum -= nums[left]
+            left += 1
+    
+    return min_length if min_length != float('inf') else 0
+
+# Example usage:
+nums = [2, 3, 1, 2, 4, 3]
+target = 7
+print(minSubArrayLen(target, nums))  # Output: 2 (subarray [4, 3])
+```
+
+### Explanation:
+- We expand the window by adding elements to `window_sum` as the `right` pointer moves.
+- When the `window_sum` exceeds or equals the target, we try to shrink the window by moving the `left` pointer to find the smallest window that satisfies the condition.
+
+### Conclusion
+
+The sliding window technique is extremely useful in optimizing problems that involve sequences and can help reduce time complexity by maintaining a "window" of elements and adjusting it as needed. The above examples should give you a good foundation for more complex problems.
