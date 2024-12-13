@@ -1296,3 +1296,325 @@ SELECT * FROM large_table WHERE date > '2023-01-01' LIMIT 1000 OFFSET 1000;
 
 ### Conclusion
 To efficiently query millions of records every second, the key is a combination of optimizing your database schema, writing efficient queries, using appropriate indexing and partitioning strategies, and taking advantage of database-specific features like caching and replication. Always test the performance of your queries and monitor the system to identify bottlenecks that need addressing.
+
+---
+
+**MySQL Table Partitioning** is a technique used to improve the performance and manageability of large databases by dividing a table into smaller, more manageable pieces, called **partitions**. These partitions can be stored separately and may offer performance benefits, especially in terms of query optimization, maintenance, and scalability.
+
+### **Types of Table Partitioning in MySQL**
+
+1. **Range Partitioning**: 
+   - Data is distributed into partitions based on a specified range of values. 
+   - Useful for data that is ordered (e.g., dates, numbers).
+   - Example: Partitioning a table of sales data by `year` or `month`.
+   
+   ```sql
+   CREATE TABLE sales (
+       id INT,
+       sale_date DATE,
+       amount DECIMAL(10, 2)
+   )
+   PARTITION BY RANGE (YEAR(sale_date)) (
+       PARTITION p2022 VALUES LESS THAN (2023),
+       PARTITION p2023 VALUES LESS THAN (2024),
+       PARTITION p2024 VALUES LESS THAN (2025)
+   );
+   ```
+
+2. **List Partitioning**:
+   - Similar to range partitioning but partitions are based on specific values rather than ranges.
+   - Useful when you want to partition based on a finite set of values.
+   - Example: Partitioning a table by `country` (e.g., `US`, `Canada`, etc.).
+   
+   ```sql
+   CREATE TABLE users (
+       id INT,
+       name VARCHAR(100),
+       country VARCHAR(50)
+   )
+   PARTITION BY LIST (country) (
+       PARTITION p_us VALUES IN ('US'),
+       PARTITION p_ca VALUES IN ('Canada'),
+       PARTITION p_uk VALUES IN ('UK')
+   );
+   ```
+
+3. **Hash Partitioning**:
+   - Data is distributed evenly into partitions based on a hash function applied to a column.
+   - Useful for distributing data evenly without a clear range or list.
+   
+   ```sql
+   CREATE TABLE employees (
+       id INT,
+       name VARCHAR(100),
+       department_id INT
+   )
+   PARTITION BY HASH (department_id) 
+   PARTITIONS 4;  -- Creates 4 partitions
+   ```
+
+4. **Key Partitioning**:
+   - Similar to hash partitioning, but it uses MySQL's internal function to determine the partition key.
+   - Typically used when the distribution is supposed to be evenly spread across the partitions.
+   
+   ```sql
+   CREATE TABLE orders (
+       order_id INT,
+       order_date DATE,
+       customer_id INT
+   )
+   PARTITION BY KEY (customer_id) 
+   PARTITIONS 3;
+   ```
+
+5. **Composite Partitioning**:
+   - A combination of two or more partitioning types.
+   - For example, you can partition by range first and then by hash or list for finer control.
+   
+   ```sql
+   CREATE TABLE logs (
+       id INT,
+       log_date DATE,
+       log_level VARCHAR(50)
+   )
+   PARTITION BY RANGE (YEAR(log_date))
+   SUBPARTITION BY HASH (log_level)
+   PARTITIONS 4
+   (
+       PARTITION p2022 VALUES LESS THAN (2023),
+       PARTITION p2023 VALUES LESS THAN (2024)
+   );
+   ```
+
+---
+
+### **Benefits of Table Partitioning**
+
+1. **Improved Query Performance**:
+   - Queries that target specific partitions can be more efficient, as MySQL only scans relevant partitions (partition pruning). For instance, queries that filter by range or list values can be optimized.
+   - For example, selecting records for the year 2023 will only scan the partition for 2023, avoiding unnecessary scans of other years.
+
+2. **Better Management of Large Data Sets**:
+   - Easier to manage large datasets, as partitions can be added, removed, or archived independently.
+   - Partitions can be split or merged as the data grows or changes.
+
+3. **Improved Maintenance**:
+   - Partitioned tables allow operations like `OPTIMIZE`, `CHECK`, and `ANALYZE` to be done on individual partitions instead of the entire table.
+   - Allows for faster backup and recovery by handling smaller partitions.
+
+4. **Partition Pruning**:
+   - MySQL can eliminate partitions that do not match the query conditions, making the query more efficient.
+
+---
+
+### **Considerations When Using Partitioning**
+
+1. **Partitioning Key**:
+   - Choose the partition key carefully. The partition key should be something frequently used in the query's `WHERE` clause, as partition pruning works best when filtering by the partitioning key.
+
+2. **Limitations**:
+   - Not all types of queries benefit from partitioning (e.g., complex joins or queries that don't filter by the partitioning key).
+   - Some operations like `ALTER TABLE` may be slower on partitioned tables.
+   - In MySQL, partitioning is not supported on foreign keys, and index usage on partitioned tables can sometimes be limited.
+
+3. **Partition Pruning**:
+   - Only works when the partitioning key is included in the `WHERE` clause of the query. Otherwise, MySQL may scan all partitions.
+
+4. **Increased Complexity**:
+   - Partitioning can introduce additional complexity in terms of database design and management. If not managed properly, it could lead to performance issues.
+
+5. **Storage and Backup**:
+   - You might need to plan storage carefully because partitioning increases the number of underlying storage files. Backup and restore can be optimized with partitioning.
+
+---
+
+### **Managing Partitions**
+
+- **Adding Partitions**:
+  You can add partitions using the `ALTER TABLE` command.
+
+  ```sql
+  ALTER TABLE sales ADD PARTITION (
+      PARTITION p2025 VALUES LESS THAN (2026)
+  );
+  ```
+
+- **Dropping Partitions**:
+  Similarly, you can drop partitions using `ALTER TABLE`:
+
+  ```sql
+  ALTER TABLE sales DROP PARTITION p2022;
+  ```
+
+- **Reorganizing Partitions**:
+  You can merge or split partitions if necessary. For example, to split a partition:
+
+  ```sql
+  ALTER TABLE sales REORGANIZE PARTITION p2023 INTO (
+      PARTITION p2023_q1 VALUES LESS THAN (2024),
+      PARTITION p2023_q2 VALUES LESS THAN (2024)
+  );
+  ```
+
+---
+
+### **Conclusion**
+
+Table partitioning in MySQL is a powerful feature that can help manage large datasets and optimize query performance. It provides flexibility and improved maintenance options for large-scale applications. However, it requires careful planning and understanding of the data access patterns to fully realize its benefits.
+
+---
+
+To query and update data in a partitioned table in MySQL, you can follow the same approach as working with non-partitioned tables, but MySQL will optimize the query and update operations based on the partitions.
+
+### **Example Setup**
+
+Let's first create a partitioned table. In this example, we'll create a table `sales` partitioned by **range** based on the year of the `sale_date` column.
+
+#### Create Partitioned Table
+
+```sql
+CREATE TABLE sales (
+    id INT PRIMARY KEY,
+    sale_date DATE,
+    amount DECIMAL(10, 2)
+)
+PARTITION BY RANGE (YEAR(sale_date)) (
+    PARTITION p2022 VALUES LESS THAN (2023),
+    PARTITION p2023 VALUES LESS THAN (2024),
+    PARTITION p2024 VALUES LESS THAN (2025)
+);
+```
+
+In this example:
+- The `sales` table is partitioned by the `sale_date` column.
+- We have partitions for the years 2022, 2023, and 2024.
+
+Now, we'll populate the table with some sample data:
+
+```sql
+INSERT INTO sales (id, sale_date, amount) VALUES
+(1, '2022-05-15', 150.00),
+(2, '2023-06-20', 200.00),
+(3, '2023-08-11', 250.00),
+(4, '2024-01-25', 300.00),
+(5, '2022-09-10', 120.00);
+```
+
+### **1. Querying Partitioned Table**
+
+When querying a partitioned table, MySQL uses **partition pruning** to scan only relevant partitions based on the query's conditions. 
+
+#### Example Query: Retrieve data for 2023
+
+```sql
+SELECT * FROM sales WHERE YEAR(sale_date) = 2023;
+```
+
+- MySQL will only scan the `p2023` partition because the `WHERE` clause explicitly filters by `sale_date` year (`2023`).
+- This is the advantage of partition pruning, as it avoids scanning data from other partitions (e.g., `p2022`, `p2024`).
+
+#### Example Query: Retrieve data for a specific range of dates
+
+```sql
+SELECT * FROM sales 
+WHERE sale_date BETWEEN '2023-01-01' AND '2023-12-31';
+```
+
+- In this case, MySQL will also target only the `p2023` partition, as the `sale_date` is filtered within the range for 2023.
+
+### **2. Updating Data in a Partitioned Table**
+
+Updating data in a partitioned table is similar to updating a non-partitioned table. However, MySQL will identify the correct partition to update based on the partitioning key or the provided conditions.
+
+#### Example 1: Update data in a specific partition (2023)
+
+To update the `amount` for sales made in 2023:
+
+```sql
+UPDATE sales 
+SET amount = 220.00
+WHERE YEAR(sale_date) = 2023;
+```
+
+- This query updates all records where the `sale_date` is in 2023. MySQL will only access the `p2023` partition, which is much more efficient than scanning the entire table.
+
+#### Example 2: Update a specific record in a partition
+
+Let's say we want to update the amount of a specific sale from `id = 2`, which is in the `p2023` partition.
+
+```sql
+UPDATE sales 
+SET amount = 180.00
+WHERE id = 2;
+```
+
+- Even though this record belongs to the `p2023` partition, MySQL will automatically figure out the correct partition based on the `id` and update the specific row.
+
+#### Example 3: Update data across multiple partitions
+
+If you want to update data across different partitions, like all sales in the `p2022` and `p2023` partitions, you can do so by specifying conditions that match multiple partitions.
+
+```sql
+UPDATE sales
+SET amount = 175.00
+WHERE YEAR(sale_date) IN (2022, 2023);
+```
+
+- This will update all rows in partitions `p2022` and `p2023`.
+
+### **3. Query and Update Example with Partitioning Logic**
+
+Here’s a more realistic scenario. Suppose we want to:
+1. Find the sales in 2023 that have an amount less than 200.
+2. Increase the amount for these sales by 10%.
+
+#### Step 1: Query the sales for 2023 with `amount < 200`
+
+```sql
+SELECT * FROM sales
+WHERE YEAR(sale_date) = 2023 AND amount < 200;
+```
+
+This will target the `p2023` partition and filter the rows where the amount is less than 200.
+
+#### Step 2: Update the `amount` for those sales by increasing it by 10%
+
+```sql
+UPDATE sales
+SET amount = amount * 1.10
+WHERE YEAR(sale_date) = 2023 AND amount < 200;
+```
+
+- The `UPDATE` statement will affect only the records in the `p2023` partition, and it will only update the rows with `amount < 200`.
+  
+### **4. How MySQL Handles Partitions During Updates**
+
+When you update partitioned tables:
+- **Partition pruning** will still occur, meaning MySQL will identify and update only the relevant partitions.
+- **Indexes**: You can have indexes on partitioned tables. However, MySQL may need to scan more partitions if the query does not use the partition key.
+- **Alter Table**: Modifying partitioned tables (e.g., splitting partitions, changing partitioning methods) requires careful planning as it could involve moving large amounts of data.
+
+### **5. Partition Maintenance (Optional)**
+
+If your data grows over time and you need to add a new partition (e.g., for the year 2025), you can use `ALTER TABLE`:
+
+```sql
+ALTER TABLE sales ADD PARTITION (
+    PARTITION p2025 VALUES LESS THAN (2026)
+);
+```
+
+Similarly, you can drop old partitions if they are no longer needed:
+
+```sql
+ALTER TABLE sales DROP PARTITION p2022;
+```
+
+---
+
+### **Conclusion**
+
+Querying and updating data in partitioned tables in MySQL is straightforward, and MySQL efficiently handles partition pruning when appropriate conditions are met. Partitioning can significantly improve performance for large tables, especially when you often query based on partition keys like date ranges or categorical values. Always choose the partitioning key wisely based on your data and query patterns.
+
+---
+
