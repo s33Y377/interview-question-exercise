@@ -1618,3 +1618,177 @@ Querying and updating data in partitioned tables in MySQL is straightforward, an
 
 ---
 
+In SQL, **indexes** are used to speed up the retrieval of data from a database table. They allow the database engine to find rows more efficiently without scanning the entire table. There are several types of indexes in SQL, each suited to different use cases. Below is an overview of the main types of indexes and examples for each:
+
+### 1. **Single-Column Index**
+A single-column index is created on one column of a table to speed up queries that filter or sort by that column.
+
+**Example:**
+```sql
+CREATE INDEX idx_name ON employees (last_name);
+```
+- This creates an index on the `last_name` column of the `employees` table.
+- It improves the performance of queries like:
+```sql
+SELECT * FROM employees WHERE last_name = 'Smith';
+```
+
+### 2. **Composite Index (Multi-Column Index)**
+A composite index is created on two or more columns. It can speed up queries that filter or sort based on multiple columns.
+
+**Example:**
+```sql
+CREATE INDEX idx_fullname ON employees (first_name, last_name);
+```
+- This creates an index on the `first_name` and `last_name` columns of the `employees` table.
+- It improves the performance of queries like:
+```sql
+SELECT * FROM employees WHERE first_name = 'John' AND last_name = 'Doe';
+```
+- It also helps if queries filter on the first column in the index (`first_name` in this case) alone.
+
+### 3. **Unique Index**
+A unique index ensures that no two rows in the table have the same values in the indexed column(s). It is automatically created on primary key and unique constraints.
+
+**Example:**
+```sql
+CREATE UNIQUE INDEX idx_unique_email ON employees (email);
+```
+- This ensures that no two employees can have the same email address.
+- This index improves queries that search for employees by email, such as:
+```sql
+SELECT * FROM employees WHERE email = 'john.doe@example.com';
+```
+
+### 4. **Primary Key Index**
+A primary key constraint automatically creates a unique index on the column(s) defined as the primary key. A primary key uniquely identifies each row in the table.
+
+**Example:**
+```sql
+CREATE TABLE employees (
+    employee_id INT PRIMARY KEY,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50)
+);
+```
+- The `employee_id` column will automatically have a unique index created, ensuring no two employees can have the same `employee_id`.
+
+### 5. **Full-Text Index**
+A full-text index is used for full-text searches in columns that store large text data. It allows the database to efficiently search for words and phrases within the text fields.
+
+**Example:**
+```sql
+CREATE FULLTEXT INDEX idx_fulltext_description ON products(description);
+```
+- This creates an index on the `description` column of the `products` table to support full-text searches like:
+```sql
+SELECT * FROM products WHERE MATCH(description) AGAINST ('laptop');
+```
+
+### 6. **Bitmap Index**
+A bitmap index is typically used on columns with a small number of distinct values (low cardinality), such as gender, status flags, or yes/no fields. It stores a bitmap for each distinct value.
+
+**Example:**
+```sql
+CREATE BITMAP INDEX idx_gender ON employees (gender);
+```
+- This creates a bitmap index on the `gender` column of the `employees` table. It is efficient for queries like:
+```sql
+SELECT * FROM employees WHERE gender = 'M';
+```
+- Bitmap indexes are particularly effective when combined with other indexes in certain scenarios (e.g., when multiple columns have low cardinality).
+
+### 7. **Clustered Index**
+A clustered index determines the physical order of data in the table. A table can have only one clustered index. If a primary key is defined, the primary key is typically used as the clustered index by default.
+
+**Example:**
+```sql
+CREATE CLUSTERED INDEX idx_clustered_name ON employees (employee_id);
+```
+- This will order the `employees` table's data based on `employee_id`. 
+- Typically, the primary key or another unique key is used as the clustered index.
+
+### 8. **Non-Clustered Index**
+A non-clustered index is a separate structure from the data itself. It contains pointers to the data rows. A table can have multiple non-clustered indexes.
+
+**Example:**
+```sql
+CREATE NONCLUSTERED INDEX idx_nonclustered_lastname ON employees (last_name);
+```
+- This creates a non-clustered index on the `last_name` column. It improves query performance for searches based on the `last_name`.
+
+### 9. **Spatial Index**
+A spatial index is used for spatial data types (like points, lines, or polygons) to support spatial queries. It is typically used in geographic or mapping systems.
+
+**Example:**
+```sql
+CREATE SPATIAL INDEX idx_spatial_location ON locations (coordinates);
+```
+- This creates a spatial index on the `coordinates` column of the `locations` table.
+
+### 10. **Hash Index**
+A hash index is used to improve the performance of queries that use the equality (`=`) operator. It uses a hash function to map the values to a hash table. It is not typically used for range queries.
+
+**Example (MySQL):**
+```sql
+CREATE INDEX idx_hash ON employees (email) USING HASH;
+```
+- This index improves equality-based searches on the `email` column.
+
+### 11. **Descending Index**
+A descending index stores values in descending order instead of the default ascending order. This can be useful if queries frequently need to sort data in descending order.
+
+**Example:**
+```sql
+CREATE INDEX idx_desc_salary ON employees (salary DESC);
+```
+- This creates a descending index on the `salary` column, which can improve the performance of queries like:
+```sql
+SELECT * FROM employees ORDER BY salary DESC;
+```
+
+### 12. **Function-Based Index**
+A function-based index is created on an expression or function applied to one or more columns. It is useful when you frequently query based on a computed result.
+
+**Example (Oracle SQL):**
+```sql
+CREATE INDEX idx_func_email ON employees (LOWER(email));
+```
+- This creates an index on the lowercase version of the `email` column, which speeds up queries that search for email addresses in any case:
+```sql
+SELECT * FROM employees WHERE LOWER(email) = 'john.doe@example.com';
+```
+
+### 13. **Expression-Based Index**
+Expression-based indexes are a specific form of function-based indexes where an expression on one or more columns is indexed.
+
+**Example:**
+```sql
+CREATE INDEX idx_expression ON employees ((first_name || ' ' || last_name));
+```
+- This index helps speed up queries that search for full names by combining `first_name` and `last_name`:
+```sql
+SELECT * FROM employees WHERE first_name || ' ' || last_name = 'John Doe';
+```
+
+---
+
+### Summary of Index Types:
+
+| **Index Type**              | **Purpose**                                         | **Example Use Case**                                      |
+|-----------------------------|-----------------------------------------------------|-----------------------------------------------------------|
+| **Single-Column Index**      | Index on one column.                               | `WHERE last_name = 'Smith'`                               |
+| **Composite Index**          | Index on multiple columns.                         | `WHERE first_name = 'John' AND last_name = 'Doe'`         |
+| **Unique Index**             | Ensures uniqueness of column(s).                    | `email` in `employees` table                               |
+| **Primary Key Index**        | Automatically created on primary key columns.       | `employee_id` as primary key in `employees` table          |
+| **Full-Text Index**          | For full-text search on large text columns.         | Searching for keywords in a `description` column          |
+| **Bitmap Index**             | Best for low-cardinality columns.                   | `gender` column in `employees`                             |
+| **Clustered Index**          | Defines physical data order.                       | Usually on `PRIMARY KEY` or `ID` columns                   |
+| **Non-Clustered Index**      | Separate structure pointing to data rows.          | `last_name` column in `employees`                          |
+| **Spatial Index**            | Index for spatial data types.                       | `coordinates` column in `locations`                        |
+| **Hash Index**               | For fast equality searches.                         | `email` column in `employees`                              |
+| **Descending Index**         | Index in descending order.                         | `salary` column for ordering salaries from high to low     |
+| **Function-Based Index**     | Index on an expression or function.                 | `LOWER(email)` for case-insensitive search                |
+| **Expression-Based Index**   | Index on a computed expression.                     | Full name search (`first_name || ' ' || last_name`)        |
+
+Indexes are essential tools in optimizing query performance, but they come with trade-offs like increased storage space and slower write operations (INSERT/UPDATE/DELETE). Therefore, you should create indexes thoughtfully based on the queries your application needs to perform.
