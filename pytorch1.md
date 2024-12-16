@@ -36,6 +36,7 @@ print(output)
 CNNs are widely used for image classification tasks. They use convolutional layers to automatically extract features from images.
 
 #### Implementation
+```python
 class CNN(nn.Module):
     def __init__(self):
         super(CNN, self).__init__()
@@ -61,10 +62,13 @@ model = CNN()
 input_data = torch.randn(1, 1, 28, 28)  # 1 channel (grayscale), 28x28 image
 output = model(input_data)
 print(output)
+```
+
 ### 3. Recurrent Neural Network (RNN)
 RNNs are used for sequential data (like time series or text). They have a feedback loop that allows them to process inputs sequentially, making them useful for tasks like language modeling or speech recognition.
 
 #### Implementation
+```python
 class RNN(nn.Module):
     def __init__(self, input_size, hidden_size, output_size):
         super(RNN, self).__init__()
@@ -105,10 +109,13 @@ model = LSTM(input_size=10, hidden_size=20, output_size=1)
 input_data = torch.randn(5, 10, 10)
 output = model(input_data)
 print(output)
+```
+
 ### 5. Transformer Model
 Transformers are popular for sequence-to-sequence tasks like machine translation, and they have become the foundation for state-of-the-art NLP models.
 
 #### Implementation (Using PyTorch's nn.Transformer)
+```python
 class TransformerModel(nn.Module):
     def __init__(self, input_dim, model_dim, nhead, num_layers, output_dim):
         super(TransformerModel, self).__init__()
@@ -131,6 +138,7 @@ src = torch.randint(0, 5000, (20, 5))  # Source sequence
 tgt = torch.randint(0, 5000, (20, 5))  # Target sequence
 output = model(src, tgt)
 print(output)
+```
 ### Conclusion
 
 These are some of the main types of models in PyTorch:
