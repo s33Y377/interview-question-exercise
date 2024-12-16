@@ -4,6 +4,7 @@ In PyTorch, models are the building blocks of deep learning architectures. These
 A basic feed-forward network consists of fully connected layers (linear layers) where each neuron is connected to every neuron in the previous layer.
 
 #### Implementation
+```python
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -29,6 +30,8 @@ model = FeedForwardNN()
 input_data = torch.randn(1, 784)
 output = model(input_data)
 print(output)
+```
+
 ### 2. Convolutional Neural Network (CNN)
 CNNs are widely used for image classification tasks. They use convolutional layers to automatically extract features from images.
 
