@@ -6,6 +6,7 @@ Below, I'll cover the key concepts of FastAPI, explain each, and provide example
    FastAPI allows you to create web APIs by defining paths (endpoints), request types, and responses. It leverages Python's type annotations, making it easy to define data models and the behavior of each endpoint.
 
 #### Example:
+```python
 from fastapi import FastAPI
 
 app = FastAPI()
@@ -13,6 +14,7 @@ app = FastAPI()
 @app.get("/")
 def read_root():
     return {"message": "Hello, World!"}
+```
 - Explanation: 
   - The @app.get("/") decorator defines a GET endpoint for the root path (/).
   - The function read_root() returns a dictionary, which FastAPI automatically converts to JSON as a response.
@@ -21,9 +23,11 @@ def read_root():
    Path parameters are values extracted from the URL path, such as /items/{item_id}. FastAPI automatically converts them into function arguments.
 
 #### Example:
+```python
 @app.get("/items/{item_id}")
 def read_item(item_id: int):
     return {"item_id": item_id}
+```
 - Explanation:
   - item_id is a path parameter. FastAPI automatically extracts it from the URL and converts it to an integer.
 
@@ -31,9 +35,11 @@ def read_item(item_id: int):
    Query parameters are passed in the URL after the ?, e.g., /items/?name=xyz&price=20. FastAPI automatically parses and validates query parameters.
 
 #### Example:
+```python
 @app.get("/items/")
 def read_item(name: str = None, price: float = None):
     return {"name": name, "price": price}
+```
 - Explanation: 
   - name and price are query parameters, and FastAPI automatically extracts and validates them.
 
@@ -41,6 +47,7 @@ def read_item(name: str = None, price: float = None):
    The request body allows clients to send data (e.g., JSON or form data) to the server. FastAPI supports reading data from the body using Pydantic models.
 
 #### Example:
+```python
 from pydantic import BaseModel
 
 class Item(BaseModel):
@@ -50,6 +57,7 @@ class Item(BaseModel):
 @app.post("/items/")
 def create_item(item: Item):
     return {"name": item.name, "price": item.price}
+```
 - Explanation: 
   - The Item class is a Pydantic model that defines the schema for the request body.
   - FastAPI automatically validates the body of the request based on this model.
@@ -58,6 +66,7 @@ def create_item(item: Item):
    You can define response models that FastAPI uses to validate and structure the response data. This helps ensure that responses are consistent.
 
 #### Example:
+```python
 from pydantic import BaseModel
 
 class ItemResponse(BaseModel):
@@ -67,6 +76,7 @@ class ItemResponse(BaseModel):
 @app.get("/items/{item_id}", response_model=ItemResponse)
 def read_item(item_id: int):
     return {"name": "Example Item", "price": 10.5}
+```
 - Explanation:
   - The response_model=ItemResponse parameter ensures that FastAPI automatically validates the response and formats it to the ItemResponse model.
 
@@ -74,6 +84,7 @@ def read_item(item_id: int):
    FastAPI provides a powerful dependency injection system. You can create reusable components (such as database connections, authentication, etc.) and inject them into your endpoints.
 
 #### Example:
+```python
 from fastapi import Depends
 
 def get_query_param(query: str = None):
@@ -82,6 +93,7 @@ def get_query_param(query: str = None):
 @app.get("/items/")
 def read_items(query: str = Depends(get_query_param)):
     return {"query": query}
+```
 - Explanation:
   - Depends(get_query_param) tells FastAPI to call get_query_param and inject the result into the query parameter of read_items.
 
@@ -89,7 +101,7 @@ def read_items(query: str = Depends(get_query_param)):
    FastAPI automatically validates the incoming request data (both query parameters and request body) using Pydantic models.
 
 #### Example:
-`python
+```python
 from pydantic import BaseModel, Field
 
 class Item(BaseModel):
@@ -98,6 +110,7 @@ class Item(BaseModel):
   @app.post("/items/")
 def create_item(item: Item):
     return {"name": item.name, "price": item.price}
+```
 - **Explanation**: 
   - `Field` allows you to set constraints like `ge=0` for price (i.e., price must be greater than or equal to 0).
   - FastAPI will automatically validate the request body based on these constraints.
@@ -106,7 +119,7 @@ def create_item(item: Item):
    You can use Pydantic's validators to perform custom validation logic on fields.
 
 #### Example:
-python
+```python
 from pydantic import BaseModel, validator
 
 class Item(BaseModel):
@@ -122,6 +135,7 @@ class Item(BaseModel):
 @app.post("/items/")
 def create_item(item: Item):
     return {"name": item.name, "price": item.price}
+```
 - **Explanation**: 
   - The `check_price` function is a custom validator for the `price` field that checks whether the price is non-negative.
 
@@ -129,13 +143,14 @@ def create_item(item: Item):
    FastAPI supports asynchronous endpoints using `async def`. This is useful for I/O-bound tasks like making HTTP requests or querying a database.
 
 #### Example:
-python
+```python
 import asyncio
 
 @app.get("/async")
 async def read_async():
     await asyncio.sleep(1)
     return {"message": "This was processed asynchronously"}
+```
 - **Explanation**: 
   - The `async def` function allows FastAPI to handle I/O-bound tasks efficiently without blocking the server.
 
@@ -143,7 +158,7 @@ async def read_async():
    FastAPI allows you to handle exceptions globally and return custom error responses.
 
 #### Example:
-python
+```python
 from fastapi import HTTPException
 
 @app.get("/items/{item_id}")
@@ -151,6 +166,7 @@ def get_item(item_id: int):
     if item_id != 42:
         raise HTTPException(status_code=404, detail="Item not found")
     returnExplanationem_id}
+```
 - **Explanation**:
   - `HTTPException` is used to raise custom errors with specific status codes and messages. In this case, if `item_id` is not 42, a 404 error is raised.
 
@@ -158,7 +174,7 @@ def get_item(item_id: int):
    FastAPI provides tools for handling security features like OAuth2, API key-based authentication, and others. You can use OAuth2 for password-based login and other security mechanisms.
 
 #### Example (OAuth2):
-python
+```python
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 
@@ -170,7 +186,8 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
     return {"username": "admin"}
 
 @app.get("/users/me")
-def read_users_me(current_user: dict = Depends(get_current_user))Explanationrrent_user
+def read_users_me(current_user: dict = Depends(get_current_user))
+```
 - **Explanation**:
   - The `OAuth2PasswordBearer` creates a dependency that expects the user to provide a token for authentication. If the token is invalid, an exception is raised.
 
@@ -178,7 +195,7 @@ def read_users_me(current_user: dict = Depends(get_current_user))Explanationrren
    FastAPI allows you to configure CORS settings to control which domains can make requests to your API.
 
 #### Example:
-python
+```python
 from fastapi.middleware.cors import CORSMiddleware
 
 app.add_middleware(
@@ -188,6 +205,7 @@ app.add_middleware(
     allow_methods=["*"],  # Allows all methods
     allow_headers=[Explanation all headers
 )
+```
 - **Explanation**: 
   - CORS is configured to allow any origin to make requests to your API. You can specify restrictions if needed.
 
@@ -195,7 +213,7 @@ app.add_middleware(
    FastAPI is designed with testing in mind. You can use `TestClient` (based on `requests`) to simulate requests to your API and test the functionality.
 
 #### Example:
-python
+```python
 from fastapi.testclient import TestClient
 
 client = TestClient(app)
@@ -204,7 +222,7 @@ def test_read_root():
     response = client.get("/")
     assert response.status_code == 200
     assert response.json() Explanation"Hello, World!"}
-`
+```
 - **Explanation**: 
   - `TestClient` simulates HTTP requests for testing purposes.
 ### 14. Swagger UI:
