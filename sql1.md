@@ -1792,3 +1792,295 @@ SELECT * FROM employees WHERE first_name || ' ' || last_name = 'John Doe';
 | **Expression-Based Index**   | Index on a computed expression.                     | Full name search (`first_name || ' ' || last_name`)        |
 
 Indexes are essential tools in optimizing query performance, but they come with trade-offs like increased storage space and slower write operations (INSERT/UPDATE/DELETE). Therefore, you should create indexes thoughtfully based on the queries your application needs to perform.
+
+---
+
+Here are SQL queries for the problems mentioned, with examples where applicable:
+
+---
+
+### **Medium Level**
+
+1️⃣ **Find the second highest salary in an employee table:**
+
+```sql
+SELECT MAX(salary) AS second_highest_salary
+FROM employees
+WHERE salary < (SELECT MAX(salary) FROM employees);
+```
+
+2️⃣ **Fetch all employees whose names contain the letter “a” exactly twice:**
+
+```sql
+SELECT * 
+FROM employees
+WHERE LENGTH(name) - LENGTH(REPLACE(name, 'a', '')) = 2;
+```
+
+3️⃣ **Retrieve only duplicate records from a table:**
+
+```sql
+SELECT col1, col2, COUNT(*) 
+FROM your_table
+GROUP BY col1, col2
+HAVING COUNT(*) > 1;
+```
+
+4️⃣ **Calculate the running total of sales by date:**
+
+```sql
+SELECT sale_date, 
+       SUM(amount) OVER (ORDER BY sale_date) AS running_total
+FROM sales;
+```
+
+5️⃣ **Find employees who earn more than the average salary in their department:**
+
+```sql
+SELECT e.name, e.salary, e.department_id
+FROM employees e
+WHERE e.salary > (SELECT AVG(salary) 
+                  FROM employees 
+                  WHERE department_id = e.department_id);
+```
+
+6️⃣ **Find the most frequently occurring value in a column:**
+
+```sql
+SELECT col1, COUNT(*) AS frequency
+FROM your_table
+GROUP BY col1
+ORDER BY frequency DESC
+LIMIT 1;
+```
+
+7️⃣ **Fetch records where the date is within the last 7 days from today:**
+
+```sql
+SELECT *
+FROM your_table
+WHERE date_column >= CURDATE() - INTERVAL 7 DAY;
+```
+
+8️⃣ **Count how many employees share the same salary:**
+
+```sql
+SELECT salary, COUNT(*) AS num_employees
+FROM employees
+GROUP BY salary;
+```
+
+9️⃣ **Fetch the top 3 records for each group in a table:**
+
+```sql
+WITH ranked_employees AS (
+    SELECT *,
+           ROW_NUMBER() OVER (PARTITION BY department_id ORDER BY salary DESC) AS rank
+    FROM employees
+)
+SELECT * 
+FROM ranked_employees
+WHERE rank <= 3;
+```
+
+🔟 **Retrieve products that were never sold (use LEFT JOIN):**
+
+```sql
+SELECT p.product_id, p.product_name
+FROM products p
+LEFT JOIN sales s ON p.product_id = s.product_id
+WHERE s.product_id IS NULL;
+```
+
+---
+
+### **Challenging Level**
+
+1️⃣ **Retrieve customers who made their first purchase in the last 6 months:**
+
+```sql
+SELECT c.customer_id, c.customer_name
+FROM customers c
+JOIN (SELECT customer_id, MIN(purchase_date) AS first_purchase
+      FROM purchases
+      GROUP BY customer_id) AS first_purchase_data
+  ON c.customer_id = first_purchase_data.customer_id
+WHERE first_purchase >= CURDATE() - INTERVAL 6 MONTH;
+```
+
+2️⃣ **Pivot a table to convert rows into columns:**
+
+```sql
+SELECT 
+    department_id,
+    MAX(CASE WHEN month = 'January' THEN sales_amount END) AS Jan_sales,
+    MAX(CASE WHEN month = 'February' THEN sales_amount END) AS Feb_sales,
+    MAX(CASE WHEN month = 'March' THEN sales_amount END) AS Mar_sales
+FROM sales_data
+GROUP BY department_id;
+```
+
+3️⃣ **Calculate the percentage change in sales month-over-month:**
+
+```sql
+WITH sales_per_month AS (
+    SELECT month, SUM(amount) AS total_sales
+    FROM sales
+    GROUP BY month
+)
+SELECT month,
+       total_sales,
+       (total_sales - LAG(total_sales) OVER (ORDER BY month)) / LAG(total_sales) OVER (ORDER BY month) * 100 AS percentage_change
+FROM sales_per_month;
+```
+
+4️⃣ **Find the median salary of employees in a table:**
+
+```sql
+WITH sorted_salaries AS (
+    SELECT salary,
+           ROW_NUMBER() OVER (ORDER BY salary) AS row_num,
+           COUNT(*) OVER () AS total_count
+    FROM employees
+)
+SELECT AVG(salary) AS median_salary
+FROM sorted_salaries
+WHERE row_num IN ((total_count + 1) / 2, (total_count + 2) / 2);
+```
+
+5️⃣ **Fetch all users who logged in consecutively for 3 days or more:**
+
+```sql
+WITH consecutive_logins AS (
+    SELECT user_id, login_date,
+           LEAD(login_date) OVER (PARTITION BY user_id ORDER BY login_date) AS next_day,
+           LEAD(login_date, 2) OVER (PARTITION BY user_id ORDER BY login_date) AS day_after_next
+    FROM logins
+)
+SELECT user_id
+FROM consecutive_logins
+WHERE DATEDIFF(next_day, login_date) = 1
+  AND DATEDIFF(day_after_next, next_day) = 1
+GROUP BY user_id;
+```
+
+6️⃣ **Delete duplicate rows while keeping one occurrence:**
+
+```sql
+WITH cte AS (
+    SELECT ROW_NUMBER() OVER (PARTITION BY col1, col2 ORDER BY col1) AS row_num
+    FROM your_table
+)
+DELETE FROM your_table
+WHERE id IN (SELECT id FROM cte WHERE row_num > 1);
+```
+
+7️⃣ **Calculate the ratio of sales between two categories:**
+
+```sql
+SELECT 
+    category,
+    SUM(sales_amount) AS total_sales,
+    (SUM(sales_amount) / (SELECT SUM(sales_amount) FROM sales WHERE category = 'CategoryA')) AS sales_ratio
+FROM sales
+WHERE category IN ('CategoryA', 'CategoryB')
+GROUP BY category;
+```
+
+8️⃣ **Implement a recursive query to generate a hierarchical structure:**
+
+```sql
+WITH RECURSIVE employee_hierarchy AS (
+    SELECT employee_id, manager_id, employee_name, 1 AS level
+    FROM employees
+    WHERE manager_id IS NULL
+    UNION ALL
+    SELECT e.employee_id, e.manager_id, e.employee_name, eh.level + 1
+    FROM employees e
+    INNER JOIN employee_hierarchy eh ON e.manager_id = eh.employee_id
+)
+SELECT * 
+FROM employee_hierarchy;
+```
+
+9️⃣ **Find gaps in sequential numbering within a table:**
+
+```sql
+WITH seq_numbers AS (
+    SELECT row_number() OVER (ORDER BY id) AS seq, id
+    FROM your_table
+)
+SELECT a.seq + 1 AS missing_number
+FROM seq_numbers a
+LEFT JOIN seq_numbers b ON a.seq + 1 = b.seq
+WHERE b.id IS NULL;
+```
+
+🔟 **Split a comma-separated string into individual rows using SQL:**
+
+```sql
+WITH split_string AS (
+    SELECT TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(csv_column, ',', n), ',', -1)) AS value
+    FROM (SELECT 1 AS n UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5) numbers
+    CROSS JOIN your_table
+    WHERE CHAR_LENGTH(csv_column) - CHAR_LENGTH(REPLACE(csv_column, ',', '')) >= n - 1
+)
+SELECT value FROM split_string;
+```
+
+---
+
+### **Advanced Problem-Solving**
+
+1️⃣ **Rank products by sales in descending order for each region:**
+
+```sql
+SELECT region, product_id, sales_amount,
+       RANK() OVER (PARTITION BY region ORDER BY sales_amount DESC) AS rank
+FROM sales;
+```
+
+2️⃣ **Fetch employees whose salaries fall within the top 10% of their department:**
+
+```sql
+WITH salary_percentile AS (
+    SELECT department_id, salary,
+           PERCENT_RANK() OVER (PARTITION BY department_id ORDER BY salary DESC) AS salary_rank
+    FROM employees
+)
+SELECT * 
+FROM salary_percentile
+WHERE salary_rank <= 0.1;
+```
+
+3️⃣ **Identify orders placed during business hours (9 AM to 6 PM):**
+
+```sql
+SELECT *
+FROM orders
+WHERE EXTRACT(HOUR FROM order_time) BETWEEN 9 AND 18;
+```
+
+4️⃣ **Get the count of users active on both weekdays and weekends:**
+
+```sql
+SELECT user_id,
+       COUNT(DISTINCT CASE WHEN DAYOFWEEK(login_date) IN (1, 7) THEN login_date END) AS weekend_logins,
+       COUNT(DISTINCT CASE WHEN DAYOFWEEK(login_date) BETWEEN 2 AND 6 THEN login_date END) AS weekday_logins
+FROM user_logins
+GROUP BY user_id
+HAVING weekend_logins > 0 AND weekday_logins > 0;
+```
+
+5️⃣ **Retrieve customers who made purchases across at least three different categories:**
+
+```sql
+SELECT customer_id
+FROM purchases
+GROUP BY customer_id
+HAVING COUNT(DISTINCT category) >= 3;
+```
+
+---
+
+These queries demonstrate a variety of SQL techniques, ranging from basic aggregation to advanced window functions, recursion, and complex joins.
