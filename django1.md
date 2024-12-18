@@ -2400,3 +2400,449 @@ You can further extend this with features like authentication, pagination, filte
 
 ---
 
+In Django, models are used to define the structure of your database tables. There are several types of models and model fields that you can use in Django to create a database schema. Here are the main types:
+
+### 1. **Django Model Class (Base Model)**
+   Every model in Django is defined by creating a Python class that inherits from `django.db.models.Model`. This class defines the fields and behaviors of the data you want to store.
+
+   Example:
+   ```python
+   from django.db import models
+
+   class Post(models.Model):
+       title = models.CharField(max_length=200)
+       content = models.TextField()
+       created_at = models.DateTimeField(auto_now_add=True)
+       updated_at = models.DateTimeField(auto_now=True)
+
+       def __str__(self):
+           return self.title
+   ```
+
+   **Common Field Types in Models:**
+   - `CharField`: For short text fields (e.g., titles, names).
+   - `TextField`: For longer text (e.g., blog content, descriptions).
+   - `IntegerField`: For integer values.
+   - `DecimalField`: For decimal numbers.
+   - `FloatField`: For floating point numbers.
+   - `DateTimeField`: For date and time.
+   - `DateField`: For date only.
+   - `TimeField`: For time only.
+   - `BooleanField`: For True/False values.
+   - `EmailField`: For email addresses.
+   - `URLField`: For URLs.
+   - `ImageField`: For image file paths.
+
+### 2. **Abstract Base Classes**
+   An **abstract model** is a model that doesn't create its own database table. Instead, it is used to define common fields or methods that can be inherited by other models.
+
+   Example:
+   ```python
+   class TimestampedModel(models.Model):
+       created_at = models.DateTimeField(auto_now_add=True)
+       updated_at = models.DateTimeField(auto_now=True)
+
+       class Meta:
+           abstract = True
+
+   class Post(TimestampedModel):
+       title = models.CharField(max_length=200)
+       content = models.TextField()
+   ```
+
+   - **Advantages**: Abstract models help avoid redundancy and promote code reuse.
+   - **Important**: The `abstract = True` option in the `Meta` class tells Django that this model should not be created as a table in the database.
+
+### 3. **Model Inheritance: Multi-table Inheritance**
+   In **multi-table inheritance**, each model gets its own database table, and Django automatically manages the relationships between the models.
+
+   Example:
+   ```python
+   class Animal(models.Model):
+       name = models.CharField(max_length=100)
+
+   class Dog(Animal):
+       breed = models.CharField(max_length=100)
+   ```
+
+   - **Table structure**: Both `Animal` and `Dog` models will have their own tables, and the `Dog` table will have a foreign key to the `Animal` table.
+   - **Use case**: When you want to create an object that shares common fields with another model but still needs its own table.
+
+### 4. **Proxy Models**
+   A **proxy model** is a way to modify the behavior of an existing model without changing its database table.
+
+   Example:
+   ```python
+   class Post(models.Model):
+       title = models.CharField(max_length=200)
+       content = models.TextField()
+
+   class PublishedPost(Post):
+       class Meta:
+           proxy = True
+
+       def publish(self):
+           self.status = 'Published'
+           self.save()
+   ```
+
+   - **Use case**: When you need to add custom methods or modify behavior but don't need a new database table.
+
+### 5. **Concrete Inheritance (Normal Model Inheritance)**
+   Unlike abstract base classes or proxy models, **concrete model inheritance** involves subclassing models where each subclass has its own table, and fields from the parent model are copied to the child.
+
+   Example:
+   ```python
+   class Animal(models.Model):
+       name = models.CharField(max_length=100)
+
+   class Dog(Animal):
+       breed = models.CharField(max_length=100)
+   ```
+
+   - **Table structure**: Both the `Animal` and `Dog` models have their own separate tables.
+   - **Use case**: When a model needs to have its own fields, but also inherit fields from a parent model.
+
+### 6. **Custom Model Managers**
+   Django allows you to define custom manager classes to add custom methods to your models.
+
+   Example:
+   ```python
+   class PostManager(models.Manager):
+       def published(self):
+           return self.filter(status='published')
+
+   class Post(models.Model):
+       title = models.CharField(max_length=200)
+       content = models.TextField()
+       status = models.CharField(max_length=20)
+       objects = PostManager()  # Use custom manager
+
+   # Usage
+   published_posts = Post.objects.published()
+   ```
+
+   - **Use case**: To encapsulate common query patterns and make your code more readable.
+
+### 7. **Related Models (Foreign Key, Many-to-Many, One-to-One)**
+   Django provides several fields to define relationships between models.
+
+   - **ForeignKey**: A many-to-one relationship (i.e., each model instance points to another model instance).
+     ```python
+     class Author(models.Model):
+         name = models.CharField(max_length=100)
+
+     class Post(models.Model):
+         title = models.CharField(max_length=200)
+         author = models.ForeignKey(Author, on_delete=models.CASCADE)
+     ```
+
+   - **ManyToManyField**: A many-to-many relationship (i.e., each model instance can be related to many instances of another model).
+     ```python
+     class Tag(models.Model):
+         name = models.CharField(max_length=100)
+
+     class Post(models.Model):
+         title = models.CharField(max_length=200)
+         tags = models.ManyToManyField(Tag)
+     ```
+
+   - **OneToOneField**: A one-to-one relationship (i.e., each model instance is related to exactly one instance of another model).
+     ```python
+     class Profile(models.Model):
+         user = models.OneToOneField(User, on_delete=models.CASCADE)
+         bio = models.TextField()
+     ```
+
+### 8. **Signals and Model Methods**
+   You can define custom methods and connect signals to perform actions during certain stages of the model's lifecycle.
+
+   - **Model Methods**: Define custom behavior for the model instances.
+     ```python
+     class Post(models.Model):
+         title = models.CharField(max_length=200)
+         content = models.TextField()
+
+         def get_summary(self):
+             return self.content[:100]  # Example method
+     ```
+
+   - **Signals**: Define actions to happen on certain events like `pre_save`, `post_save`, etc.
+     ```python
+     from django.db.models.signals import pre_save
+     from django.dispatch import receiver
+
+     @receiver(pre_save, sender=Post)
+     def pre_save_post(sender, instance, **kwargs):
+         instance.title = instance.title.upper()
+     ```
+
+---
+
+### Summary of Django Model Types:
+1. **Base Model** (Standard model class).
+2. **Abstract Base Classes** (Used for shared functionality across models).
+3. **Multi-table Inheritance** (Model inheritance with separate database tables).
+4. **Proxy Models** (Used to alter model behavior without changing the database schema).
+5. **Concrete Model Inheritance** (Inherits fields but creates separate tables).
+6. **Custom Model Managers** (Custom methods for querying and manipulating models).
+7. **Related Models** (Using ForeignKey, ManyToManyField, OneToOneField).
+8. **Signals & Model Methods** (Custom methods and lifecycle signals).
+
+These are the different types of models and model-related patterns that Django offers for handling complex relationships and behaviors in your applications.
+
+---
+
+### What is JWT Authentication?
+
+JWT (JSON Web Token) is an open standard (RFC 7519) that defines a compact and self-contained way to securely transmit information between parties as a JSON object. It is widely used for authentication and information exchange, especially in modern web applications.
+
+In the context of web applications, JWT is typically used for **authentication** and **authorization**. It allows a client to authenticate itself without needing to send credentials (like username/password) on every request. Instead, the client sends a token that has been signed by a server, and the server can verify that the token is valid without needing to maintain session data.
+
+### JWT Structure
+
+A JWT consists of three parts:
+
+1. **Header**: 
+   This typically consists of two parts: the type of the token (JWT) and the signing algorithm (e.g., HMAC SHA256 or RSA).
+
+   ```json
+   {
+     "alg": "HS256",
+     "typ": "JWT"
+   }
+   ```
+
+2. **Payload**:
+   This contains the claims. Claims are statements about an entity (usually the user) and additional data. For example, a claim might be the user ID or their roles.
+
+   ```json
+   {
+     "sub": "1234567890",
+     "name": "John Doe",
+     "iat": 1516239022
+   }
+   ```
+
+3. **Signature**:
+   The signature is created by taking the encoded header, encoded payload, a secret key, and the algorithm specified in the header. The server can use this signature to verify that the token hasn’t been tampered with.
+
+   ```
+   HMACSHA256(
+     base64UrlEncode(header) + "." +
+     base64UrlEncode(payload),
+     secret)
+   ```
+
+The resulting JWT looks something like this:
+
+```
+header.payload.signature
+```
+
+### How JWT Authentication Works
+
+1. **User Login**: 
+   - The user logs in by providing their credentials (e.g., username and password).
+   - The server verifies these credentials (usually with a database) and, if valid, generates a JWT token.
+
+2. **Token Creation**:
+   - The server creates a JWT containing user-specific information (like user ID, roles, and expiration time) and signs it using a secret key.
+   - This JWT is then sent back to the client (e.g., in the response body or as a cookie).
+
+3. **Client Stores Token**:
+   - The client (usually the browser or mobile app) stores this JWT token, typically in **localStorage** or **sessionStorage** (or a cookie if needed).
+
+4. **Subsequent Requests**:
+   - For each subsequent request, the client sends the JWT token to the server (usually in the `Authorization` header as a `Bearer` token).
+   
+   ```
+   Authorization: Bearer <token>
+   ```
+
+5. **Token Verification**:
+   - The server verifies the token by checking the signature and ensuring that it hasn’t expired.
+   - If valid, the server grants access to the protected resource. If not, it returns an error (e.g., 401 Unauthorized).
+
+6. **Token Expiration**:
+   - JWTs can include an expiration time (`exp` claim) to limit the time the token is valid.
+   - When the token expires, the user needs to reauthenticate and obtain a new token.
+
+### Benefits of JWT Authentication
+- **Stateless**: The server doesn’t need to store session data, making the system scalable.
+- **Compact**: JWTs are small and easy to send in HTTP headers.
+- **Cross-Domain**: JWTs can be used in cross-origin resource sharing (CORS) scenarios.
+- **Secure**: When properly signed and verified, the integrity and authenticity of the token can be trusted.
+
+### Implementing JWT Authentication in Django
+
+To implement JWT authentication in Django, you can use the `djangorestframework-simplejwt` package, which is a simple library for handling JWT authentication in Django Rest Framework (DRF).
+
+Here are the steps to implement JWT authentication:
+
+#### 1. Install Dependencies
+
+First, install the required libraries:
+
+```bash
+pip install djangorestframework djangorestframework-simplejwt
+```
+
+#### 2. Configure Django Settings
+
+In your `settings.py` file, you need to configure Django Rest Framework to use JWT authentication.
+
+```python
+# settings.py
+
+INSTALLED_APPS = [
+    # other apps
+    'rest_framework',
+    'rest_framework_simplejwt',
+]
+
+# Configure REST Framework to use JWT authentication
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+}
+```
+
+#### 3. Create JWT Views
+
+You'll need views for obtaining and refreshing JWT tokens. You can create views for login and token refreshing using the `SimpleJWT` package.
+
+```python
+# views.py
+
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+
+# Use built-in views for JWT obtain and refresh
+class MyTokenObtainPairView(TokenObtainPairView):
+    # You can override the token response here if needed
+    pass
+
+class MyTokenRefreshView(TokenRefreshView):
+    pass
+```
+
+#### 4. Define URLs
+
+Add URL patterns for your JWT authentication views. In the `urls.py` file, define routes for obtaining and refreshing tokens.
+
+```python
+# urls.py
+
+from django.urls import path
+from .views import MyTokenObtainPairView, MyTokenRefreshView
+
+urlpatterns = [
+    # JWT Token Obtain and Refresh views
+    path('api/token/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', MyTokenRefreshView.as_view(), name='token_refresh'),
+]
+```
+
+#### 5. Protect API Views
+
+Now, in your API views, you can protect routes by requiring authentication with JWT. For example, to protect a view using JWT authentication:
+
+```python
+# views.py
+
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.views import APIView
+from rest_framework.response import Response
+
+class ProtectedView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request):
+        content = {'message': 'You are authenticated!'}
+        return Response(content)
+```
+
+#### 6. Create the URL for the Protected View
+
+Add a route to your `urls.py` for the protected view.
+
+```python
+# urls.py
+
+from .views import ProtectedView
+
+urlpatterns = [
+    # other urls
+    path('protected/', ProtectedView.as_view(), name='protected_view'),
+]
+```
+
+#### 7. Test JWT Authentication
+
+1. **Obtain JWT Token**:
+   - Make a `POST` request to `/api/token/` with the user's username and password to get a JWT token.
+
+   Example request:
+   ```bash
+   POST /api/token/
+   Content-Type: application/json
+   {
+     "username": "your_username",
+     "password": "your_password"
+   }
+   ```
+
+   Response:
+   ```json
+   {
+     "access": "your_jwt_access_token",
+     "refresh": "your_jwt_refresh_token"
+   }
+   ```
+
+2. **Access Protected View**:
+   - After obtaining the `access` token, include it in the `Authorization` header for subsequent requests to access protected views.
+
+   Example request to the protected view:
+   ```bash
+   GET /protected/
+   Authorization: Bearer your_jwt_access_token
+   ```
+
+   If the token is valid, the response will be:
+   ```json
+   {
+     "message": "You are authenticated!"
+   }
+   ```
+
+3. **Refresh Token**:
+   - If the `access` token expires, you can obtain a new token by making a `POST` request to `/api/token/refresh/` with the `refresh` token.
+
+   Example request:
+   ```bash
+   POST /api/token/refresh/
+   Content-Type: application/json
+   {
+     "refresh": "your_jwt_refresh_token"
+   }
+   ```
+
+   Response:
+   ```json
+   {
+     "access": "new_access_token"
+   }
+   ```
+
+---
+
+### Conclusion
+
+JWT authentication in Django is a secure, stateless way to authenticate users in web applications, especially with APIs. By using libraries like `djangorestframework-simplejwt`, you can easily set up JWT authentication in your Django project to issue, verify, and refresh tokens. 
+
+This approach is scalable, and you don’t need to manage session data on the server, which is one of the key advantages of JWT-based authentication.
+
+---
+
