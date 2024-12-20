@@ -263,6 +263,292 @@ Deploying a Django application involves multiple steps:
 
 3. **Set up a Database**: Configure a production database
 
+---
+
+Django's ORM (Object-Relational Mapping) is a powerful tool for interacting with a database. It allows you to write Python code to interact with your database, instead of writing raw SQL queries. Here's a comprehensive guide to common Django ORM queries with examples and expected outputs.
+
+### 1. **Creating Objects (Insert)**
+
+**Example**:
+```python
+from myapp.models import Book
+
+# Create a new book object
+book = Book.objects.create(title="Django for Beginners", author="John Doe", published_date="2024-12-20")
+```
+
+**Output**:
+This query will insert a new record into the `Book` table with the provided data. No output is returned, but a new `Book` object is created in the database.
+
+### 2. **Fetching All Records**
+
+**Example**:
+```python
+# Get all books from the database
+books = Book.objects.all()
+```
+
+**Output**:
+Returns a `QuerySet` containing all records in the `Book` table. Each book will be a `Book` model instance.
+```python
+[<Book: Django for Beginners>, <Book: Advanced Django>, ...]
+```
+
+### 3. **Filtering Records**
+
+**Example**:
+```python
+# Get books where the author's name is 'John Doe'
+books = Book.objects.filter(author="John Doe")
+```
+
+**Output**:
+Returns a `QuerySet` of all books where the `author` is "John Doe".
+```python
+[<Book: Django for Beginners>, <Book: Django Mastery>]
+```
+
+### 4. **Getting a Single Object**
+
+**Example**:
+```python
+# Get a book by its ID
+book = Book.objects.get(id=1)
+```
+
+**Output**:
+Returns a single `Book` instance if a book with the given ID exists. If not, it raises a `DoesNotExist` error.
+```python
+<Book: Django for Beginners>
+```
+
+### 5. **Excluding Records**
+
+**Example**:
+```python
+# Get all books except those written by 'John Doe'
+books = Book.objects.exclude(author="John Doe")
+```
+
+**Output**:
+Returns a `QuerySet` of books where the author's name is not "John Doe".
+```python
+[<Book: Python Basics>, <Book: Mastering Django>]
+```
+
+### 6. **Chaining Queries**
+
+**Example**:
+```python
+# Get books where the author's name is 'John Doe' and the title contains 'Django'
+books = Book.objects.filter(author="John Doe").filter(title__contains="Django")
+```
+
+**Output**:
+Returns a `QuerySet` of books that match both conditions.
+```python
+[<Book: Django for Beginners>]
+```
+
+### 7. **Order by (Sorting)**
+
+**Example**:
+```python
+# Get books ordered by title
+books = Book.objects.all().order_by('title')
+```
+
+**Output**:
+Returns a `QuerySet` of books sorted in ascending order by title.
+```python
+[<Book: Advanced Django>, <Book: Django for Beginners>, <Book: Python Basics>]
+```
+
+### 8. **Limiting Results (Slicing)**
+
+**Example**:
+```python
+# Get the first 3 books
+books = Book.objects.all()[:3]
+```
+
+**Output**:
+Returns the first 3 books in the table.
+```python
+[<Book: Advanced Django>, <Book: Django for Beginners>, <Book: Python Basics>]
+```
+
+### 9. **Count**
+
+**Example**:
+```python
+# Get the count of books
+count = Book.objects.count()
+```
+
+**Output**:
+Returns the number of `Book` records in the database.
+```python
+5
+```
+
+### 10. **Aggregate Functions**
+
+**Example**:
+```python
+from django.db.models import Avg
+
+# Get the average price of all books
+average_price = Book.objects.aggregate(Avg('price'))
+```
+
+**Output**:
+Returns the average value of the `price` field for all books.
+```python
+{'price__avg': 15.75}
+```
+
+### 11. **Distinct**
+
+**Example**:
+```python
+# Get distinct authors
+authors = Book.objects.values('author').distinct()
+```
+
+**Output**:
+Returns a `QuerySet` of unique authors.
+```python
+[{'author': 'John Doe'}, {'author': 'Jane Smith'}, {'author': 'David Lee'}]
+```
+
+### 12. **Update**
+
+**Example**:
+```python
+# Update the price of books by 'John Doe'
+Book.objects.filter(author="John Doe").update(price=20)
+```
+
+**Output**:
+Updates all books by 'John Doe' to have a price of 20. No direct output, but the database is modified.
+
+### 13. **Delete**
+
+**Example**:
+```python
+# Delete all books by 'John Doe'
+Book.objects.filter(author="John Doe").delete()
+```
+
+**Output**:
+Deletes all records where the author is 'John Doe'. The method returns a tuple with the number of records deleted.
+```python
+(2, {'myapp.Book': 2})  # 2 books deleted from the `Book` table
+```
+
+### 14. **Exists**
+
+**Example**:
+```python
+# Check if there are any books by 'John Doe'
+exists = Book.objects.filter(author="John Doe").exists()
+```
+
+**Output**:
+Returns `True` if the filter condition returns any records, `False` otherwise.
+```python
+True
+```
+
+### 15. **Q Objects (Complex Queries)**
+
+**Example**:
+```python
+from django.db.models import Q
+
+# Get books where the author is 'John Doe' or the title contains 'Django'
+books = Book.objects.filter(Q(author="John Doe") | Q(title__contains="Django"))
+```
+
+**Output**:
+Returns a `QuerySet` matching either condition.
+```python
+[<Book: Django for Beginners>, <Book: Advanced Django>]
+```
+
+### 16. **Values and Values List**
+
+**Example**:
+```python
+# Get a list of authors
+authors = Book.objects.values('author')
+```
+
+**Output**:
+Returns a `QuerySet` of dictionaries with the author field.
+```python
+[{'author': 'John Doe'}, {'author': 'Jane Smith'}]
+```
+
+```python
+# Get a list of authors as a tuple
+authors = Book.objects.values_list('author', flat=True)
+```
+
+**Output**:
+Returns a `QuerySet` of authors in a list form.
+```python
+['John Doe', 'Jane Smith']
+```
+
+### 17. **F Expressions**
+
+**Example**:
+```python
+from django.db.models import F
+
+# Update the price of books by increasing it by 5
+Book.objects.filter(author="John Doe").update(price=F('price') + 5)
+```
+
+**Output**:
+Increases the price of all books by 'John Doe' by 5, based on their current price. No direct output, but the database is updated.
+
+### 18. **Raw SQL Queries**
+
+**Example**:
+```python
+# Execute a raw SQL query to find books by author 'John Doe'
+books = Book.objects.raw('SELECT * FROM myapp_book WHERE author = %s', ['John Doe'])
+```
+
+**Output**:
+Returns a list of `Book` instances matching the raw query.
+```python
+[<Book: Django for Beginners>, <Book: Django Mastery>]
+```
+
+### 19. **Transaction Management**
+
+**Example**:
+```python
+from django.db import transaction
+
+# Use transaction to update multiple records
+with transaction.atomic():
+    Book.objects.filter(author="John Doe").update(price=30)
+    Book.objects.filter(author="Jane Smith").update(price=25)
+```
+
+**Output**:
+Ensures that the changes are applied together. If one of the updates fails, none of the changes will be saved.
+
+---
+
+These are some of the most common Django ORM queries. They allow you to interact with your database efficiently without writing raw SQL, and Django will take care of the underlying database operations for you.
+
+---
 
 The Django ORM (Object-Relational Mapping) allows developers to interact with a database using Python code instead of writing raw SQL queries. Below are key Django ORM concepts with examples.
 
