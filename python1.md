@@ -3611,3 +3611,209 @@ In this case, we've added a new method `method_two` to `MyClass` via monkey patc
 - **Document Changes**: Clearly document any monkey patches to ensure that other developers understand why the patch was applied and what it does.
 
 In summary, while monkey patching can be useful in certain scenarios, it's important to weigh the pros and cons and consider whether it's the best solution for your problem.
+
+---
+
+### sort a dictionary
+
+```python
+my_dict = {'c': 1, 'a': 4, 'b': 2}
+
+# Sort by value
+sorted_dict = dict(sorted(my_dict.items(), key=lambda item: item[1]))
+print("key", sorted_dict) # key {'c': 1, 'b': 2, 'a': 4}
+
+sorted_dict = dict(sorted(my_dict.items(), key=lambda item: item[0]))
+print("value", sorted_dict) # value {'a': 4, 'b': 2, 'c': 1}
+
+```
+
+---
+
+### dictionary intersection or common
+
+```python
+a = {"a":1, "b":2}
+b = {"b":1, "c":2}
+print([{x:y} for x,y in a.items() if x not in b]) #[{'a': 1}]
+print([{x:y} for x,y in a.items() if x in b]) #[{'b': 2}]
+```
+
+---
+
+### program that checks if all of the numbers in a sequence are unique
+
+```python
+def check_distinct(data_list):
+ if len(data_list) == len(set(data_list)):
+   return True
+ else:
+   return False;
+
+print(check_distinct([1,6,5,8]))     #Prints True
+print(check_distinct([2,2,5,5,7,8])) #Prints False
+```
+
+---
+
+### global scope
+
+```python
+# global scope
+a = 10
+def my_func(n):
+    global a
+    a = 4
+    c = a ** 2
+    return c
+print(a)
+print(my_func(3))
+print(a)
+
+o/p: 
+10
+16
+4
+```
+
+---
+
+### Python Array
+
+```python
+# Python Array
+import array as arr
+
+# Create an array of integers
+numbers = arr.array('i', [1, 2, 3, 4, 5])
+
+# Print the array
+print(numbers)  # Output: array('i', [1, 2, 3, 4, 5])
+
+# Accessing elements by index
+first_element = numbers[0]
+print("First element:", first_element)  # Output: First element: 1
+
+# Modifying elements
+numbers[2] = 10
+print(numbers)  # Output: array('i', [1, 2, 10, 4, 5])
+```
+
+---
+
+### Find Nearest number
+
+```python
+myNumber = 50
+myList = [1,2,40,55,90,100,52,49]
+min(myList, key=lambda x:abs(x-myNumber)) # 49
+```
+
+---
+
+### Sort Number
+
+```python
+def sorting_fun(l):
+    for i in range(len(l)):
+        for j in range(i + 1, len(l)):
+            if l[i] > l[j]:
+               l[i], l[j] = l[j], l[i]
+    return l
+
+print(sorting_fun([654,7,657,56,-99,321,-4,6,-3,7,7,6])) 
+#[-99, -4, -3, 6, 6, 7, 7, 7, 56, 321, 654, 657]
+
+print(sorted([654,7,657,56,-99,321,-4,6,-3,7,7,6])) 
+#[-99, -4, -3, 6, 6, 7, 7, 7, 56, 321, 654, 657]
+
+```
+
+---
+
+### Flatten multidimensional list/array
+
+```python
+from collections.abc import Iterable
+
+def flatten(lis):
+     for item in lis:
+         if isinstance(item, Iterable) and not isinstance(item, str):
+             for x in flatten(item):
+                 yield x
+         else:
+             yield item
+
+li = [1,0,1,1,[[[[1],0,1],1,1,1,1,]],0,1,1,0,0,[1,0,1],[1,[1,[0,[[1],1]]]]]
+
+print(list(flatten(li))) 
+#[1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1]
+
+```
+
+---
+
+### Public private protected class object
+
+```python
+class VariableClass:
+    def __init__(self):
+        self.public_variable = "I am public"
+        self._protected_variable = "I am protected"
+        self.__private_variable = "I am private"
+
+    def public_method(self):
+        print("Public method")
+
+    def _protected_method(self):
+        print("Protected method")
+
+    def __private_method(self):
+        print("Private method")
+
+obj = VariableClass()
+
+# Accessing public members
+print(obj.public_variable)   # Output: I am public
+obj.public_method()           # Output: Public method
+
+# Accessing protected members (not recommended)
+print(obj._protected_variable) # Output: I am protected
+obj._protected_method()        # Output: Protected method
+
+# Accessing private members (not recommended)
+# This will be name-mangled to _MyClass__private_variable
+print(obj._VariableClass__private_variable)  # Output: I am private
+# Name-mangled for private method too
+obj._VariableClass__private_method()        # Output: Private method
+```
+
+---
+
+### Base class execution order
+
+```python
+class Father:
+  def __init__(self):
+    print('You are in Father Class Constructor')
+
+  def show(self):
+    print("Father Class instance Method")
+
+class Mother:
+  def __init__(self):
+    print("You are in Mother Class Constructor")
+
+  def show(self):
+    print("Mother Class instance Method")
+
+class Son(Father, Mother):
+  pass
+    # def __init__(self):
+    #     print("You are in Son Class Constructor")
+
+son = Son()
+son.show()
+```
+
+---
