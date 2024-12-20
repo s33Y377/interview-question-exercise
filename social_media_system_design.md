@@ -1724,4 +1724,697 @@ By integrating **Kafka**, **Redis**, and **Flask-SocketIO**, this system can han
 
 ---
 
+There are several alternatives to WebSockets for real-time notifications, each with its own advantages and use cases. Some of the most common alternatives are:
+
+### 1. **Server-Sent Events (SSE)**
+   - **Description**: SSE is a simple, one-way communication method from the server to the client over an HTTP connection. The server sends updates to the client whenever there is new data.
+   - **Pros**: 
+     - Easier to implement than WebSockets.
+     - Built-in support in modern browsers.
+     - Good for broadcasting real-time updates to many clients (e.g., notifications, news updates).
+   - **Cons**: 
+     - One-way communication (from server to client only).
+     - Limited support for very high-frequency updates or complex two-way communication.
+   - **Use Case**: Ideal for applications that need to push updates to clients, like social media updates, news feeds, or live scores.
+
+### 2. **HTTP Long Polling**
+   - **Description**: With long polling, the client makes a request to the server and holds the connection open until the server has new data to send. Once data is sent, the client immediately sends a new request to the server.
+   - **Pros**:
+     - Works on all browsers and environments (even if WebSockets or SSE are not supported).
+     - Can be more reliable for environments with firewalls or strict network policies.
+   - **Cons**: 
+     - Less efficient than WebSockets, as each new message requires a new HTTP request.
+     - Higher latency due to the need to constantly re-establish connections.
+   - **Use Case**: Suitable for applications where WebSockets are not viable or where compatibility with older systems is needed.
+
+### 3. **Push Notifications**
+   - **Description**: Push notifications are typically used for mobile applications or web apps that need to notify users about updates even when they aren't actively using the app. Push notifications use a push notification service (like Apple Push Notification Service or Firebase Cloud Messaging).
+   - **Pros**:
+     - Can send notifications to clients even when they are not actively connected or running the app.
+     - Great for mobile apps and native apps.
+   - **Cons**:
+     - Not always real-time due to reliance on third-party services.
+     - More complex setup and need for third-party services (e.g., Firebase, APNs).
+   - **Use Case**: Mobile apps, or web apps needing background notifications, like messaging apps or social networks.
+
+### 4. **MQTT (Message Queuing Telemetry Transport)**
+   - **Description**: MQTT is a lightweight, publish-subscribe messaging protocol often used in IoT (Internet of Things) applications. It allows for real-time communication with low bandwidth usage.
+   - **Pros**:
+     - Low overhead and efficient for mobile and IoT devices.
+     - Supports real-time message delivery.
+     - Offers quality of service levels for message reliability.
+   - **Cons**:
+     - May require a specialized MQTT broker to manage the connections.
+     - Not as widely supported by web browsers as WebSockets.
+   - **Use Case**: IoT applications, mobile apps, and systems where lightweight communication is important.
+
+### 5. **GraphQL Subscriptions**
+   - **Description**: GraphQL subscriptions enable clients to listen to specific events or changes in data over a WebSocket connection. It provides a real-time, event-driven approach for querying data.
+   - **Pros**:
+     - Built-in support for real-time updates in GraphQL-based applications.
+     - Works well with GraphQL queries and mutations.
+   - **Cons**:
+     - Requires a GraphQL server and proper subscription management.
+     - Complexity in scaling and managing WebSocket connections.
+   - **Use Case**: Ideal for GraphQL-based applications that need real-time data synchronization.
+
+### 6. **Pusher / Firebase Realtime Database**
+   - **Description**: Pusher and Firebase are services that provide real-time functionality with low latency for web and mobile applications. These services abstract away the complexity of managing WebSockets and other protocols.
+   - **Pros**:
+     - Easy to implement with SDKs and documentation.
+     - Real-time updates with minimal setup.
+     - Built-in features like event broadcasting, presence channels, and data storage.
+   - **Cons**:
+     - Costs can scale with usage.
+     - Less control over the underlying infrastructure.
+   - **Use Case**: For applications that need simple, fast implementation of real-time notifications and collaboration features.
+
+### 7. **WebRTC (Web Real-Time Communication)**
+   - **Description**: WebRTC is a peer-to-peer communication protocol primarily used for video, audio, and data sharing. While not traditionally used for notifications, it can handle real-time data transfer between clients.
+   - **Pros**:
+     - Very low-latency communication.
+     - Supports peer-to-peer communication.
+   - **Cons**:
+     - More complex than WebSockets or SSE.
+     - Requires handling signaling and peer discovery.
+   - **Use Case**: Real-time video chat, file sharing, and communication apps.
+
+### Choosing the Right Solution:
+- **For server-to-client notifications**: Use **SSE** or **Push Notifications** (for mobile/web).
+- **For low-latency and efficient communication**: **WebSockets** or **MQTT**.
+- **For GraphQL-powered apps**: **GraphQL subscriptions**.
+- **For apps with minimal backend management**: **Pusher** or **Firebase**.
+
+Each of these technologies can suit different use cases depending on your application's requirements.
+
+---
+---
+
+Server-Sent Events (SSE) is a mechanism that allows a server to send real-time updates to a browser over a single HTTP connection. It is based on the `text/event-stream` MIME type and is a simple alternative to WebSockets for sending real-time data from the server to the client.
+
+### How SSE Works:
+- The client (typically a browser) makes an HTTP request to a server with the `Accept: text/event-stream` header.
+- The server sends data in a specific event stream format, and the connection remains open.
+- The client can receive events continuously as long as the connection is open.
+
+### Setting Up SSE in Python
+
+To implement SSE in Python, we can use the `Flask` framework to easily handle HTTP requests and responses. Here’s a step-by-step guide to implementing SSE:
+
+1. **Install Flask:**
+   You can install Flask via pip if you don't have it already:
+
+   ```bash
+   pip install Flask
+   ```
+
+2. **Create a Flask Application with SSE:**
+
+   Below is an example implementation of SSE with Flask. This will create a server that sends periodic events to the client.
+
+   ```python
+   from flask import Flask, Response
+   import time
+
+   app = Flask(__name__)
+
+   # The route to stream events
+   @app.route('/events')
+   def sse():
+       def event_stream():
+           while True:
+               # Sending an event every 1 second
+               yield f"data: The current time is {time.strftime('%H:%M:%S')}\n\n"
+               time.sleep(1)  # Wait for 1 second
+
+       return Response(event_stream(), mimetype='text/event-stream')
+
+   # A simple homepage to test SSE in the browser
+   @app.route('/')
+   def index():
+       return '''
+           <html>
+               <head>
+                   <title>Server-Sent Events Example</title>
+               </head>
+               <body>
+                   <h1>Server-Sent Events</h1>
+                   <div id="events"></div>
+                   <script type="text/javascript">
+                       const eventSource = new EventSource('/events');
+                       eventSource.onmessage = function(event) {
+                           const newElement = document.createElement("div");
+                           newElement.textContent = event.data;
+                           document.getElementById("events").appendChild(newElement);
+                       };
+                   </script>
+               </body>
+           </html>
+       '''
+
+   if __name__ == '__main__':
+       app.run(debug=True, threaded=True)
+   ```
+
+### Breakdown of the Code:
+
+- **`/events` route**: This route is responsible for the SSE connection. It returns a `Response` with the MIME type `text/event-stream`, which tells the browser that it will receive server-sent events.
+  
+- **`event_stream` generator**: This function yields event data continuously. The `yield` statement ensures the connection stays open and the server sends a new event every time the loop runs. In this example, we are sending the current time every second.
+
+- **JavaScript Client**: The JavaScript code listens for events sent from the server. When a message is received, the data is displayed in the `#events` div.
+
+- **`threaded=True`**: This ensures that Flask can handle multiple requests simultaneously, which is important for real-time applications.
+
+### Running the Application:
+1. Save the Python code to a file (e.g., `app.py`).
+2. Run the application by executing:
+
+   ```bash
+   python app.py
+   ```
+
+3. Open your browser and navigate to `http://127.0.0.1:5000`. You should see the time updates in real-time every second.
+
+### Important Notes:
+- SSE is a one-way communication from the server to the client. If you need two-way communication (i.e., client sending data to the server), you might need to combine SSE with other techniques like AJAX or WebSockets.
+- SSE requires HTTP/1.1 or higher and supports automatic reconnection in case the connection drops.
+- If you're deploying the application, ensure that your server (like Nginx) is configured to keep HTTP connections open for long periods.
+
+This implementation gives you a simple and effective way to send real-time data to clients using Server-Sent Events.
+
+---
+---
+
+HTTP Long Polling is a technique where the client sends a request to the server, and the server holds the request open until there is new information available or a timeout occurs. Once new data is available, the server responds to the request, after which the client immediately re-establishes the connection by sending another request. This technique allows the server to push data to the client in near real-time while using the traditional HTTP protocol.
+
+Here's how you can implement HTTP Long Polling in Python using the `Flask` web framework.
+
+### Steps:
+
+1. **Install Flask:**
+   First, you need to install Flask (if you haven't already):
+
+   ```bash
+   pip install Flask
+   ```
+
+2. **Create the Long Polling Server:**
+
+   Below is an implementation of HTTP Long Polling in Python with Flask:
+
+   ```python
+   from flask import Flask, jsonify, request
+   import time
+   import threading
+
+   app = Flask(__name__)
+
+   # A list to store clients waiting for updates
+   clients = []
+
+   # A simple function to simulate data update (e.g., from a sensor or event)
+   def data_updater():
+       while True:
+           # Simulate data changes and notify clients
+           time.sleep(5)  # Wait 5 seconds between updates
+           for client in clients:
+               # Notify all clients with some new data
+               client['response'].set_data(f"data: New event occurred at {time.strftime('%H:%M:%S')}\n\n")
+               client['response'].flush()  # Ensure the data is sent immediately
+
+   # Long polling route
+   @app.route('/long-poll')
+   def long_poll():
+       # Create a response object that will hold the data until it's updated
+       response = app.response_class(status=200, mimetype='text/event-stream')
+       
+       # Store the client response for later updates
+       clients.append({'response': response})
+       
+       # Wait for the event to be triggered or a timeout (simulate long polling)
+       # You could add a timeout condition here as well
+       return response
+
+   # Route to simulate a simple client interface
+   @app.route('/')
+   def index():
+       return '''
+           <html>
+               <head>
+                   <title>HTTP Long Polling Example</title>
+               </head>
+               <body>
+                   <h1>Long Polling Updates</h1>
+                   <div id="events"></div>
+                   <script type="text/javascript">
+                       function fetchUpdates() {
+                           const eventSource = new EventSource('/long-poll');
+                           eventSource.onmessage = function(event) {
+                               const newElement = document.createElement("div");
+                               newElement.textContent = event.data;
+                               document.getElementById("events").appendChild(newElement);
+                               fetchUpdates();  // Reconnect immediately after receiving a message
+                           };
+                       }
+                       fetchUpdates();
+                   </script>
+               </body>
+           </html>
+       '''
+
+   if __name__ == '__main__':
+       # Start a separate thread to simulate data updates
+       threading.Thread(target=data_updater, daemon=True).start()
+       app.run(debug=True, threaded=True)
+   ```
+
+### Explanation of the Code:
+
+1. **`clients` List**: This is a list that stores the client connections (i.e., the responses that are waiting for data updates).
+
+2. **`data_updater` Function**: This function simulates an event or data change every 5 seconds. For every data update, it goes through all clients (stored in the `clients` list) and sends them the new data by setting the response data using `response.set_data()`.
+
+3. **`/long-poll` Route**: This is where the long polling occurs. When a client requests this route, the server keeps the request open until it sends a data update. The request remains open as the client waits for the server to push data back.
+
+4. **Client-side JavaScript**: The client continuously polls the server by invoking the `/long-poll` endpoint. When data is received (via the `onmessage` event), the client immediately reconnects by calling `fetchUpdates()` again to wait for the next update.
+
+5. **`threaded=True`**: This argument allows Flask to handle multiple requests simultaneously (important for handling many clients).
+
+6. **Data simulation**: The `data_updater()` function simulates data changes every 5 seconds, which are pushed to all clients waiting for updates.
+
+### How It Works:
+
+- The server holds the HTTP request open until new data is available (or until the timeout occurs).
+- The client waits for the server response and once received, the connection is closed. Then, the client immediately sends another request to the server for new data.
+- In the provided example, after every event update from the server, the client re-establishes the long-polling connection.
+
+### Running the Application:
+1. Save the Python script (e.g., `app.py`).
+2. Run it:
+
+   ```bash
+   python app.py
+   ```
+
+3. Open your browser and navigate to `http://127.0.0.1:5000`. The browser will receive updates from the server every 5 seconds.
+
+### Important Considerations:
+- **Timeouts**: You can introduce timeouts on the server side if needed. Flask doesn’t have built-in support for request timeouts, but you could manually check if too much time has passed before responding.
+- **Performance**: Long polling may cause some performance concerns with many clients, as each open connection consumes server resources. If your application scales, you may want to consider switching to WebSockets or SSE for more efficient real-time communication.
+
+### Conclusion:
+HTTP Long Polling is a simple method to achieve real-time communication between a client and a server, though it can be less efficient than other techniques like WebSockets for applications that require high throughput or scalability. This Python Flask implementation is good for small-scale real-time apps or as an introductory approach to long-lived HTTP connections.
+
+
+---
+---
+
+MQTT (Message Queuing Telemetry Transport) is a lightweight and widely used messaging protocol for small sensors and mobile devices, optimized for high-latency or low-bandwidth networks. It follows a publish-subscribe model, where clients can publish messages to topics and subscribe to topics to receive messages.
+
+To implement MQTT in Python, we need to use a library such as `paho-mqtt`, which is an MQTT client library that allows Python applications to interact with MQTT brokers (servers) to publish and subscribe to messages.
+
+### Steps to implement MQTT in Python:
+
+1. **Install the `paho-mqtt` library**:
+
+   First, you need to install the `paho-mqtt` library, which will be used to create the MQTT client.
+
+   ```bash
+   pip install paho-mqtt
+   ```
+
+2. **Set up the MQTT Broker**:
+
+   - You can either run your own MQTT broker (e.g., using **Eclipse Mosquitto** or **HiveMQ**) or use a cloud-based broker (e.g., **CloudMQTT**, **Adafruit IO**, **ThingSpeak**).
+   - For local testing, you can install **Mosquitto** broker:
+
+     ```bash
+     sudo apt-get install mosquitto
+     sudo apt-get install mosquitto-clients
+     ```
+
+   - Or you can use public brokers like:
+     - **broker.hivemq.com** (public broker)
+     - **test.mosquitto.org** (public broker)
+
+3. **Python MQTT Publisher and Subscriber Example**:
+
+   Below are two Python scripts: one for the publisher (client that sends messages) and one for the subscriber (client that listens for messages).
+
+#### MQTT Publisher (Publisher.py)
+
+This script will connect to an MQTT broker and publish messages to a topic.
+
+```python
+import paho.mqtt.client as mqtt
+import time
+
+# Callback function when the client connects to the broker
+def on_connect(client, userdata, flags, rc):
+    print(f"Connected with result code {rc}")
+    # Publish a message to a topic after connecting
+    client.publish("test/topic", "Hello MQTT!")
+
+# Create an MQTT client instance
+client = mqtt.Client()
+
+# Attach the connect callback function
+client.on_connect = on_connect
+
+# Connect to the broker (local or public broker)
+client.connect("broker.hivemq.com", 1883, 60)  # You can replace with your broker address
+
+# Start the network loop to handle events
+client.loop_start()
+
+# Wait for some time to allow the connection and publish
+time.sleep(2)
+
+# Stop the loop
+client.loop_stop()
+```
+
+#### MQTT Subscriber (Subscriber.py)
+
+This script will connect to the MQTT broker, subscribe to a topic, and wait for messages.
+
+```python
+import paho.mqtt.client as mqtt
+
+# Callback function when the client connects to the broker
+def on_connect(client, userdata, flags, rc):
+    print(f"Connected with result code {rc}")
+    # Subscribe to a topic after connecting
+    client.subscribe("test/topic")
+
+# Callback function when a message is received
+def on_message(client, userdata, msg):
+    print(f"Received message: {msg.payload.decode()} on topic: {msg.topic}")
+
+# Create an MQTT client instance
+client = mqtt.Client()
+
+# Attach the connect and message callback functions
+client.on_connect = on_connect
+client.on_message = on_message
+
+# Connect to the broker (local or public broker)
+client.connect("broker.hivemq.com", 1883, 60)  # You can replace with your broker address
+
+# Start the network loop to handle events
+client.loop_forever()
+```
+
+### Explanation of the Code:
+
+1. **`on_connect` Callback**:
+   - This function is triggered when the MQTT client successfully connects to the broker.
+   - In the publisher, after connecting, it sends a message to the topic `test/topic`.
+   - In the subscriber, it subscribes to `test/topic` to receive messages.
+
+2. **`on_message` Callback**:
+   - This function is triggered whenever a message is received on a subscribed topic. The message content is printed to the console.
+
+3. **MQTT Client**:
+   - `mqtt.Client()` creates a new MQTT client instance.
+   - `client.connect()` connects the client to the broker.
+   - `client.loop_start()` and `client.loop_forever()` start the loop to handle network communication and messages.
+
+4. **MQTT Broker**:
+   - In the examples, I used the **HiveMQ** public broker (`broker.hivemq.com`), but you can replace it with a private broker or a different public one.
+   - Default port for MQTT is `1883` (non-secure), and `8883` is for secure MQTT connections using TLS/SSL.
+
+### Running the Publisher and Subscriber:
+
+1. **Run the Subscriber**:
+   - Open a terminal and run the subscriber script:
+
+   ```bash
+   python Subscriber.py
+   ```
+
+   The subscriber will connect to the MQTT broker and wait for messages.
+
+2. **Run the Publisher**:
+   - Open another terminal and run the publisher script:
+
+   ```bash
+   python Publisher.py
+   ```
+
+   The publisher will connect to the broker, send a message to the topic `test/topic`, and the subscriber will receive it.
+
+### Advanced Topics (Optional):
+
+1. **Quality of Service (QoS)**:
+   MQTT supports three levels of Quality of Service (QoS):
+   - **QoS 0**: At most once (no guarantee of delivery).
+   - **QoS 1**: At least once (guaranteed delivery but may be delivered multiple times).
+   - **QoS 2**: Exactly once (guaranteed delivery, no duplicates).
+
+   You can specify the QoS level when subscribing or publishing messages. For example:
+
+   ```python
+   client.subscribe("test/topic", qos=1)
+   ```
+
+2. **Last Will and Testament (LWT)**:
+   MQTT clients can set a "last will" message that the broker sends if the client disconnects unexpectedly. This is useful for notifying other clients of a client's disconnection.
+
+   ```python
+   client.will_set("test/topic", payload="Client disconnected", qos=1, retain=True)
+   ```
+
+3. **Secure MQTT (TLS/SSL)**:
+   To secure the communication between the MQTT client and broker, you can enable TLS/SSL encryption by specifying the necessary parameters, such as the server certificate and private key.
+
+4. **Retained Messages**:
+   MQTT allows a message to be "retained" by the broker. When a new client subscribes to a topic, it immediately receives the last retained message for that topic.
+
+   You can set the retained flag when publishing:
+
+   ```python
+   client.publish("test/topic", "Hello MQTT!", retain=True)
+   ```
+
+### Conclusion:
+
+The above examples demonstrate a basic MQTT setup using Python and `paho-mqtt` for publishing and subscribing to messages. MQTT is highly scalable and efficient, making it suitable for IoT applications, real-time messaging, and other use cases where lightweight and reliable communication is needed.
+
+
+---
+---
+
+
+GraphQL Subscriptions enable real-time communication between clients and servers, allowing the server to push updates to the client whenever data changes. It is a critical feature for building interactive, real-time applications. In Python, you can implement GraphQL Subscriptions using the `Graphene` library, which provides tools for building GraphQL APIs.
+
+Here's a step-by-step guide to implement GraphQL Subscriptions in Python using `Graphene` and `Ariadne`.
+
+### Prerequisites:
+- **Graphene**: A library for building GraphQL APIs in Python.
+- **Ariadne**: A Python library for GraphQL subscriptions, which allows asynchronous event-driven programming.
+- **AsyncIO**: To handle asynchronous code needed for GraphQL subscriptions.
+  
+### Step 1: Install Required Libraries
+
+First, install the necessary libraries:
+
+```bash
+pip install graphene ariadne asyncio
+```
+
+### Step 2: Create the GraphQL Subscription Server
+
+For the GraphQL Subscription implementation, we will need:
+- **WebSocket**: The transport layer for subscriptions.
+- **Graphene or Ariadne**: To build the GraphQL schema.
+
+We’ll use **Ariadne** for creating subscriptions, as it provides excellent support for asynchronous GraphQL subscriptions. 
+
+### Step 3: Implementing a Simple GraphQL Subscription Server
+
+Let's implement a basic GraphQL subscription system using `Ariadne`. This example will simulate a simple "message" system where the server pushes new messages to the client in real-time.
+
+#### Create the Python Server (`server.py`):
+
+```python
+import asyncio
+from ariadne import make_executable_schema, load_schema_from_path, ObjectType, QueryType, SubscriptionType
+from ariadne.asgi import GraphQL
+from typing import List
+
+# Define your GraphQL schema
+type_defs = """
+    type Query {
+        messages: [String!]!
+    }
+
+    type Subscription {
+        messageAdded: String!
+    }
+"""
+
+# Create query and subscription resolvers
+query = QueryType()
+subscription = SubscriptionType()
+
+messages: List[str] = []  # A list to store messages
+
+# Query Resolver to fetch messages
+@query.field("messages")
+def resolve_messages(_, info):
+    return messages
+
+# Subscription Resolver to push new messages
+@subscription.field("messageAdded")
+async def resolve_message_added(_, info):
+    # This is where we will push new messages to subscribers
+    while True:
+        await asyncio.sleep(2)  # Wait for 2 seconds before sending the next message
+        if messages:
+            yield messages[-1]  # Push the latest message to subscribers
+
+# Create the executable schema
+schema = make_executable_schema(type_defs, query, subscription)
+
+# Create the GraphQL app (ASGI application)
+app = GraphQL(schema)
+
+# To simulate adding new messages every few seconds
+async def add_new_messages():
+    counter = 1
+    while True:
+        await asyncio.sleep(5)  # Wait for 5 seconds before adding a new message
+        new_message = f"New message #{counter}"
+        messages.append(new_message)
+        counter += 1
+
+# Run the asynchronous task to add new messages in the background
+loop = asyncio.get_event_loop()
+loop.create_task(add_new_messages())
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="127.0.0.1", port=4000)
+```
+
+### Explanation of the Code:
+
+1. **GraphQL Schema**:
+   - We define the `Query` type to allow fetching a list of messages with the `messages` query.
+   - We define the `Subscription` type to allow subscribing to real-time updates via the `messageAdded` subscription.
+
+2. **Query Resolver**:
+   - The `resolve_messages` function returns the list of messages when the `messages` query is called.
+
+3. **Subscription Resolver**:
+   - The `resolve_message_added` function is an asynchronous generator that sends new messages to the subscribers. It sends a new message every 2 seconds, simulating real-time message updates.
+   - `await asyncio.sleep(2)` simulates waiting for new events (e.g., database updates, sensor readings, etc.).
+
+4. **Message Simulation**:
+   - The `add_new_messages` function runs in the background, periodically adding new messages to the `messages` list every 5 seconds. These messages are then pushed to subscribers via the `messageAdded` subscription.
+
+5. **Ariadne ASGI App**:
+   - The app is created using `Ariadne`'s `GraphQL` class, which serves the GraphQL endpoint.
+
+6. **Running the Server**:
+   - The server is run with **`uvicorn`**, an ASGI server that handles asynchronous web applications.
+
+### Step 4: Run the GraphQL Subscription Server
+
+To run the server, you can execute the following command:
+
+```bash
+python server.py
+```
+
+This will start the GraphQL server at `http://127.0.0.1:4000`.
+
+### Step 5: Create the GraphQL Client
+
+You can test the subscription with a GraphQL client like **GraphiQL** (web-based), **Apollo Client** (for JavaScript), or **Websockets** in Python. Below is an example using Python's `websockets` library to connect to the server.
+
+#### Python Client (`client.py`):
+
+Install the required library for the WebSocket client:
+
+```bash
+pip install websockets
+```
+
+Then, use the following code for the client:
+
+```python
+import asyncio
+import websockets
+import json
+
+# Define the WebSocket URL for the GraphQL subscription
+uri = "ws://127.0.0.1:4000"
+
+async def subscribe_to_messages():
+    async with websockets.connect(uri) as websocket:
+        # Define the subscription query
+        subscription_query = {
+            "type": "start",
+            "id": "1",
+            "payload": {
+                "query": """
+                    subscription {
+                        messageAdded
+                    }
+                """
+            }
+        }
+
+        # Send the subscription request
+        await websocket.send(json.dumps(subscription_query))
+
+        # Listen for messages from the server
+        while True:
+            response = await websocket.recv()
+            data = json.loads(response)
+            print(f"New message received: {data['payload']['data']['messageAdded']}")
+
+# Run the WebSocket client
+asyncio.get_event_loop().run_until_complete(subscribe_to_messages())
+```
+
+### Explanation of the Client Code:
+
+1. **WebSocket Connection**:
+   - The client connects to the server using `websockets.connect()` to the GraphQL WebSocket endpoint.
+
+2. **Subscription Query**:
+   - The client sends a subscription request with the `messageAdded` subscription. This tells the server to send new messages whenever they are added.
+
+3. **Receive Messages**:
+   - The client listens for new messages using `await websocket.recv()`. Each time a new message is sent from the server, it is printed to the console.
+
+4. **Run the Client**:
+   - The client listens indefinitely for new messages sent from the server.
+
+### Step 6: Testing the Subscription
+
+1. **Run the server** (`server.py`):
+
+   ```bash
+   python server.py
+   ```
+
+2. **Run the client** (`client.py`):
+
+   ```bash
+   python client.py
+   ```
+
+   The client will start receiving new messages as the server adds them. Every time a new message is added (every 5 seconds), it will be pushed to the client in real-time.
+
+### Conclusion
+
+This example demonstrates how to implement GraphQL Subscriptions using Python with **Ariadne**. By using the asynchronous capabilities of Python (`asyncio`), we can create a real-time GraphQL API where the server can push updates to subscribed clients in real-time. This setup is ideal for real-time applications like chat apps, live notifications, or any application that requires real-time data updates.
+
+---
+---
 
