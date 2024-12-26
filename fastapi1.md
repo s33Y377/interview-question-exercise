@@ -1118,3 +1118,66 @@ The provided code is an example of how to define a simple FastAPI application wi
 
 ### Summary:
 This FastAPI route defines an endpoint `/items/` that returns a list of items. If the client provides a query parameter `q`, it adds that parameter to the response. The route is asynchronous, meaning FastAPI can handle requests concurrently for better performance.
+
+---
+---
+
+### Explain
+
+```python
+
+@app.get("/items/{item_id}")
+async def read_items(
+    item_id: Annotated[int, Path(title="The ID of the item to get")],
+    q: Annotated[str | None, Query(alias="item-query")] = None,
+):
+    results = {"item_id": item_id}
+    if q:
+        results.update({"q": q})
+    return results
+```
+
+This code defines a route for a FastAPI web application. Let’s break it down step by step:
+
+### 1. **Route Declaration**:
+```python
+@app.get("/items/{item_id}")
+```
+- `@app.get("/items/{item_id}")`: This is a FastAPI route decorator that specifies that the function `read_items` will be triggered when an HTTP `GET` request is made to a URL like `/items/{item_id}`, where `{item_id}` is a path parameter. The path parameter `item_id` can be accessed in the function.
+- The `item_id` part is a variable, so when a request is made to `/items/42`, for example, `item_id` will be 42.
+
+### 2. **Function Declaration**:
+```python
+async def read_items(item_id: Annotated[int, Path(title="The ID of the item to get")], q: Annotated[str | None, Query(alias="item-query")] = None):
+```
+- `async def read_items`: This function is defined as an `async` function, meaning it’s asynchronous and can be non-blocking, allowing FastAPI to handle multiple requests concurrently without waiting for each operation to finish.
+- `item_id: Annotated[int, Path(title="The ID of the item to get")]`:
+  - `item_id`: This is the name of the parameter that will correspond to the path variable in the URL (`{item_id}`). It will be an integer (`int`).
+  - `Annotated[int, Path(title="The ID of the item to get")]`: This is a type annotation using Python's `Annotated` type to provide additional metadata to FastAPI. The `Path()` function is used to specify that `item_id` comes from the URL path and adds a title for the parameter.
+- `q: Annotated[str | None, Query(alias="item-query")] = None`:
+  - `q`: This is an optional query parameter (e.g., `?item-query=search_term`).
+  - `Annotated[str | None, Query(alias="item-query")]`: This is another type annotation. The `Query()` function is used to specify that this parameter should come from the query string. The `alias="item-query"` means that the query parameter will be called `item-query` instead of `q`. It is marked as optional because its default value is `None`.
+
+### 3. **Processing Logic**:
+```python
+results = {"item_id": item_id}
+if q:
+    results.update({"q": q})
+return results
+```
+- `results = {"item_id": item_id}`: A dictionary is created with the `item_id` that was passed in the URL.
+- `if q:`: This checks if the query parameter `q` has been provided (i.e., it’s not `None`).
+  - `results.update({"q": q})`: If `q` is provided, it adds `q` to the `results` dictionary.
+- `return results`: Finally, the function returns the `results` dictionary. FastAPI will automatically convert this into a JSON response.
+
+### Example Use Case:
+- Request: `GET /items/42?item-query=test`
+  - This would call `read_items` with `item_id=42` and `q="test"`.
+  - The response would be: `{"item_id": 42, "q": "test"}`.
+
+- Request: `GET /items/42`
+  - This would call `read_items` with `item_id=42` and `q=None`.
+  - The response would be: `{"item_id": 42}`.
+
+### Summary:
+This FastAPI route handler allows you to retrieve an item by its `item_id` (from the path) and optionally filter the result using a query parameter `item-query`. It then returns the result as a JSON object.
