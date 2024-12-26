@@ -2118,3 +2118,182 @@ In summary, this endpoint retrieves products by their category and price range, 
 ---
 ---
 
+### Postgresql
+
+To connect FastAPI to a PostgreSQL database, you typically use `SQLAlchemy` (for ORM-based queries) or `asyncpg` (for asynchronous database operations). Below, I'll guide you through setting up a simple FastAPI app that connects to PostgreSQL using both options.
+
+### 1. Using SQLAlchemy with PostgreSQL in FastAPI (Synchronous Example)
+
+#### 1.1 Install the required dependencies:
+
+You need to install FastAPI, SQLAlchemy, and `psycopg2` (PostgreSQL adapter for Python):
+
+```bash
+pip install fastapi[all] sqlalchemy psycopg2
+```
+
+#### 1.2 Create a `database.py` file to set up the PostgreSQL connection:
+
+```python
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy import Integer, String, Column
+
+# Database URL for PostgreSQL
+SQLALCHEMY_DATABASE_URL = "postgresql://user:password@localhost:5432/db_name"
+
+# Set up the database engine and session maker
+engine = create_engine(SQLALCHEMY_DATABASE_URL)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+# Base class for declarative models
+Base = declarative_base()
+
+# Example of a model
+class User(Base):
+    __tablename__ = 'users'
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, index=True)
+    email = Column(String, unique=True, index=True)
+```
+
+Replace the database URL with your actual PostgreSQL credentials.
+
+#### 1.3 Create a utility to get the database session:
+
+```python
+# database.py
+from sqlalchemy.orm import Session
+
+# Dependency to get the session
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+```
+
+#### 1.4 Create the FastAPI application and define API routes:
+
+```python
+from fastapi import FastAPI, Depends
+from sqlalchemy.orm import Session
+from database import get_db, User
+
+app = FastAPI()
+
+# API route to get all users
+@app.get("/users/")
+def read_users(db: Session = Depends(get_db)):
+    users = db.query(User).all()
+    return users
+
+# API route to add a new user
+@app.post("/users/")
+def create_user(name: str, email: str, db: Session = Depends(get_db)):
+    db_user = User(name=name, email=email)
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+```
+
+#### 1.5 Run the FastAPI app:
+
+```bash
+uvicorn main:app --reload
+```
+
+### 2. Using `asyncpg` for Asynchronous Connection to PostgreSQL (Asynchronous Example)
+
+#### 2.1 Install the required dependencies:
+
+```bash
+pip install fastapi[all] asyncpg
+```
+
+#### 2.2 Create the PostgreSQL connection and queries with `asyncpg`:
+
+```python
+import asyncpg
+from fastapi import FastAPI
+
+app = FastAPI()
+
+# PostgreSQL database URL
+DATABASE_URL = "postgresql://user:password@localhost:5432/db_name"
+
+# Establish a connection pool
+async def get_db():
+    return await asyncpg.create_pool(DATABASE_URL)
+
+@app.on_event("startup")
+async def startup():
+    app.state.db_pool = await get_db()
+
+@app.on_event("shutdown")
+async def shutdown():
+    await app.state.db_pool.close()
+
+# Endpoint to fetch users
+@app.get("/users/")
+async def read_users():
+    async with app.state.db_pool.acquire() as connection:
+        result = await connection.fetch('SELECT * FROM users')
+        return result
+
+# Endpoint to add a new user
+@app.post("/users/")
+async def create_user(name: str, email: str):
+    async with app.state.db_pool.acquire() as connection:
+        query = 'INSERT INTO users(name, email) VALUES($1, $2) RETURNING *'
+        user = await connection.fetchrow(query, name, email)
+        return user
+```
+
+#### 2.3 Run the FastAPI app:
+
+```bash
+uvicorn main:app --reload
+```
+
+### Notes:
+1. **`asyncpg`**: This is an asynchronous library and allows for non-blocking I/O operations with the PostgreSQL database.
+2. **`SQLAlchemy`**: It is often preferred for more complex applications due to its ORM (Object-Relational Mapping) capabilities.
+
+### Environment Configuration (Optional)
+If you have sensitive database credentials (username, password), it's best to use environment variables or a `.env` file with `python-dotenv`. Here's an example using `.env`:
+
+1. Create a `.env` file:
+
+```
+DATABASE_URL=postgresql://user:password@localhost:5432/db_name
+```
+
+2. Install the required package:
+
+```bash
+pip install python-dotenv
+```
+
+3. Modify your code to load environment variables:
+
+```python
+from dotenv import load_dotenv
+import os
+
+# Load environment variables
+load_dotenv()
+
+# Get the database URL from environment
+DATABASE_URL = os.getenv('DATABASE_URL')
+```
+
+### Final Thoughts
+Both approaches (SQLAlchemy and asyncpg) are great choices depending on your use case. For small apps or if you're familiar with SQLAlchemy, the synchronous approach should be sufficient. If you expect high concurrency or need non-blocking I/O, you should go for the asynchronous approach using `asyncpg`.
+
+---
+---
+
