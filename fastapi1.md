@@ -2065,3 +2065,56 @@ This code defines a **FastAPI** endpoint, specifically a `GET` endpoint at the p
    ```
 
 In summary, this endpoint retrieves products by their category and price range, with default values provided for price if the client doesn't specify them. The use of query parameters allows for flexible filtering when retrieving products.
+
+
+---
+---
+
+**Celery** and **RabbitMQ** are two key components often used together in distributed systems to handle asynchronous tasks, queuing, and background processing. Here's an overview of each:
+
+### 1. **Celery**
+   - **What it is:** Celery is an open-source, asynchronous task queue/job queue system based on distributed message passing. It is primarily used for handling background tasks, enabling you to perform operations (like sending emails, data processing, etc.) outside the main application flow.
+   
+   - **How it works:** Celery allows you to define tasks in your application (usually written in Python), which can then be executed asynchronously, either immediately or at scheduled intervals. The tasks are offloaded to worker processes, which run in the background. This helps improve the performance and scalability of applications by not blocking the main thread while waiting for long-running operations to complete.
+   
+   - **Features:**
+     - **Asynchronous task execution:** You can delegate tasks that don't need to be completed immediately, improving the responsiveness of your application.
+     - **Distributed processing:** Tasks can be executed by multiple workers running on different machines.
+     - **Task scheduling:** You can schedule tasks to run at specific times or intervals, similar to cron jobs.
+     - **Retries & error handling:** Celery provides built-in support for retrying failed tasks.
+     - **Result storage:** Celery supports storing the results of tasks for later retrieval.
+   
+   - **Supported backends:** Celery is often paired with message brokers like RabbitMQ or Redis, which act as intermediaries between the client (which submits tasks) and the workers (which execute them).
+
+### 2. **RabbitMQ**
+   - **What it is:** RabbitMQ is an open-source message broker that enables communication between different components or services in a system through messaging. It is designed to handle high-throughput and distributed messaging systems.
+   
+   - **How it works:** RabbitMQ uses the Advanced Message Queuing Protocol (AMQP) to transmit messages between producers (senders) and consumers (receivers). A producer sends messages to an exchange, which routes them to queues. Consumers then pull messages from the queues to process them. This decouples components of a system, allowing them to communicate asynchronously.
+   
+   - **Features:**
+     - **Message Queuing:** RabbitMQ queues messages and delivers them to consumers in the order they were received.
+     - **Routing:** Messages can be routed through different exchange types (direct, topic, fanout, and headers), enabling flexible message delivery strategies.
+     - **Persistence:** Messages can be stored on disk (persistence) or kept in memory, depending on the system's needs.
+     - **High Availability:** RabbitMQ can be set up to support clustering and high availability to ensure that messages are reliably delivered even if parts of the system fail.
+     - **Consumer Acknowledgement:** Consumers acknowledge the processing of messages, ensuring that messages aren't lost in case of failure.
+     - **Scalability:** RabbitMQ supports horizontal scaling by adding more nodes to the cluster.
+
+### **How Celery and RabbitMQ work together:**
+- **Celery** uses a message broker like **RabbitMQ** to distribute tasks to worker processes. Here's how they interact:
+   1. The **client** (usually a web application) creates a task and sends it to a message broker (like RabbitMQ).
+   2. The **message broker** (RabbitMQ) holds the task in a queue.
+   3. **Celery workers** (running in the background) fetch tasks from the queue and execute them.
+   4. Optionally, the result of the task is sent back and can be stored in a result backend (like Redis or a database).
+
+   By using RabbitMQ as the message broker, Celery can distribute tasks across multiple workers, enabling scalable and fault-tolerant task execution.
+
+---
+
+### In Summary:
+- **Celery** is a distributed task queue system that facilitates asynchronous task execution and background processing.
+- **RabbitMQ** is a message broker that facilitates communication between components in a distributed system through message queuing and routing.
+- Together, they enable scalable, efficient, and reliable task processing in web applications and other distributed systems.
+
+---
+---
+
