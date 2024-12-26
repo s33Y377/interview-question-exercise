@@ -241,6 +241,7 @@ def test_read_root():
     assert response.json() == {"message": "Hello, World!"}
 ```
 
+
 ---
 
 ## 11. **Background Tasks**
@@ -310,7 +311,163 @@ The `Item` model will be automatically validated for incoming requests.
 
 ---
 
-## Conclusion
+To structure a FastAPI project with multiple modules like "accounts" and "employees", you can organize the project into separate Python files and use FastAPI's **include_router** functionality to combine them into a single application. This is a good way to manage large applications by separating concerns into different modules.
+
+Here's how you can organize a FastAPI project with multiple modules:
+
+### 1. Create the Project Structure
+
+A typical structure for a FastAPI app with multiple modules would look like this:
+
+```plaintext
+fastapi_project/
+├── app/
+│   ├── __init__.py
+│   ├── main.py
+│   ├── accounts/
+│   │   ├── __init__.py
+│   │   ├── routes.py
+│   │   ├── models.py
+│   │   └── schemas.py
+│   └── employees/
+│       ├── __init__.py
+│       ├── routes.py
+│       ├── models.py
+│       └── schemas.py
+└── requirements.txt
+```
+
+### 2. Install Dependencies
+
+In your `requirements.txt`, you will have:
+
+```text
+fastapi
+uvicorn
+```
+
+Install the required dependencies by running:
+
+```bash
+pip install -r requirements.txt
+```
+
+### 3. Define the "accounts" module
+
+In the `app/accounts/` directory, define the `routes.py` file to handle routes related to accounts.
+
+#### `app/accounts/routes.py`
+
+```python
+from fastapi import APIRouter
+
+# Create a new router for the 'accounts' module
+router = APIRouter()
+
+# Define a route for creating an account
+@router.get("/account")
+def read_account():
+    return {"message": "Account details"}
+
+@router.post("/account/create")
+def create_account(account_name: str):
+    return {"message": f"Account '{account_name}' created"}
+```
+
+#### `app/accounts/models.py` (Optional for database models)
+
+You could define database models here if you're using an ORM like SQLAlchemy.
+
+#### `app/accounts/schemas.py` (Optional for Pydantic models)
+
+Define Pydantic models for request/response validation if necessary.
+
+### 4. Define the "employees" module
+
+In the `app/employees/` directory, create the `routes.py` file to handle employee-related routes.
+
+#### `app/employees/routes.py`
+
+```python
+from fastapi import APIRouter
+
+# Create a new router for the 'employees' module
+router = APIRouter()
+
+# Define a route for employee details
+@router.get("/employee")
+def read_employee():
+    return {"message": "Employee details"}
+
+@router.post("/employee/add")
+def add_employee(employee_name: str):
+    return {"message": f"Employee '{employee_name}' added"}
+```
+
+#### `app/employees/models.py` (Optional for database models)
+
+Define any database models related to employees here if needed.
+
+#### `app/employees/schemas.py` (Optional for Pydantic models)
+
+Define Pydantic models for employee-related request/response validation.
+
+### 5. Main Application File
+
+Now, in the `main.py` file, you can include the routers from the `accounts` and `employees` modules.
+
+#### `app/main.py`
+
+```python
+from fastapi import FastAPI
+from app.accounts.routes import router as accounts_router
+from app.employees.routes import router as employees_router
+
+# Create the FastAPI app instance
+app = FastAPI()
+
+# Include the routers for different modules
+app.include_router(accounts_router, prefix="/accounts", tags=["accounts"])
+app.include_router(employees_router, prefix="/employees", tags=["employees"])
+
+@app.get("/")
+def read_root():
+    return {"message": "Welcome to the FastAPI app!"}
+```
+
+### 6. Running the FastAPI Application
+
+To run the FastAPI application, use Uvicorn:
+
+```bash
+uvicorn app.main:app --reload
+```
+
+This command starts the FastAPI app from the `app/main.py` file and reloads automatically during development.
+
+### 7. Access the Endpoints
+
+- [http://127.0.0.1:8000/accounts/account](http://127.0.0.1:8000/accounts/account) — This will return `{"message": "Account details"}`.
+- [http://127.0.0.1:8000/accounts/account/create?account_name=JohnDoe](http://127.0.0.1:8000/accounts/account/create?account_name=JohnDoe) — This will return `{"message": "Account 'JohnDoe' created"}`.
+- [http://127.0.0.1:8000/employees/employee](http://127.0.0.1:8000/employees/employee) — This will return `{"message": "Employee details"}`.
+- [http://127.0.0.1:8000/employees/employee/add?employee_name=JaneDoe](http://127.0.0.1:8000/employees/employee/add?employee_name=JaneDoe) — This will return `{"message": "Employee 'JaneDoe' added"}`.
+
+### 8. Interactive Documentation
+
+FastAPI automatically generates interactive API documentation for each of the included routers:
+
+- [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) — OpenAPI documentation with Swagger UI.
+- [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc) — ReDoc documentation.
+
+### Key Points
+
+- **Routers**: Each module (e.g., `accounts`, `employees`) has its own router which contains related routes.
+- **Prefix and Tags**: You can specify `prefix` and `tags` when including the router. This is helpful for grouping routes and organizing the documentation.
+- **Project Structure**: This modular approach allows easy expansion of your application with multiple domains or features (e.g., adding a `products` module or a `transactions` module).
+
+This way, you can manage multiple parts of the application in separate modules, keeping your project clean and maintainable.
+
+---
 
 
 To further delve into FastAPI, let's cover more advanced concepts such as middleware, ORM integration, and models.
