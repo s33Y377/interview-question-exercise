@@ -1991,3 +1991,77 @@ async def read_root():
 - **Synchronous middleware** processes requests in a blocking manner and works fine for simple, non-I/O-bound operations.
 - **Asynchronous middleware** can perform non-blocking operations and is best suited for handling I/O-bound tasks that could otherwise block the event loop.
 - FastAPI allows you to choose the right approach based on the requirements of your application, optimizing performance by leveraging asynchronous programming where needed.
+
+
+---
+---
+
+### Explain
+
+```python
+@app.get("/products/")
+async def get_products(category: str = None, price_min: float = 0, price_max: float = 1000):
+    return {"category": category, "price_min": price_min, "price_max": price_max}
+```
+
+This code defines a **FastAPI** endpoint, specifically a `GET` endpoint at the path `/products/`. The endpoint retrieves product data based on optional query parameters provided in the URL. Here's a breakdown of how the code works:
+
+### 1. **Decorator: `@app.get("/products/")`**
+   - The `@app.get("/products/")` decorator is used to define the HTTP method and the route.
+   - It specifies that this is a **GET** request to the `/products/` URL.
+
+### 2. **Function Definition: `async def get_products(...)`**
+   - `async def` indicates that this is an **asynchronous** function, which means it can handle other requests while waiting for external resources (like database queries) without blocking the server.
+   - The function `get_products` is executed when a **GET** request is made to `/products/`.
+
+### 3. **Parameters:**
+   - **`category: str = None`**: This parameter represents an optional query parameter named `category`. It expects a string value (e.g., "electronics", "clothing"), but if the user does not provide a value, it defaults to `None`.
+   - **`price_min: float = 0`**: This parameter represents a minimum price filter, expecting a floating-point number. If the user does not specify it, it defaults to `0`.
+   - **`price_max: float = 1000`**: This parameter represents a maximum price filter, also a floating-point number. It defaults to `1000` if not provided.
+
+### 4. **Return Statement:**
+   - The function returns a dictionary containing the values of the parameters (`category`, `price_min`, and `price_max`). This dictionary will be automatically converted to a **JSON response**.
+   - If any of the parameters are missing from the URL, their default values will be used.
+
+### Example Usage:
+
+- **Request 1:**
+   ```
+   GET /products/?category=electronics&price_min=100&price_max=500
+   ```
+   This would return:
+   ```json
+   {
+     "category": "electronics",
+     "price_min": 100,
+     "price_max": 500
+   }
+   ```
+
+- **Request 2:**
+   ```
+   GET /products/?category=clothing
+   ```
+   This would return:
+   ```json
+   {
+     "category": "clothing",
+     "price_min": 0,
+     "price_max": 1000
+   }
+   ```
+
+- **Request 3:**
+   ```
+   GET /products/
+   ```
+   This would return:
+   ```json
+   {
+     "category": null,
+     "price_min": 0,
+     "price_max": 1000
+   }
+   ```
+
+In summary, this endpoint retrieves products by their category and price range, with default values provided for price if the client doesn't specify them. The use of query parameters allows for flexible filtering when retrieving products.
