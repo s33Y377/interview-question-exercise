@@ -761,8 +761,7 @@ print(longest_substring("abcabcbb"))  # Output: 3 ("abc")
 - **Problem**: Write a generator function that generates the Fibonacci sequence up to `n` numbers.
 - **Solution**:
 
-```
-python
+```python
    def fibonacci(n):
        a, b = 0, 1
        for _ in range(n):
@@ -779,7 +778,7 @@ python
 - **Problem**: Given two sorted lists, merge them into a single sorted list.
 - **Solution**:
 
-```
+```python
    def merge_sorted_lists(list1, list2):
        merged = []
        i, j = 0, 0
@@ -804,7 +803,7 @@ python
 - **Problem**: Write a function that implements binary search on a sorted list.
 - **Solution**:
 
-```
+```python
    def binary_search(arr, target):
        left, right = 0, len(arr) - 1
        while left <= right:
@@ -826,7 +825,7 @@ python
 - **Problem**: Sort a list of tuples based on the second element in each tuple.
 - **Solution**:
 
-```
+```python
    def sort_by_second_element(tuples):
        return sorted(tuples, key=lambda x: x[1])
 
@@ -840,7 +839,7 @@ python
 - **Problem**: Write a function that checks if a given string is a palindrome (reads the same forwards and backwards).
 - **Solution**:
 
-```
+```python
    def is_palindrome(s: str) -> bool:
        s = ''.join(e for e in s if e.isalnum()).lower()  # Remove non-alphanumeric characters and make lowercase
        return s == s[::-1]
@@ -853,7 +852,7 @@ python
 - **Problem**: Given a list of strings, write a function that concatenates all strings into a single string.
 - **Solution**:
 
-```
+```python
    def concat_strings(str_list):
        return ''.join(str_list)
 
@@ -866,7 +865,7 @@ python
 - **Problem**: Write a function that finds the most frequent element in a list.
 - **Solution**:
 
-```
+```python
    from collections import Counter
 
    def most_frequent(lst):
@@ -874,7 +873,7 @@ python
        return count.most_common(1)[0][0]
 
    print(most_frequent([1, 2, 2, 3, 3, 3, 4]))  # Output: 3
-   ```
+```
 
 These practical questions test your ability to write efficient and effective Python code, focusing on problem-solving, algorithm implementation, and understanding Python's advanced features such as decorators, iterators, and context managers.
 
@@ -1060,6 +1059,36 @@ class PrimeIterator:
 primes = PrimeIterator()
 for _ in range(10):
     print(next(primes))
+```
+
+```python
+class MyRange:
+    def __init__(self, start, end):
+        self.start = start
+        self.end = end
+        self.current = start
+
+    def __iter__(self):
+        # Return the iterator object itself
+        return self
+
+    def __next__(self):
+        if self.current >= self.end:
+            # Stop the iteration when current reaches the end
+            raise StopIteration
+        else:
+            # Return the current value and update the current value
+            value = self.current
+            self.current += 1
+            return value
+
+
+# Usage of the custom iterator
+my_range = MyRange(1, 5)
+
+for number in my_range:
+    print(number)
+
 ```
 
 ---
