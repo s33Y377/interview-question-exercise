@@ -1,6 +1,8 @@
 Advanced design patterns address complex problems in software architecture and design. These patterns often deal with more intricate concerns like system scalability, performance, or object interactions. Here are some advanced design patterns, along with a scenario and example for each:
 
+[System Design](https://refactoring.guru/design-patterns)
 ---
+
 
 ### 1. **Abstract Factory Pattern**
 The Abstract Factory Pattern provides an interface for creating families of related or dependent objects without specifying their concrete classes.
