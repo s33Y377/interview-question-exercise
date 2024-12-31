@@ -3235,4 +3235,135 @@ class BookListView(APIView):
 ---
 ---
 
+Django supports three types of model inheritance, each of which helps manage how data is stored and queried in the database. These are:
 
+1. **Abstract Base Classes**
+2. **Multi-Table Inheritance**
+3. **Proxy Models**
+
+### 1. **Abstract Base Classes**
+
+An **Abstract Base Class** is a model that you can use as a base for other models, but it will not be created as a table in the database. The subclasses that inherit from the abstract base class will have their own tables in the database, but they will inherit fields and methods from the base class.
+
+**Use case**: Use this when you want to share common information across several models, but don't want a table for the base class itself.
+
+#### Example:
+
+```python
+from django.db import models
+
+# Abstract Base Class
+class Person(models.Model):
+    name = models.CharField(max_length=100)
+    birth_date = models.DateField()
+
+    class Meta:
+        abstract = True
+
+    def full_name(self):
+        return self.name
+
+# Subclass 1
+class Author(Person):
+    pen_name = models.CharField(max_length=100)
+
+# Subclass 2
+class Publisher(Person):
+    company_name = models.CharField(max_length=100)
+```
+
+Here:
+- `Person` is an abstract base class, so no table is created for it.
+- `Author` and `Publisher` will each have their own table in the database, but they will inherit `name` and `birth_date` from `Person`.
+
+### 2. **Multi-Table Inheritance**
+
+With **Multi-Table Inheritance**, each model in the inheritance chain gets its own database table, and Django will join them together when querying related data. The child class table will have a foreign key to the parent class table.
+
+**Use case**: Use this when you want to create a new model that builds on the parent model's fields but needs its own table and potentially its own set of fields.
+
+#### Example:
+
+```python
+from django.db import models
+
+# Parent model
+class Person(models.Model):
+    name = models.CharField(max_length=100)
+    birth_date = models.DateField()
+
+# Child model
+class Author(Person):
+    pen_name = models.CharField(max_length=100)
+
+# Another child model
+class Publisher(Person):
+    company_name = models.CharField(max_length=100)
+```
+
+Here:
+- Django will create three tables: `Person`, `Author`, and `Publisher`.
+- The `Author` and `Publisher` tables will each have a foreign key column (`person_id`) linking to the `Person` table.
+- This means when you query `Author` or `Publisher`, Django will join the tables to include the fields from `Person`.
+
+### 3. **Proxy Models**
+
+A **Proxy Model** is a subclass of an existing model that does not add any new fields or change the database schema. It allows you to add custom behavior (methods, model managers, etc.) without altering the database structure. Proxy models are often used for custom model managers or behaviors.
+
+**Use case**: Use this when you need to add custom methods or behavior to an existing model without changing its structure or creating a new table.
+
+#### Example:
+
+```python
+from django.db import models
+
+# Existing model
+class Person(models.Model):
+    name = models.CharField(max_length=100)
+    birth_date = models.DateField()
+
+# Proxy model
+class CustomPerson(Person):
+    class Meta:
+        proxy = True
+
+    def greet(self):
+        return f"Hello, my name is {self.name}!"
+```
+
+Here:
+- `CustomPerson` is a proxy model, so it shares the same database table as `Person` but can have additional methods, like `greet()`.
+- The `proxy = True` option tells Django that this model should not create a new table.
+
+### Key Differences
+
+- **Abstract Base Classes**: Do not create a database table; they are intended only as a base class for other models.
+- **Multi-Table Inheritance**: Each model in the inheritance chain has its own database table, and Django automatically handles joining these tables when querying.
+- **Proxy Models**: Do not create a new table and only modify or extend the behavior of an existing model.
+
+### When to Use Which?
+
+- Use **Abstract Base Classes** when you want to share common fields between several models but don't need a separate table for the base class.
+- Use **Multi-Table Inheritance** when you want to create models that share some common fields but also need to have their own specific fields and a separate table.
+- Use **Proxy Models** when you want to change the behavior of an existing model (e.g., adding custom methods) without altering the database schema.
+
+### Example with Queries
+
+Let’s use the **Multi-Table Inheritance** example to show how querying works across related models:
+
+```python
+# Creating instances
+person = Person.objects.create(name='John Doe', birth_date='1990-01-01')
+author = Author.objects.create(name='Jane Austen', birth_date='1775-12-16', pen_name='Austen')
+publisher = Publisher.objects.create(name='Penguin', birth_date='1935-05-15', company_name='Penguin Books')
+
+# Querying across models
+authors = Author.objects.all()  # Will fetch Author and join with Person
+publishers = Publisher.objects.all()  # Will fetch Publisher and join with Person
+```
+
+- The `Author` and `Publisher` queries will automatically include fields from `Person` (such as `name` and `birth_date`), thanks to multi-table inheritance.
+
+### Conclusion
+
+Django model inheritance allows you to structure your models in a way that makes sense for your application's needs, whether you need shared fields, separate tables, or additional functionality. Choosing the right type of inheritance is crucial for maintaining clean, efficient, and maintainable code.
