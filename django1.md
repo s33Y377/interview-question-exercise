@@ -2962,6 +2962,167 @@ These are the different types of models and model-related patterns that Django o
 
 ---
 
+### Django Model Types Explained with Examples:
+
+1. **Base Model (Standard Model Class)**:
+   The base model class is the most common type. You define your fields and methods within the class to represent a database table.
+
+   **Example:**
+   ```python
+   from django.db import models
+
+   class Author(models.Model):
+       name = models.CharField(max_length=100)
+       birth_date = models.DateField()
+
+   # This will create a table "author" in the database with columns "name" and "birth_date".
+   ```
+
+2. **Abstract Base Classes**:
+   Abstract base classes allow you to define common fields and methods that can be shared across other models. Django does not create a database table for the abstract model.
+
+   **Example:**
+   ```python
+   class Person(models.Model):
+       name = models.CharField(max_length=100)
+       birth_date = models.DateField()
+
+       class Meta:
+           abstract = True  # No table will be created for Person
+
+   class Author(Person):
+       genre = models.CharField(max_length=100)
+
+   class Reader(Person):
+       membership_type = models.CharField(max_length=100)
+   ```
+
+   Here, `Author` and `Reader` share fields defined in `Person`, but `Person` itself does not get its own table.
+
+3. **Multi-table Inheritance**:
+   In this type of inheritance, each model has its own table, but they inherit fields from a parent model. Django creates separate tables for both the child and parent models.
+
+   **Example:**
+   ```python
+   class Person(models.Model):
+       name = models.CharField(max_length=100)
+       birth_date = models.DateField()
+
+   class Author(Person):
+       genre = models.CharField(max_length=100)
+
+   # The database will have two tables: "person" and "author".
+   # The "author" table will have a ForeignKey to the "person" table.
+   ```
+
+4. **Proxy Models**:
+   Proxy models allow you to change the behavior of a model without altering its database schema. You use them to modify things like model methods or default ordering.
+
+   **Example:**
+   ```python
+   class Author(models.Model):
+       name = models.CharField(max_length=100)
+       birth_date = models.DateField()
+
+   class SpecialAuthor(Author):
+       class Meta:
+           proxy = True
+
+       def get_special_award(self):
+           return f"Special Award for {self.name}"
+
+   # The "SpecialAuthor" model will use the same table as "Author" but can have different behavior.
+   ```
+
+5. **Concrete Model Inheritance**:
+   With concrete model inheritance, each class in the inheritance chain gets its own table, and child models inherit fields from the parent. This creates multiple tables.
+
+   **Example:**
+   ```python
+   class Person(models.Model):
+       name = models.CharField(max_length=100)
+       birth_date = models.DateField()
+
+   class Author(Person):
+       genre = models.CharField(max_length=100)
+
+   # Both "Person" and "Author" will have their own tables in the database.
+   ```
+
+6. **Custom Model Managers**:
+   Custom model managers allow you to define custom query methods for your models. A manager is a way to add extra functionality to your model queries.
+
+   **Example:**
+   ```python
+   class Author(models.Model):
+       name = models.CharField(max_length=100)
+       birth_date = models.DateField()
+
+       class AuthorManager(models.Manager):
+           def recent_authors(self):
+               return self.filter(birth_date__gte='2000-01-01')
+
+       # Attach the custom manager to the model
+       authors = Author.objects.recent_authors()  # Will get authors born after 2000
+   ```
+
+7. **Related Models (ForeignKey, ManyToManyField, OneToOneField)**:
+   These are used to define relationships between models. 
+
+   - `ForeignKey`: A one-to-many relationship.
+   - `ManyToManyField`: A many-to-many relationship.
+   - `OneToOneField`: A one-to-one relationship.
+
+   **Example:**
+   ```python
+   class Author(models.Model):
+       name = models.CharField(max_length=100)
+
+   class Book(models.Model):
+       title = models.CharField(max_length=100)
+       author = models.ForeignKey(Author, on_delete=models.CASCADE)
+
+   class Reader(models.Model):
+       name = models.CharField(max_length=100)
+       books_read = models.ManyToManyField(Book)
+
+   class Profile(models.Model):
+       user = models.OneToOneField(Reader, on_delete=models.CASCADE)
+       bio = models.TextField()
+   ```
+
+   Here:
+   - `Author` and `Book` have a one-to-many relationship through `ForeignKey`.
+   - `Reader` and `Book` have a many-to-many relationship.
+   - `Reader` and `Profile` have a one-to-one relationship.
+
+8. **Signals & Model Methods**:
+   Django provides signals that allow you to attach custom behavior at certain stages of model lifecycle events (e.g., before saving, after saving). You can also define custom model methods for model-specific behavior.
+
+   **Example:**
+   ```python
+   from django.db.models.signals import pre_save
+   from django.dispatch import receiver
+   from django.db import models
+
+   class Author(models.Model):
+       name = models.CharField(max_length=100)
+
+       @property
+       def name_length(self):
+           return len(self.name)
+
+   @receiver(pre_save, sender=Author)
+   def author_pre_save(sender, instance, **kwargs):
+       print(f"About to save author: {instance.name}")
+
+   # When saving an Author instance, the signal will print the author's name.
+   ```
+
+In summary, Django provides multiple ways to design models for different use cases like inheritance, custom behavior, relationships, and more. Each of these model types and features allows you to tailor your application’s data models in various ways depending on your needs.
+
+---
+
 ### What is JWT Authentication?
 
 JWT (JSON Web Token) is an open standard (RFC 7519) that defines a compact and self-contained way to securely transmit information between parties as a JSON object. It is widely used for authentication and information exchange, especially in modern web applications.
