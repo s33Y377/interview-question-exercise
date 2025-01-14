@@ -1,3 +1,35 @@
+```python
+import pandas as pd
+
+# Sample data for logon times
+logon_data = {
+    'user_id': [1, 2, 3],
+    'logon_time': ['2025-01-14 08:00:00', '2025-01-14 09:00:00', '2025-01-14 10:00:00']
+}
+
+# Sample data for logoff times
+logoff_data = {
+    'user_id': [1, 2, 3],
+    'logoff_time': ['2025-01-14 09:00:00', '2025-01-14 10:30:00', '2025-01-14 11:00:00']
+}
+
+# Convert logon_time and logoff_time to datetime format
+logon_df = pd.DataFrame(logon_data)
+logon_df['logon_time'] = pd.to_datetime(logon_df['logon_time'])
+
+logoff_df = pd.DataFrame(logoff_data)
+logoff_df['logoff_time'] = pd.to_datetime(logoff_df['logoff_time'])
+
+# Merge logon and logoff data on 'user_id'
+merged_df = pd.merge(logon_df, logoff_df, on='user_id')
+
+# Calculate session duration by subtracting logon_time from logoff_time
+merged_df['session_duration'] = merged_df['logoff_time'] - merged_df['logon_time']
+
+# Display the result
+print(merged_df)
+```
+
 Once you have the logon and logoff data in a pandas DataFrame, there are many additional analyses, transformations, and operations you can perform depending on your use case. Below are some examples of what can be done with this data:
 
 ### 1. **Basic Data Analysis**
