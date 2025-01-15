@@ -1,3 +1,156 @@
+To calculate the total number of weeks worked by an employee in a `pandas` DataFrame, you can follow these steps:
+
+### Steps:
+1. **Convert the `start_date` and `end_date` columns to `datetime` format** (if not already in that format).
+2. **Calculate the duration** (difference) between the `start_date` and `end_date`.
+3. **Convert the duration to weeks**.
+
+### Example:
+
+Let's assume you have the following DataFrame:
+
+```python
+import pandas as pd
+
+# Sample data
+data = {
+    'employee_id': [1, 2, 3],
+    'start_date': ['2025-01-01', '2025-01-05', '2025-01-10'],
+    'end_date': ['2025-01-10', '2025-01-12', '2025-01-15']
+}
+
+# Create DataFrame
+df = pd.DataFrame(data)
+
+# Convert 'start_date' and 'end_date' to datetime format
+df['start_date'] = pd.to_datetime(df['start_date'])
+df['end_date'] = pd.to_datetime(df['end_date'])
+
+# Display the DataFrame
+print(df)
+```
+
+### Step 1: Calculate the Duration
+To calculate the duration in weeks, we can subtract the `start_date` from the `end_date` and divide by `7` to convert the result into weeks.
+
+```python
+# Calculate the duration in weeks
+df['weeks_worked'] = (df['end_date'] - df['start_date']).dt.days / 7
+
+# Display the updated DataFrame
+print(df)
+```
+
+### Example Output:
+For the given input, the output would look like this:
+
+```plaintext
+   employee_id start_date   end_date  weeks_worked
+0            1 2025-01-01 2025-01-10           1.29
+1            2 2025-01-05 2025-01-12           1.00
+2            3 2025-01-10 2025-01-15           0.71
+```
+
+### Explanation:
+- The `dt.days` extracts the total number of days between `start_date` and `end_date`.
+- Dividing by `7` converts the number of days into weeks.
+- The result is stored in a new column `weeks_worked`.
+
+### Handling Partial Weeks:
+If you want to round the total number of weeks to the nearest whole number or express it with a certain number of decimal places, you can use `round()` or `floor()` methods:
+
+- **Round to 2 decimal places:**
+  ```python
+  df['weeks_worked'] = ((df['end_date'] - df['start_date']).dt.days / 7).round(2)
+  ```
+
+- **Round down to the nearest whole number:**
+  ```python
+  df['weeks_worked'] = ((df['end_date'] - df['start_date']).dt.days / 7).apply(lambda x: int(x))
+  ```
+
+Let me know if you need additional details or adjustments to this calculation!
+
+
+
+---
+---
+
+
+
+You can achieve this by sorting the DataFrame by `user_id` and `login_time`, then iterating through the sessions for each user and combining sessions that are within 5 minutes of each other. Here's how you can do it:
+
+```python
+import pandas as pd
+from datetime import timedelta
+
+# Sample DataFrame
+data = {
+    'user_id': [1, 1, 1, 2, 2],
+    'login_time': ['2025-01-15 08:00:00', '2025-01-15 08:06:00', '2025-01-15 09:00:00', '2025-01-15 09:00:00', '2025-01-15 09:10:00'],
+    'logout_time': ['2025-01-15 08:30:00', '2025-01-15 08:45:00', '2025-01-15 09:30:00', '2025-01-15 09:30:00', '2025-01-15 09:40:00']
+}
+
+# Convert to DataFrame
+df = pd.DataFrame(data)
+
+# Convert time columns to datetime
+df['login_time'] = pd.to_datetime(df['login_time'])
+df['logout_time'] = pd.to_datetime(df['logout_time'])
+
+# Sort by user_id and login_time
+df = df.sort_values(by=['user_id', 'login_time'])
+
+# Calculate total active session time
+def calculate_active_time(df):
+    total_time = timedelta()
+    current_session_start = None
+    current_session_end = None
+    
+    for _, row in df.iterrows():
+        if current_session_end is None:
+            # First session, initialize
+            current_session_start = row['login_time']
+            current_session_end = row['logout_time']
+        elif row['login_time'] <= current_session_end + timedelta(minutes=5):
+            # Merge with the current session
+            current_session_end = max(current_session_end, row['logout_time'])
+        else:
+            # No merge, finalize the current session and start a new one
+            total_time += current_session_end - current_session_start
+            current_session_start = row['login_time']
+            current_session_end = row['logout_time']
+    
+    # Add the last session
+    if current_session_start is not None:
+        total_time += current_session_end - current_session_start
+    
+    return total_time
+
+# Group by user_id and apply the function
+result = df.groupby('user_id').apply(calculate_active_time)
+
+# Convert the timedelta result to total seconds for easier readability
+result_seconds = result.dt.total_seconds()
+
+# Print the total active session time for each user in seconds
+print(result_seconds)
+```
+
+### Explanation:
+1. **DataFrame Setup**: First, we load the data and ensure that `login_time` and `logout_time` are converted to `datetime` objects.
+2. **Sorting**: The data is sorted by `user_id` and `login_time` to process each user's sessions in order.
+3. **Active Session Calculation**: For each user, we iterate through the login and logout times. If the next login is within 5 minutes of the previous logout, we combine the sessions. Otherwise, we finalize the current session, add it to the total time, and start a new session.
+4. **Result**: The total active time for each user is calculated and converted into seconds for clarity.
+
+This will output the total active session time for each user, accounting for consecutive sessions that are within 5 minutes of each other.
+
+
+---
+---
+
+
+
 ```python
 import pandas as pd
 
