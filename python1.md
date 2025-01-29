@@ -3845,4 +3845,41 @@ son = Son()
 son.show()
 ```
 
+
+
 ---
+---
+
+
+
+In Python, `self` is not a keyword, but a convention used in instance methods of classes to refer to the current instance of the class. You can technically use any other name instead of `self`, but it is highly discouraged because `self` is the widely accepted and understood convention in the Python community. Using a different name could confuse other programmers who read your code and make it harder to maintain.
+
+Here’s an example of using `self` (the usual convention):
+
+```python
+class MyClass:
+    def __init__(self, value):
+        self.value = value
+
+    def show_value(self):
+        print(self.value)
+```
+
+You can technically replace `self` with any other name, like `this` or `instance`, but it's not recommended:
+
+```python
+class MyClass:
+    def __init__(this, value):
+        this.value = value
+
+    def show_value(this):
+        print(this.value)
+```
+
+While this works, it’s better to stick to `self` for readability and clarity.
+
+
+
+---
+---
+
