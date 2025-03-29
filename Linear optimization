@@ -1,0 +1,53 @@
+**Linear optimization** (also known as **linear programming**) is a mathematical method for determining the best possible outcome in a given mathematical model. The model is represented by linear relationships (i.e., equations or inequalities), where the goal is to maximize or minimize a linear objective function, subject to a set of linear constraints.
+
+### Key Components of Linear Optimization:
+1. **Objective Function**: This is the function to be maximized or minimized. It is a linear function of decision variables.
+   - Example: Maximize profit or minimize cost.
+
+2. **Decision Variables**: These are the variables that decision-makers will adjust to achieve the best outcome.
+   - Example: Number of units to produce, amount of resources to allocate.
+
+3. **Constraints**: These are the restrictions or limitations on the decision variables. They are expressed as linear inequalities or equalities.
+   - Example: Available resources, budget constraints, production capacity.
+
+4. **Non-negativity Constraints**: Decision variables are often restricted to non-negative values (e.g., you can't produce a negative quantity of something).
+
+### Example of Linear Optimization:
+
+#### Problem: A factory produces two products, A and B. Each product requires labor hours and material. The goal is to determine how many units of each product the factory should produce to maximize profit, subject to labor and material constraints.
+
+- **Objective**: Maximize profit from products A and B.
+- **Decision Variables**: Let:
+  - \( x_1 \) = number of units of Product A
+  - \( x_2 \) = number of units of Product B
+
+- **Profit**: The profit for Product A is $40 per unit, and for Product B, it is $30 per unit. So, the objective function is:
+  \[
+  \text{Maximize } Z = 40x_1 + 30x_2
+  \]
+
+- **Constraints**:
+  - Labor: Product A requires 3 hours of labor, and Product B requires 2 hours of labor. The total labor available is 180 hours. So, the constraint is:
+    \[
+    3x_1 + 2x_2 \leq 180
+    \]
+  - Material: Product A requires 2 units of material, and Product B requires 3 units. The total material available is 120 units. So, the constraint is:
+    \[
+    2x_1 + 3x_2 \leq 120
+    \]
+  - Non-negativity constraints:
+    \[
+    x_1 \geq 0, \, x_2 \geq 0
+    \]
+
+#### Solution:
+To solve this, you can use the **Simplex Method** or other linear programming solvers, such as Excel Solver, Python's `scipy.optimize`, or other optimization tools.
+
+#### Application Example:
+**Manufacturing Optimization**: This type of linear optimization problem is common in manufacturing and production planning. A factory might need to decide how much of each product to produce, given constraints like labor, material, and machine time, in order to maximize profit or minimize costs. Other examples of applications include:
+
+- **Transportation Problems**: Minimizing the cost of shipping goods from multiple suppliers to multiple customers.
+- **Diet Problems**: Finding the most cost-effective combination of foods that meets all nutritional requirements.
+- **Supply Chain Optimization**: Minimizing total cost or maximizing service levels by determining optimal inventory levels and production schedules.
+
+Linear optimization is widely used in industries like manufacturing, logistics, finance, and agriculture.
