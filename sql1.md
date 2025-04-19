@@ -367,6 +367,9 @@ These solutions cover a variety of advanced SQL techniques such as:
 
 Sure! Here are a few more advanced SQL query scenarios that cover a range of concepts including recursive queries, performance optimization, advanced joins, CTEs (Common Table Expressions), and handling complex aggregations. These examples can challenge even experienced SQL developers and help prepare for tough interview questions.
 
+---
+---
+
 ### 1. **Recursive Query - Organizational Hierarchy**
 
 You are tasked with querying an organization’s employee hierarchy, where each employee reports to another employee. The table structure is as follows:
@@ -614,6 +617,7 @@ ORDER BY order_id;
 
 - **Explanation**: This query uses a **recursive CTE** to generate a sequence of numbers from 1 to 7. It then filters out the existing `order_id`s from the `Orders` table to find the missing `order_id` values. The result will be the gaps in the sequence.
 
+---
 ---
 
 These advanced SQL queries cover complex scenarios that involve recursion, optimization, pivoting, conditional aggregation, and more. Let me know if you would like further details or help with specific queries!
